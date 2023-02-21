@@ -50,11 +50,11 @@ public class AV3DSpaceCatch extends JComponent
     public static double DeslocamentoAngular = 0.2; // Default: 0.2.
     public static double ShiftCartesianoAnular = 0.01; // Default: 0.01.
     public int TamanhoAlvo = 10; // Default: 10.
-    public double LimiteXAlvo = 100; // Default: 100.
-    public double LimiteYAlvo = 100; // Default: 100.
-    public double LimiteZAlvo = 30; // Default: 30.
+    public double LimiteXAlvo = 150; // Default: 150.
+    public double LimiteYAlvo = 150; // Default: 150.
+    public double LimiteZAlvo = 50; // Default: 50.
     public double LimitePhi = Math.PI / 3; // Default: Math.PI / 3.
-    public double DistanciaCapturaAlvo = 40; // Default: 40.
+    public double DistanciaCapturaAlvo = 50; // Default: 50.
     public Color CorAlvo = Color.WHITE;
     public Color CorGuias = Color.GREEN;
 
@@ -78,7 +78,6 @@ public class AV3DSpaceCatch extends JComponent
     public double zalvo;
     public double Teta = 0;
     public double Phi = 0;
-    public int ContadorCorAlvo = 0; // Default inicial: 0.
 
     public int FlagArquivo;
 
@@ -290,7 +289,7 @@ public class AV3DSpaceCatch extends JComponent
             if (FlagPausa == 0)
                 LabelStatus.setText("<html>Pontuação = " + String.valueOf(Pontuacao) + ".<br><br>Velocidade = " + String.valueOf(Velocidade) + "<br><br>Setas para direcionar.<br><br>\"A\" para aumentar velocidade. \"Z\" para reduzir.<br><br>\"P\" para pausar.<br><br>Barra de espaço para resetar as variáveis de localização.<br><br>ESC para sair.</html>");
             else
-                LabelStatus.setText("<html>Pontuação: " + String.valueOf(Pontuacao) + ".<br><br>Jogo pausado.<br>Aperte \"P\" para continuar.</html>");
+                LabelStatus.setText("<html>Pontuação: " + String.valueOf(Pontuacao) + ".<br><br>Jogo pausado.<br><br>Aperte \"P\" para continuar.</html>");
 
             if (FlagPausa == 0) if (Espaco.equals(""))
                 {
@@ -309,7 +308,7 @@ public class AV3DSpaceCatch extends JComponent
 
             if (FlagPausa == 0) DesenharEspaco(comp);
 
-            if (FlagPausa == 0) if (Math.sqrt((x - xalvo) * (x - xalvo) + (y - yalvo) * (y - yalvo) + (z - zalvo) * (z - zalvo)) <= DistanciaCapturaAlvo)
+            if (FlagPausa == 0) if (Math.sqrt((x - (2 * xalvo + TamanhoAlvo) / 2) * (x - (2 * xalvo + TamanhoAlvo) / 2) + (y - (2 * yalvo + TamanhoAlvo) / 2) * (y - (2 * yalvo + TamanhoAlvo) / 2) + (z - (2 * zalvo + TamanhoAlvo) / 2) * (z - (2 * zalvo + TamanhoAlvo) / 2)) <= DistanciaCapturaAlvo)
                 {
                 Pontuacao++;
                 Espaco = "";
