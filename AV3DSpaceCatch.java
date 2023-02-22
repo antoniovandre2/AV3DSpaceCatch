@@ -54,10 +54,10 @@ public class AV3DSpaceCatch extends JComponent
     public double LimiteYAlvo = 200; // Default: 150.
     public double LimiteZAlvo = 70; // Default: 50.
     public double LimitePhi = Math.PI / 3; // Default: Math.PI / 3.
-    public double DistanciaCapturaAlvo = 70; // Default: 70.
+    public double DistanciaCapturaAlvo = 20; // Default: 70.
     public Color CorAlvo = Color.WHITE;
     public Color CorGuias = Color.GREEN;
-    public double FatorTonalidadeAproximacao = 20; // Deve ser um real positivo. Default: 2.
+    public double FatorTonalidadeAproximacao = 0.05; // Deve ser um real positivo. Default: 2.
 
     // Variáveis de funcionamento interno. Evite alterar.
 
@@ -304,7 +304,7 @@ public class AV3DSpaceCatch extends JComponent
 
                     } while ((Math.sqrt((x - (2 * xalvo + TamanhoAlvo) / 2) * (x - (2 * xalvo + TamanhoAlvo) / 2) + (y - (2 * yalvo + TamanhoAlvo) / 2) * (y - (2 * yalvo + TamanhoAlvo) / 2) + (-z - (2 * zalvo + TamanhoAlvo) / 2) * (-z - (2 * zalvo + TamanhoAlvo) / 2)) <= DistanciaCapturaAlvo));
 
-            if (FlagPausa == 0) FameAV3DSpaceCatch.getContentPane().setBackground(new Color((int) (16 - 16 * Math.pow(Math.min(Math.sqrt((x - xalvo) * (x - xalvo) + (y - yalvo) * (y - yalvo) + (-z - zalvo) * (-z - zalvo)), (2 * Math.sqrt(3) * Math.max(LimiteXAlvo, Math.max(LimiteYAlvo, LimiteZAlvo)))) / (2 * Math.sqrt(3) * Math.max(LimiteXAlvo, Math.max(LimiteYAlvo, LimiteZAlvo))), FatorTonalidadeAproximacao)), (int) (32 - 32 * Math.pow(Math.min(Math.sqrt((x - xalvo) * (x - xalvo) + (y - yalvo) * (y - yalvo) + (-z - zalvo) * (-z - zalvo)), (2 * Math.sqrt(3) * Math.max(LimiteXAlvo, Math.max(LimiteYAlvo, LimiteZAlvo)))) / (2 * Math.sqrt(3) * Math.max(LimiteXAlvo, Math.max(LimiteYAlvo, LimiteZAlvo))), FatorTonalidadeAproximacao)), (int) (16 - 16 * Math.pow(Math.min(Math.sqrt((x - xalvo) * (x - xalvo) + (y - yalvo) * (y - yalvo) + (-z - zalvo) * (-z - zalvo)), (2 * Math.sqrt(3) * Math.max(LimiteXAlvo, Math.max(LimiteYAlvo, LimiteZAlvo)))) / (2 * Math.sqrt(3) * Math.max(LimiteXAlvo, Math.max(LimiteYAlvo, LimiteZAlvo))), FatorTonalidadeAproximacao))));
+            if (FlagPausa == 0) FameAV3DSpaceCatch.getContentPane().setBackground(new Color((int) (16 - 16 * Math.pow(Math.min(Math.sqrt((x - xalvo) * (x - xalvo) + (y - yalvo) * (y - yalvo) + (-z - zalvo) * (-z - zalvo)), (2 * Math.sqrt(3) * Math.max(LimiteXAlvo, Math.max(LimiteYAlvo, LimiteZAlvo)))) / (2 * Math.sqrt(3) * Math.max(LimiteXAlvo, Math.max(LimiteYAlvo, LimiteZAlvo))), FatorTonalidadeAproximacao)), (int) (192 - 192 * Math.pow(Math.min(Math.sqrt((x - xalvo) * (x - xalvo) + (y - yalvo) * (y - yalvo) + (-z - zalvo) * (-z - zalvo)), (2 * Math.sqrt(3) * Math.max(LimiteXAlvo, Math.max(LimiteYAlvo, LimiteZAlvo)))) / (2 * Math.sqrt(3) * Math.max(LimiteXAlvo, Math.max(LimiteYAlvo, LimiteZAlvo))), FatorTonalidadeAproximacao)), (int) (16 - 16 * Math.pow(Math.min(Math.sqrt((x - xalvo) * (x - xalvo) + (y - yalvo) * (y - yalvo) + (-z - zalvo) * (-z - zalvo)), (2 * Math.sqrt(3) * Math.max(LimiteXAlvo, Math.max(LimiteYAlvo, LimiteZAlvo)))) / (2 * Math.sqrt(3) * Math.max(LimiteXAlvo, Math.max(LimiteYAlvo, LimiteZAlvo))), FatorTonalidadeAproximacao))));
 
             AnguloVisao = Math.atan(Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 / DistanciaTela);
 
