@@ -39,7 +39,7 @@ public class AV3DSpaceCatch extends JComponent
     public int TamanhoPlanoY = 400; // Default: 400.
     public static int MinTamanhoPlanoX = 300; // Default: 300.
     public static int MinTamanhoPlanoY = 300; // Default: 300.
-    public int Velocidade = 50; // Default: 90.
+    public double Velocidade = 50; // Default: 50.
     public int LimiteSuperiorVelocidade = 100; // Default: 100.
     public int LimiteInferiorVelocidade = 10; // Default: 80.
     public static String AV3DSpaceCatchIconFilePath = "AV3DSpaceCatch - Logo - 200p.png";
@@ -57,6 +57,7 @@ public class AV3DSpaceCatch extends JComponent
     public double DistanciaCapturaAlvo = 70; // Default: 70.
     public Color CorAlvo = Color.WHITE;
     public Color CorGuias = Color.GREEN;
+    public double FatorTonalidadeAproximacao = 20; // Deve ser um real positivo. Default: 2.
 
     // Variáveis de funcionamento interno. Evite alterar.
 
@@ -68,7 +69,7 @@ public class AV3DSpaceCatch extends JComponent
     public long Pontuacao = 0;
     public long TempoR = System.currentTimeMillis();
     public String Espaco = "";
-    public int FlagPausa = 0;
+    public int FlagPausa = 1;
 
     public double x = 0;
     public double y = 0;
@@ -169,11 +170,20 @@ public class AV3DSpaceCatch extends JComponent
         AV3DSpaceCatch comp = new AV3DSpaceCatch();
         comp.setPreferredSize(new Dimension(TamanhoPlanoX, TamanhoPlanoY));
         FameAV3DSpaceCatch.getContentPane().add(comp, BorderLayout.PAGE_START);
-        JLabel LabelStatus = new JLabel("<html>Pontuação = " + String.valueOf(Pontuacao) + ".<br><br>Velocidade = " + String.valueOf(Velocidade) + "<br><br>Setas para direcionar.<br><br>\"A\" para aumentar velocidade. \"Z\" para reduzir.<br><br>\"P\" para pausar.<br><br>Barra de espaço para resetar as variáveis de localização.<br><br>ESC para sair.</html>");
+
+        JLabel LabelStatus = new JLabel("");
+
+        if (FlagPausa == 0)
+            LabelStatus.setText("<html>Pontuação = " + String.valueOf(Pontuacao) + ".<br><br>Velocidade = " + String.valueOf(Velocidade) + "<br><br>Setas para direcionar.<br><br>\"A\" para aumentar velocidade. \"Z\" para reduzir.<br><br>\"P\" para pausar.<br><br>Barra de espaço para resetar as variáveis de localização.<br><br>ESC para sair.</html>");
+        else
+            LabelStatus.setText("<html>Pontuação: " + String.valueOf(Pontuacao) + ".<br><br>Jogo pausado.<br><br>Aperte \"P\" para continuar.</html>");
+
         LabelStatus.setFont(new Font("DialogInput", Font.BOLD | Font.ITALIC, TamanhoFonteLabelStatus));
         LabelStatus.setOpaque(true);
         LabelStatus.setLocation(5, TamanhoPlanoY + 5);
         FameAV3DSpaceCatch.add(LabelStatus);
+
+        FameAV3DSpaceCatch.getContentPane().setBackground(Color.BLACK);
 
         FameAV3DSpaceCatch.addKeyListener(new KeyListener()
             {
@@ -192,7 +202,7 @@ public class AV3DSpaceCatch extends JComponent
                     Teta = 0;
                     Phi = 0;
 
-                    FlagPausa = 0;
+                    FlagPausa = 1;
                     }
 
                 if (keyCode == KeyEvent.VK_P)
@@ -263,7 +273,7 @@ public class AV3DSpaceCatch extends JComponent
                     Teta = 0;
                     Phi = 0;
 
-                    FlagPausa = 0;
+                    FlagPausa = 1;
                     }
 
             long Tempo = System.currentTimeMillis();
@@ -280,16 +290,7 @@ public class AV3DSpaceCatch extends JComponent
             if ((Math.abs(Phi) >= LimitePhi))
                 Phi = (LimitePhi - DeslocamentoAngular) * Math.signum(Phi);
 
-            FameAV3DSpaceCatch.getContentPane().setBackground(new Color((int) (255 / Math.sqrt((x - xalvo) * (x - xalvo) + (y - yalvo) * (y - yalvo) + (z - zalvo) * (z - zalvo))), (int) (255 / Math.sqrt((x - xalvo) * (x - xalvo) + (y - yalvo) * (y - yalvo) + (z - zalvo) * (z - zalvo))), (int) (255 / Math.sqrt((x - xalvo) * (x - xalvo) + (y - yalvo) * (y - yalvo) + (z - zalvo) * (z - zalvo)))));
-
             if (Math.cos(-Teta) > 0) FatorZ = 1; else FatorZ = -1;
-
-            AnguloVisao = Math.atan(Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 / DistanciaTela);
-
-            if (FlagPausa == 0)
-                LabelStatus.setText("<html>Pontuação = " + String.valueOf(Pontuacao) + ".<br><br>Velocidade = " + String.valueOf(Velocidade) + "<br><br>Setas para direcionar.<br><br>\"A\" para aumentar velocidade. \"Z\" para reduzir.<br><br>\"P\" para pausar.<br><br>Barra de espaço para resetar as variáveis de localização.<br><br>ESC para sair.</html>");
-            else
-                LabelStatus.setText("<html>Pontuação: " + String.valueOf(Pontuacao) + ".<br><br>Jogo pausado.<br><br>Aperte \"P\" para continuar.</html>");
 
             if (FlagPausa == 0) if (Espaco.equals(""))
                 {
@@ -301,14 +302,18 @@ public class AV3DSpaceCatch extends JComponent
 
                     zalvo = (int) (Math.random() * LimiteZAlvo * Math.signum(Math.random() - 0.5));
 
-                    } while ((Math.sqrt((x - xalvo) * (x - xalvo) + (y - yalvo) * (y - yalvo) + (z - zalvo) * (z - zalvo)) <= DistanciaCapturaAlvo));
+                    } while ((Math.sqrt((x - (2 * xalvo + TamanhoAlvo) / 2) * (x - (2 * xalvo + TamanhoAlvo) / 2) + (y - (2 * yalvo + TamanhoAlvo) / 2) * (y - (2 * yalvo + TamanhoAlvo) / 2) + (-z - (2 * zalvo + TamanhoAlvo) / 2) * (-z - (2 * zalvo + TamanhoAlvo) / 2)) <= DistanciaCapturaAlvo));
 
-                Espaco = String.valueOf(xalvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo) + ";" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo) + ";" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + ";" + String.valueOf(xalvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + ";" + String.valueOf(xalvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo) + "|" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo) + "|" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + "|" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + "|" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + TamanhoAlvo);
+            if (FlagPausa == 0) FameAV3DSpaceCatch.getContentPane().setBackground(new Color((int) (16 - 16 * Math.pow(Math.min(Math.sqrt((x - xalvo) * (x - xalvo) + (y - yalvo) * (y - yalvo) + (-z - zalvo) * (-z - zalvo)), (2 * Math.sqrt(3) * Math.max(LimiteXAlvo, Math.max(LimiteYAlvo, LimiteZAlvo)))) / (2 * Math.sqrt(3) * Math.max(LimiteXAlvo, Math.max(LimiteYAlvo, LimiteZAlvo))), FatorTonalidadeAproximacao)), (int) (32 - 32 * Math.pow(Math.min(Math.sqrt((x - xalvo) * (x - xalvo) + (y - yalvo) * (y - yalvo) + (-z - zalvo) * (-z - zalvo)), (2 * Math.sqrt(3) * Math.max(LimiteXAlvo, Math.max(LimiteYAlvo, LimiteZAlvo)))) / (2 * Math.sqrt(3) * Math.max(LimiteXAlvo, Math.max(LimiteYAlvo, LimiteZAlvo))), FatorTonalidadeAproximacao)), (int) (16 - 16 * Math.pow(Math.min(Math.sqrt((x - xalvo) * (x - xalvo) + (y - yalvo) * (y - yalvo) + (-z - zalvo) * (-z - zalvo)), (2 * Math.sqrt(3) * Math.max(LimiteXAlvo, Math.max(LimiteYAlvo, LimiteZAlvo)))) / (2 * Math.sqrt(3) * Math.max(LimiteXAlvo, Math.max(LimiteYAlvo, LimiteZAlvo))), FatorTonalidadeAproximacao))));
+
+            AnguloVisao = Math.atan(Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 / DistanciaTela);
+
+            Espaco = String.valueOf(xalvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo) + ";" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo) + ";" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + ";" + String.valueOf(xalvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + ";" + String.valueOf(xalvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo) + "|" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo) + "|" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + "|" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + "|" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + TamanhoAlvo);
                 }
 
             if (FlagPausa == 0) DesenharEspaco(comp);
 
-            if (FlagPausa == 0) if (Math.sqrt((x - (2 * xalvo + TamanhoAlvo) / 2) * (x - (2 * xalvo + TamanhoAlvo) / 2) + (y - (2 * yalvo + TamanhoAlvo) / 2) * (y - (2 * yalvo + TamanhoAlvo) / 2) + (z - (2 * zalvo + TamanhoAlvo) / 2) * (z - (2 * zalvo + TamanhoAlvo) / 2)) <= DistanciaCapturaAlvo)
+            if (FlagPausa == 0) if (Math.sqrt((x - (2 * xalvo + TamanhoAlvo) / 2) * (x - (2 * xalvo + TamanhoAlvo) / 2) + (y - (2 * yalvo + TamanhoAlvo) / 2) * (y - (2 * yalvo + TamanhoAlvo) / 2) + (-z - (2 * zalvo + TamanhoAlvo) / 2) * (-z - (2 * zalvo + TamanhoAlvo) / 2)) <= DistanciaCapturaAlvo)
                 {
                 Pontuacao++;
                 Espaco = "";
@@ -320,6 +325,11 @@ public class AV3DSpaceCatch extends JComponent
                 }
 
             try {Thread.sleep(10);} catch(InterruptedException e) {}
+
+            if (FlagPausa == 0)
+                LabelStatus.setText("<html>Pontuação = " + String.valueOf(Pontuacao) + ".<br><br>Velocidade = " + String.valueOf(Velocidade) + "<br><br>Setas para direcionar.<br><br>\"A\" para aumentar velocidade. \"Z\" para reduzir.<br><br>\"P\" para pausar.<br><br>Barra de espaço para resetar as variáveis de localização.<br><br>ESC para sair.</html>");
+            else
+                LabelStatus.setText("<html>Pontuação: " + String.valueOf(Pontuacao) + ".<br><br>Jogo pausado.<br><br>Aperte \"P\" para continuar.</html>");
             }
 
         System.exit(0);
