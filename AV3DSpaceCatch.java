@@ -9,7 +9,7 @@
  * 
  * Licença de uso: Atribuição-NãoComercial-CompartilhaIgual (CC BY-NC-SA).
  * 
- * Última atualização: 21-02-2023
+ * Última atualização: 22-02-2023
  */
 
 import java.awt.*;
@@ -57,7 +57,7 @@ public class AV3DSpaceCatch extends JComponent
     public double DistanciaCapturaAlvo = 20; // Default: 70.
     public Color CorAlvo = Color.WHITE;
     public Color CorGuias = Color.GREEN;
-    public double FatorTonalidadeAproximacao = 0.05; // Deve ser um real positivo. Default: 2.
+    public double FatorTonalidadeAproximacao = 0.05; // Deve ser um real positivo menor ou igual a 1. Default: 0.05.
 
     // Variáveis de funcionamento interno. Evite alterar.
 
@@ -164,8 +164,8 @@ public class AV3DSpaceCatch extends JComponent
         JFrame FameAV3DSpaceCatch = new JFrame("AV3DSpaceCatch - " + Versao);
         FameAV3DSpaceCatch.setIconImage(new ImageIcon(getClass().getResource(AV3DSpaceCatchIconFilePath)).getImage());
 
-        FameAV3DSpaceCatch.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        
+        FameAV3DSpaceCatch.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
         FameAV3DSpaceCatch.setPreferredSize(new Dimension(TamanhoPlanoX, TamanhoPlanoY + TamanhoEspacoLabelStatus));
         AV3DSpaceCatch comp = new AV3DSpaceCatch();
         comp.setPreferredSize(new Dimension(TamanhoPlanoX, TamanhoPlanoY));
@@ -407,6 +407,16 @@ public class AV3DSpaceCatch extends JComponent
                         comp.addLineG(Math.min(TamanhoPlanoX, TamanhoPlanoY) - 50 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 20 - CorrecaoY, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 40  - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoY, CorGuias);
                         }
                     }
+                else
+                    {
+                    comp.addLineG(50 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - 20 - CorrecaoY, 40 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoY, CorGuias);
+
+                    comp.addLineG(50 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 20 - CorrecaoY, 40 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoY, CorGuias);
+
+                    comp.addLineG(Math.min(TamanhoPlanoX, TamanhoPlanoY) - 50 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - 20 - CorrecaoY, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 40  - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoY, CorGuias);
+
+                    comp.addLineG(Math.min(TamanhoPlanoX, TamanhoPlanoY) - 50 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 20 - CorrecaoY, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 40  - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoY, CorGuias);
+                    }
 
                 if ((Math.acos(ProdutoEscalarZo / Math.sqrt(xo * xo + zo * zo)) < 3 * Math.PI / 2) && (Math.acos(ProdutoEscalarZd / Math.sqrt(xd * xd + zd * zd)) < 3 * Math.PI / 2))
                     {
@@ -423,6 +433,16 @@ public class AV3DSpaceCatch extends JComponent
 
                         comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoX, 40 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 20 - CorrecaoX, 50 - CorrecaoY, CorGuias);
                         }
+                    }
+                else
+                    {
+                    comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - 20 - CorrecaoX, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 50 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoX, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 40 - CorrecaoY, CorGuias);
+
+                    comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoX, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 40 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 20 - CorrecaoX, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 50 - CorrecaoY, CorGuias);
+
+                    comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - 20 - CorrecaoX, 50 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoX, 40 - CorrecaoY, CorGuias);
+
+                    comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoX, 40 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 20 - CorrecaoX, 50 - CorrecaoY, CorGuias);
                     }
 
                 if ((Math.acos(ProdutoEscalaro / Math.sqrt(xo * xo + yo * yo + zo * zo)) < AnguloVisao) && (Math.acos(ProdutoEscalard / Math.sqrt(xd * xd + yd * yd + zd * zd)) < AnguloVisao) && (Math.min(xi, Math.min(yi, Math.min(xf, yf))) > 0) && (Math.max(xi, Math.max(yi, Math.max(xf, yf))) < Math.min(TamanhoPlanoX, TamanhoPlanoY)))
