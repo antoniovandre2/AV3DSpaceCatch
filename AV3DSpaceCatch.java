@@ -50,11 +50,11 @@ public class AV3DSpaceCatch extends JComponent
     public static double DeslocamentoAngular = 0.2; // Default: 0.2.
     public static double ShiftCartesianoAnular = 0.01; // Default: 0.01.
     public int TamanhoAlvo = 10; // Default: 10.
-    public double LimiteXAlvo = 150; // Default: 150.
-    public double LimiteYAlvo = 150; // Default: 150.
-    public double LimiteZAlvo = 50; // Default: 50.
+    public double LimiteXAlvo = 200; // Default: 150.
+    public double LimiteYAlvo = 200; // Default: 150.
+    public double LimiteZAlvo = 70; // Default: 50.
     public double LimitePhi = Math.PI / 3; // Default: Math.PI / 3.
-    public double DistanciaCapturaAlvo = 50; // Default: 50.
+    public double DistanciaCapturaAlvo = 70; // Default: 70.
     public Color CorAlvo = Color.WHITE;
     public Color CorGuias = Color.GREEN;
 
