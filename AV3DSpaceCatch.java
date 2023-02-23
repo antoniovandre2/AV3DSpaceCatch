@@ -9,7 +9,7 @@
  * 
  * Licença de uso: Atribuição-NãoComercial-CompartilhaIgual (CC BY-NC-SA).
  * 
- * Última atualização: 22-02-2023
+ * Última atualização: 23-02-2023
  */
 
 import java.awt.*;
@@ -53,7 +53,6 @@ public class AV3DSpaceCatch extends JComponent
     public double LimiteXAlvo = 200; // Default: 150.
     public double LimiteYAlvo = 200; // Default: 150.
     public double LimiteZAlvo = 70; // Default: 50.
-    public double LimitePhi = Math.PI / 3; // Default: Math.PI / 3.
     public double DistanciaCapturaAlvo = 20; // Default: 20.
     public Color CorAlvo = Color.WHITE;
     public Color CorGuias = Color.GREEN;
@@ -217,10 +216,10 @@ public class AV3DSpaceCatch extends JComponent
                     if (Velocidade > LimiteInferiorVelocidade) Velocidade -= 10;
 
                 if (keyCode == KeyEvent.VK_UP) if (FlagPausa == 0) 
-                    if (Math.abs(Phi) < LimitePhi) Phi += DeslocamentoAngular;
+                    Phi += DeslocamentoAngular;
 
                 if (keyCode == KeyEvent.VK_DOWN) if (FlagPausa == 0) 
-                    if (Math.abs(Phi) < LimitePhi) Phi -= DeslocamentoAngular;
+                    Phi -= DeslocamentoAngular;
 
                 if (keyCode == KeyEvent.VK_LEFT) if (FlagPausa == 0) 
                     Teta += DeslocamentoAngular;
@@ -292,9 +291,6 @@ public class AV3DSpaceCatch extends JComponent
             long Tempo2 = System.currentTimeMillis();
 
             if (FlagFlashCatch == 1) if ((Tempo2 - TempoR2) > 100) FlagFlashCatch = 0;
-
-            if ((Math.abs(Phi) >= LimitePhi))
-                Phi = (LimitePhi - DeslocamentoAngular) * Math.signum(Phi);
 
             if (Math.cos(-Teta) > 0) FatorZ = 1; else FatorZ = -1;
 
@@ -385,16 +381,40 @@ public class AV3DSpaceCatch extends JComponent
 
                 xf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.tan(Math.atan(yd / xd) + Teta)) - CorrecaoX;
 
-                if (Math.abs(xo) > Math.abs(yo))
-                    yi = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.tan(Math.atan(zo / xo) + Phi)) - CorrecaoY;
-                else
-                    yi = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.signum(yo) * FatorZ * Math.tan(Math.atan(zo / yo) + Math.signum(yd) * FatorZ * Phi)) - CorrecaoY;
+                int FlagPontoNatureza = 0;
 
-                if (Math.abs(xd) > Math.abs(yd))
-                    yf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.tan(Math.atan(zd / xd) + Phi)) - CorrecaoY;
+                if (Math.abs(xo) > Math.abs(zo))
+                    {
+                    if (Math.abs(xo) > Math.abs(yo))
+                        yi = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.tan(Math.atan(zo / xo) + Phi)) - CorrecaoY;
+                    else
+                        yi = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.signum(yo) * FatorZ * Math.tan(Math.atan(zo / yo) + Math.signum(yd) * FatorZ * Phi)) - CorrecaoY;
+                    }
                 else
-                    yf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.signum(yd) * FatorZ * Math.tan(Math.atan(zd / yd) + Math.signum(yd) * FatorZ * Phi)) - CorrecaoY;
-                
+                    {
+                    if (Math.abs(xo) > Math.abs(yo))
+                        yi = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.tan(Math.PI / 2 - Math.atan(xo / zo) + Phi)) - CorrecaoY;
+                    else
+                        yi = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.signum(yo) * FatorZ * Math.tan(Math.atan(zo / yo) + Math.signum(yd) * FatorZ * Phi)) - CorrecaoY;
+
+                    FlagPontoNatureza = 1;
+                    }
+
+                    if (Math.abs(xd) > Math.abs(zd))
+                        {
+                        if (Math.abs(xd) > Math.abs(yd))
+                            yf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.tan(Math.atan(zd / xd) + Phi)) - CorrecaoY;
+                        else
+                            yf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.signum(yd) * FatorZ * Math.tan(Math.atan(zd / yd) + Math.signum(yd) * FatorZ * Phi)) - CorrecaoY;
+                        }
+                    else
+                        {
+                        if (Math.abs(xd) > Math.abs(yd))
+                            yf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.tan(Math.PI / 2 - Math.atan(xd / zd) + Phi)) - CorrecaoY;
+                        else
+                            yf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.signum(yd) * FatorZ * Math.tan(Math.atan(zd / yd) + Math.signum(yd) * FatorZ * Phi)) - CorrecaoY;
+                        }
+
                 double ProdutoEscalaro = xo * Math.cos(-Teta) * Math.cos(-Phi) + yo * Math.sin(-Teta) * Math.cos(-Phi) + FatorZ * zo * Math.sin(-Phi);
 
                 double ProdutoEscalard = xd * Math.cos(-Teta) * Math.cos(-Phi) + yd * Math.sin(-Teta) * Math.cos(-Phi) + FatorZ * zd * Math.sin(-Phi);
@@ -463,14 +483,6 @@ public class AV3DSpaceCatch extends JComponent
 
                 if ((Math.acos(ProdutoEscalaro / Math.sqrt(xo * xo + yo * yo + zo * zo)) < AnguloVisao) && (Math.acos(ProdutoEscalard / Math.sqrt(xd * xd + yd * yd + zd * zd)) < AnguloVisao) && (Math.min(xi, Math.min(yi, Math.min(xf, yf))) > 0) && (Math.max(xi, Math.max(yi, Math.max(xf, yf))) < Math.min(TamanhoPlanoX, TamanhoPlanoY)))
                     comp.addLine(xi, yi, xf, yf, CorAlvo);
-                }
-
-            if (Phi == (LimitePhi - DeslocamentoAngular) * Math.signum(Phi))
-                {
-                if (Math.signum(Phi) > 0)
-                    comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - 30 - CorrecaoX, 20 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 30 - CorrecaoX, 20 - CorrecaoY, CorGuias);
-                else if (Math.signum(Phi) < 0)
-                    comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - 30 - CorrecaoX, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 20 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 30 - CorrecaoX, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 20 - CorrecaoY, CorGuias);
                 }
             }
         }
