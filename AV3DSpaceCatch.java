@@ -9,7 +9,7 @@
  * 
  * Licença de uso: Atribuição-NãoComercial-CompartilhaIgual (CC BY-NC-SA).
  * 
- * Última atualização: 23-02-2023
+ * Última atualização: 24-02-2023
  */
 
 import java.awt.*;
@@ -193,7 +193,7 @@ public class AV3DSpaceCatch extends JComponent
                 int keyCode = ke.getKeyCode();
 
                 if (keyCode == KeyEvent.VK_ESCAPE)
-                    {Sair = 1;}
+                    Sair = 1;
 
                 if (keyCode == KeyEvent.VK_SPACE)
                     {
@@ -216,16 +216,16 @@ public class AV3DSpaceCatch extends JComponent
                     if (Velocidade > LimiteInferiorVelocidade) Velocidade -= 10;
 
                 if (keyCode == KeyEvent.VK_UP) if (FlagPausa == 0) 
-                    Phi += DeslocamentoAngular;
+                    {if (Math.abs(Phi) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) Phi += DeslocamentoAngular; else VariavelLimiteAtingido();}
 
                 if (keyCode == KeyEvent.VK_DOWN) if (FlagPausa == 0) 
-                    Phi -= DeslocamentoAngular;
+                    {if (Math.abs(Phi) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) Phi -= DeslocamentoAngular; else VariavelLimiteAtingido();}
 
                 if (keyCode == KeyEvent.VK_LEFT) if (FlagPausa == 0) 
-                    Teta += DeslocamentoAngular;
+                    {if (Math.abs(Teta) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) Teta += DeslocamentoAngular; else VariavelLimiteAtingido();}
 
                 if (keyCode == KeyEvent.VK_RIGHT) if (FlagPausa == 0) 
-                    Teta -= DeslocamentoAngular;
+                    {if (Math.abs(Teta) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) Teta -= DeslocamentoAngular; else VariavelLimiteAtingido();}
                 }
 
             public void keyReleased(KeyEvent ke){}
@@ -281,9 +281,14 @@ public class AV3DSpaceCatch extends JComponent
 
             if (FlagPausa == 0) if (Tempo - TempoR > 1000 / Velocidade)
                 {
-                x += Math.cos(-Phi) * Math.cos(-Teta);
-                y += Math.cos(-Phi) * Math.sin(-Teta);
-                z += Math.sin(-Phi);
+                if ((Math.abs(x) - DeslocamentoLinear > Double.MAX_VALUE - DeslocamentoLinear) || (Math.abs(y) - DeslocamentoLinear > Double.MAX_VALUE - DeslocamentoLinear) || (Math.abs(z) - DeslocamentoLinear > Double.MAX_VALUE - DeslocamentoLinear))
+                    VariavelLimiteAtingido();
+                else
+                    {
+                    x += Math.cos(-Phi) * Math.cos(-Teta);
+                    y += Math.cos(-Phi) * Math.sin(-Teta);
+                    z += Math.sin(-Phi);
+                    }
 
                 TempoR = Tempo;
                 }
@@ -512,5 +517,14 @@ public class AV3DSpaceCatch extends JComponent
             writer.close();
             }
         catch (IOException e) {}
+        }
+
+    public void VariavelLimiteAtingido()
+        {
+        x = 0;
+        y = 0;
+        z = 0;
+        Teta = 0;
+        Phi = 0;
         }
     }
