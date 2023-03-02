@@ -285,7 +285,7 @@ public class AV3DSpaceCatch extends JComponent
                     {
                     x += Math.cos(-Phi) * Math.cos(-Teta);
                     y += Math.cos(-Phi) * Math.sin(-Teta);
-                    z += Math.sin(-Phi) * Math.cos(-Teta);
+                    z += Math.sin(-Phi);
                     }
 
                 TempoR = Tempo;
@@ -372,9 +372,9 @@ public class AV3DSpaceCatch extends JComponent
 
             double yd = (1 + Math.cos(-Phi) * Math.sin(-Teta)) * Double.parseDouble(CoordenadasDest[1]) - y;
 
-            double zo = (1 + Math.sin(-Phi) * Math.cos(-Teta)) * (-Double.parseDouble(CoordenadasOrig[2])) - z;
+            double zo = Math.cos(-Teta) * ((1 + Math.sin(-Phi) * Math.cos(-Teta)) * (-Double.parseDouble(CoordenadasOrig[2])) - z);
 
-            double zd = (1 + Math.sin(-Phi) * Math.cos(-Teta)) * (-Double.parseDouble(CoordenadasDest[2])) - z;
+            double zd = Math.cos(-Teta) * ((1 + Math.sin(-Phi) * Math.cos(-Teta)) * (-Double.parseDouble(CoordenadasDest[2])) - z);
 
             int xi;
             int yi;
