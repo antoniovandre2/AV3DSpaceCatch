@@ -27,6 +27,8 @@ import java.lang.Thread;
 import java.lang.Math;
 import java.io.*;
 
+import javax.sound.sampled.*;
+
 import AntonioVandre.*;
 
 public class AV3DSpaceCatch extends JComponent
@@ -56,6 +58,7 @@ public class AV3DSpaceCatch extends JComponent
     public Color CorAlvo = Color.WHITE;
     public Color CorGuias = Color.GREEN;
     public double FatorTonalidadeAproximacao = 30; // Default: 30.
+    public String ArquivoSomCatch = "ES_PREL Hit Laser 4 - SFX Producer.wav";
 
     // Variáveis de funcionamento interno. Evite alterar.
 
@@ -325,6 +328,15 @@ public class AV3DSpaceCatch extends JComponent
 
             if (FlagPausa == 0) if (Math.sqrt(((1 + Math.cos(-Phi) * Math.cos(-Teta)) * (2 * xalvo + TamanhoAlvo) / 2 - x) * ((1 + Math.cos(-Phi) * Math.cos(-Teta)) * (2 * xalvo + TamanhoAlvo) / 2 - x) + ((1 + Math.cos(-Phi) * Math.sin(-Teta)) * (2 * yalvo + TamanhoAlvo) / 2 - y) * ((1 + Math.cos(-Phi) * Math.sin(-Teta)) * (2 * yalvo + TamanhoAlvo) / 2 - y) + ((1 + Math.sin(-Phi) * Math.cos(-Teta)) * (2 * zalvo + TamanhoAlvo) / 2 + z) * ((1 + Math.sin(-Phi) * Math.cos(-Teta)) * (2 * zalvo + TamanhoAlvo) / 2 + z)) <= DistanciaCapturaAlvo)
                 {
+                try {
+                    InputStream is = getClass().getResourceAsStream(ArquivoSomCatch);
+                    InputStream bis = new BufferedInputStream(is);
+                    AudioInputStream ais = AudioSystem.getAudioInputStream(bis);
+                    Clip Catch = AudioSystem.getClip();  
+                    Catch.open(ais);
+                    Catch.start();
+                } catch(Exception ex) {}
+
                 Pontuacao++;
                 Espaco = "";
                 FlagFlashCatch = 1;
