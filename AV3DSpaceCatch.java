@@ -9,7 +9,7 @@
  * 
  * Licença de uso: Atribuição-NãoComercial-CompartilhaIgual (CC BY-NC-SA).
  * 
- * Última atualização: 02-03-2023
+ * Última atualização: 03-03-2023
  */
 
 import java.awt.*;
@@ -42,8 +42,8 @@ public class AV3DSpaceCatch extends JComponent
     public static int MinTamanhoPlanoX = 300; // Default: 300.
     public static int MinTamanhoPlanoY = 300; // Default: 300.
     public double Velocidade = 50; // Default: 50.
-    public int LimiteSuperiorVelocidade = 100; // Default: 100.
-    public int LimiteInferiorVelocidade = 10; // Default: 80.
+    public double LimiteSuperiorVelocidade = 100; // Default: 100.
+    public double LimiteInferiorVelocidade = 10; // Default: 80.
     public static String AV3DSpaceCatchIconFilePath = "AV3DSpaceCatch - Logo - 200p.png";
     public static int TamanhoEspacoLabelStatus = 280; // Default: 280.
     public static int TamanhoFonteLabelStatus = 11; // Default: 11.
@@ -59,6 +59,9 @@ public class AV3DSpaceCatch extends JComponent
     public Color CorGuias = Color.GREEN;
     public double FatorTonalidadeAproximacao = 30; // Default: 30.
     public String ArquivoSomCatch = "ES_PREL Hit Laser 4 - SFX Producer.wav";
+    public String ArquivoSomBGM10x = "ES_Wind Drone Winter - SFX Producer - 1x.wav";
+    public String ArquivoSomBGM15x = "ES_Wind Drone Winter - SFX Producer - 1.5x.wav";
+    public String ArquivoSomBGM20x = "ES_Wind Drone Winter - SFX Producer - 2x.wav";
 
     // Variáveis de funcionamento interno. Evite alterar.
 
@@ -72,6 +75,11 @@ public class AV3DSpaceCatch extends JComponent
     public String Espaco = "";
     public int FlagPausa = 1;
     public int FlagFlashCatch = 0;
+    public int FlagCatchSound = 0;
+    public int FlagBGM = 0;
+    public Clip Catch = null;
+    public Clip BGM = null;
+
 
     public double x = 0;
     public double y = 0;
@@ -211,10 +219,24 @@ public class AV3DSpaceCatch extends JComponent
                     if (FlagPausa == 1) FlagPausa = 0; else FlagPausa = 1;
 
                 if (keyCode == KeyEvent.VK_A) if (FlagPausa == 0) 
-                    if (Velocidade < LimiteSuperiorVelocidade) Velocidade += 10;
+                    if (Velocidade < LimiteSuperiorVelocidade)
+                        {
+                        Velocidade += 10;
+
+                        BGM.stop();
+                        BGM.close();
+                        FlagBGM = 0;
+                        }
 
                 if (keyCode == KeyEvent.VK_Z) if (FlagPausa == 0) 
-                    if (Velocidade > LimiteInferiorVelocidade) Velocidade -= 10;
+                    if (Velocidade > LimiteInferiorVelocidade)
+                        {
+                        Velocidade -= 10;
+
+                        BGM.stop();
+                        BGM.close();
+                        FlagBGM = 0;
+                        }
 
                 if (keyCode == KeyEvent.VK_UP) if (FlagPausa == 0) 
                     {if (Math.abs(Phi) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) Phi += DeslocamentoAngular; else VariavelLimiteAtingido();}
@@ -278,6 +300,37 @@ public class AV3DSpaceCatch extends JComponent
                     FlagPausa = 1;
                     }
 
+            try {
+                if (FlagPausa == 0)
+                    {
+                    if (FlagBGM == 0)
+                        {
+                        InputStream BGMIS = null;
+
+                        if ((Velocidade - LimiteInferiorVelocidade) / (LimiteSuperiorVelocidade - LimiteInferiorVelocidade) < 0.3)
+                            BGMIS = getClass().getResourceAsStream(ArquivoSomBGM10x);
+                        else if ((Velocidade - LimiteInferiorVelocidade) / (LimiteSuperiorVelocidade - LimiteInferiorVelocidade) < 0.6)
+                            BGMIS = getClass().getResourceAsStream(ArquivoSomBGM15x);
+                        else
+                            BGMIS = getClass().getResourceAsStream(ArquivoSomBGM20x);
+
+                        InputStream BGMBIS = new BufferedInputStream(BGMIS);
+                        AudioInputStream BGMAIS = AudioSystem.getAudioInputStream(BGMBIS);
+                        BGM = AudioSystem.getClip();  
+                        BGM.open(BGMAIS);
+                        BGM.loop(Clip.LOOP_CONTINUOUSLY);
+                        BGM.start();
+                        FlagBGM = 1;
+                        }
+                    }
+                else if (FlagBGM == 1)
+                    {
+                    BGM.stop();
+                    BGM.close();
+                    FlagBGM = 0;
+                    }
+            } catch(Exception ex) {}
+
             long Tempo = System.currentTimeMillis();
 
             if (FlagPausa == 0) if (Tempo - TempoR > 1000 / Velocidade)
@@ -329,12 +382,16 @@ public class AV3DSpaceCatch extends JComponent
             if (FlagPausa == 0) if (Math.sqrt(((1 + Math.cos(-Phi) * Math.cos(-Teta)) * (2 * xalvo + TamanhoAlvo) / 2 - x) * ((1 + Math.cos(-Phi) * Math.cos(-Teta)) * (2 * xalvo + TamanhoAlvo) / 2 - x) + ((1 + Math.cos(-Phi) * Math.sin(-Teta)) * (2 * yalvo + TamanhoAlvo) / 2 - y) * ((1 + Math.cos(-Phi) * Math.sin(-Teta)) * (2 * yalvo + TamanhoAlvo) / 2 - y) + ((1 + Math.sin(-Phi) * Math.cos(-Teta)) * (2 * zalvo + TamanhoAlvo) / 2 + z) * ((1 + Math.sin(-Phi) * Math.cos(-Teta)) * (2 * zalvo + TamanhoAlvo) / 2 + z)) <= DistanciaCapturaAlvo)
                 {
                 try {
-                    InputStream is = getClass().getResourceAsStream(ArquivoSomCatch);
-                    InputStream bis = new BufferedInputStream(is);
-                    AudioInputStream ais = AudioSystem.getAudioInputStream(bis);
-                    Clip Catch = AudioSystem.getClip();  
-                    Catch.open(ais);
+                    if (FlagCatchSound == 1) Catch.close();
+
+                    InputStream CatchIS = getClass().getResourceAsStream(ArquivoSomCatch);
+                    InputStream CatchBIS = new BufferedInputStream(CatchIS);
+                    AudioInputStream CatchAIS = AudioSystem.getAudioInputStream(CatchBIS);
+                    Catch = AudioSystem.getClip();  
+                    Catch.open(CatchAIS);
                     Catch.start();
+
+                    FlagCatchSound = 1;
                 } catch(Exception ex) {}
 
                 Pontuacao++;
