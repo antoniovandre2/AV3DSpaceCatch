@@ -223,6 +223,7 @@ public class AV3DSpaceCatch extends JComponent
                         {
                         Velocidade += 10;
 
+                        while (! BGM.isRunning()) try{Thread.sleep(10);} catch (InterruptedException e) {}
                         BGM.stop();
                         BGM.close();
                         FlagBGM = 0;
@@ -233,6 +234,7 @@ public class AV3DSpaceCatch extends JComponent
                         {
                         Velocidade -= 10;
 
+                        while (! BGM.isRunning()) try{Thread.sleep(10);} catch (InterruptedException e) {}
                         BGM.stop();
                         BGM.close();
                         FlagBGM = 0;
