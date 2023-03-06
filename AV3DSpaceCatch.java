@@ -9,7 +9,7 @@
  * 
  * Licença de uso: Atribuição-NãoComercial-CompartilhaIgual (CC BY-NC-SA).
  * 
- * Última atualização: 03-03-2023
+ * Última atualização: 06-03-2023
  */
 
 import java.awt.*;
@@ -41,20 +41,22 @@ public class AV3DSpaceCatch extends JComponent
     public int TamanhoPlanoY = 400; // Default: 400.
     public static int MinTamanhoPlanoX = 300; // Default: 300.
     public static int MinTamanhoPlanoY = 300; // Default: 300.
-    public double Velocidade = 50; // Default: 50.
+    public double Velocidade = 50; // Default inicial: 50.
     public double LimiteSuperiorVelocidade = 100; // Default: 100.
-    public double LimiteInferiorVelocidade = 10; // Default: 80.
+    public double LimiteInferiorVelocidade = 10; // Default: 10.
+    public double IncrementoVelocidade = 10; // Default: 10.
+    public int FramesPorSegundoPorVelocidade = 60; // Default: 60.
     public static String AV3DSpaceCatchIconFilePath = "AV3DSpaceCatch - Logo - 200p.png";
     public static int TamanhoEspacoLabelStatus = 280; // Default: 280.
     public static int TamanhoFonteLabelStatus = 11; // Default: 11.
-    public double DistanciaTela = 2; // Default: valor inicial: 2.
+    public double DistanciaTela = 2; // Default: 2.
     public static double DeslocamentoLinear = 1; // Default: 1.
     public static double DeslocamentoAngular = 0.1; // Default: 0.1.
-    public int TamanhoAlvo = 10; // Default: 10.
-    public double LimiteXAlvo = 200; // Default: 200.
-    public double LimiteYAlvo = 200; // Default: 200.
-    public double LimiteZAlvo = 100; // Default: 100.
-    public double DistanciaCapturaAlvo = 20; // Default: 30.
+    public int TamanhoAlvo = 1; // Default: 10.
+    public double LimiteXAlvo = 20; // Default: 200.
+    public double LimiteYAlvo = 20; // Default: 200.
+    public double LimiteZAlvo = 10; // Default: 100.
+    public double DistanciaCapturaAlvo = 2; // Default: 30.
     public Color CorAlvo = Color.WHITE;
     public Color CorGuias = Color.GREEN;
     public double FatorTonalidadeAproximacao = 30; // Default: 30.
@@ -221,7 +223,7 @@ public class AV3DSpaceCatch extends JComponent
                 if (keyCode == KeyEvent.VK_A) if (FlagPausa == 0) 
                     if (Velocidade < LimiteSuperiorVelocidade)
                         {
-                        Velocidade += 10;
+                        Velocidade += IncrementoVelocidade;
 
                         while (! BGM.isRunning()) try{Thread.sleep(10);} catch (InterruptedException e) {}
                         BGM.stop();
@@ -232,7 +234,7 @@ public class AV3DSpaceCatch extends JComponent
                 if (keyCode == KeyEvent.VK_Z) if (FlagPausa == 0) 
                     if (Velocidade > LimiteInferiorVelocidade)
                         {
-                        Velocidade -= 10;
+                        Velocidade -= IncrementoVelocidade;
 
                         while (! BGM.isRunning()) try{Thread.sleep(10);} catch (InterruptedException e) {}
                         BGM.stop();
@@ -241,10 +243,10 @@ public class AV3DSpaceCatch extends JComponent
                         }
 
                 if (keyCode == KeyEvent.VK_UP) if (FlagPausa == 0) 
-                    {if (Math.abs(Phi) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) Phi += DeslocamentoAngular; else VariavelLimiteAtingido();}
+                    {if (Math.abs(Phi) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) Phi += Math.signum(Math.cos(-Teta)) * DeslocamentoAngular; else VariavelLimiteAtingido();}
 
                 if (keyCode == KeyEvent.VK_DOWN) if (FlagPausa == 0) 
-                    {if (Math.abs(Phi) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) Phi -= DeslocamentoAngular; else VariavelLimiteAtingido();}
+                    {if (Math.abs(Phi) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) Phi -= Math.signum(Math.cos(-Teta)) * DeslocamentoAngular; else VariavelLimiteAtingido();}
 
                 if (keyCode == KeyEvent.VK_LEFT) if (FlagPausa == 0) 
                     {if (Math.abs(Teta) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) Teta += DeslocamentoAngular; else VariavelLimiteAtingido();}
@@ -335,15 +337,17 @@ public class AV3DSpaceCatch extends JComponent
 
             long Tempo = System.currentTimeMillis();
 
-            if (FlagPausa == 0) if (Tempo - TempoR > 1000 / Velocidade)
+            if (FlagPausa == 0) if (Tempo - TempoR > (int) (1000 / (FramesPorSegundoPorVelocidade * Velocidade)))
                 {
                 if ((Math.abs(x) - DeslocamentoLinear > Double.MAX_VALUE - DeslocamentoLinear) || (Math.abs(y) - DeslocamentoLinear > Double.MAX_VALUE - DeslocamentoLinear) || (Math.abs(z) - DeslocamentoLinear > Double.MAX_VALUE - DeslocamentoLinear))
                     VariavelLimiteAtingido();
                 else
                     {
-                    x += Math.cos(-Phi) * Math.cos(-Teta);
-                    y += Math.cos(-Phi) * Math.sin(-Teta);
-                    z += Math.sin(-Phi);
+                    x += Velocidade * Math.cos(-Phi) * Math.cos(-Teta) / FramesPorSegundoPorVelocidade;
+
+                    y += Velocidade * Math.cos(-Phi) * Math.sin(-Teta) / FramesPorSegundoPorVelocidade;
+
+                    z += Velocidade * Math.signum(Math.cos(-Teta)) * Math.sin(-Phi) / FramesPorSegundoPorVelocidade;
                     }
 
                 TempoR = Tempo;
@@ -363,7 +367,7 @@ public class AV3DSpaceCatch extends JComponent
 
                     zalvo = (int) (Math.random() * LimiteZAlvo * Math.signum(Math.random() - 0.5));
 
-                    } while (Math.sqrt(((1 + Math.cos(-Phi) * Math.cos(-Teta)) * (2 * xalvo + TamanhoAlvo) / 2 - x) * ((1 + Math.cos(-Phi) * Math.cos(-Teta)) * (2 * xalvo + TamanhoAlvo) / 2 - x) + ((1 + Math.cos(-Phi) * Math.sin(-Teta)) * (2 * yalvo + TamanhoAlvo) / 2 - y) * ((1 + Math.cos(-Phi) * Math.sin(-Teta)) * (2 * yalvo + TamanhoAlvo) / 2 - y) + ((1 + Math.sin(-Phi) * Math.cos(-Teta)) * (2 * zalvo + TamanhoAlvo) / 2 + z) * ((1 + Math.sin(-Phi) * Math.cos(-Teta)) * (2 * zalvo + TamanhoAlvo) / 2 + z)) <= DistanciaCapturaAlvo);
+                    } while (Math.sqrt(((1 + Math.cos(-Phi) * Math.cos(-Teta)) * (2 * xalvo + TamanhoAlvo) / 2 - x) * ((1 + Math.cos(-Phi) * Math.cos(-Teta)) * (2 * xalvo + TamanhoAlvo) / 2 - x) + ((1 + Math.cos(-Phi) * Math.sin(-Teta)) * (2 * yalvo + TamanhoAlvo) / 2 - y) * ((1 + Math.cos(-Phi) * Math.sin(-Teta)) * (2 * yalvo + TamanhoAlvo) / 2 - y) + ((1 + Math.sin(-Phi)) * (2 * zalvo + TamanhoAlvo) / 2 + z) * ((1 + Math.sin(-Phi)) * (2 * zalvo + TamanhoAlvo) / 2 + z)) <= DistanciaCapturaAlvo);
 
 
                 Espaco = String.valueOf(xalvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo) + ";" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo) + ";" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + ";" + String.valueOf(xalvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + ";" + String.valueOf(xalvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo) + "|" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo) + "|" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + "|" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + "|" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + TamanhoAlvo);
@@ -371,7 +375,7 @@ public class AV3DSpaceCatch extends JComponent
 
             if (FlagPausa == 0)
                 {
-                double FatorCor = Math.pow(Math.min(Math.sqrt(((1 + Math.cos(-Phi) * Math.cos(-Teta)) * (2 * xalvo + TamanhoAlvo) / 2 - x) * ((1 + Math.cos(-Phi) * Math.cos(-Teta)) * (2 * xalvo + TamanhoAlvo) / 2 - x) + ((1 + Math.cos(-Phi) * Math.sin(-Teta)) * (2 * yalvo + TamanhoAlvo) / 2 - y) * ((1 + Math.cos(-Phi) * Math.sin(-Teta)) * (2 * yalvo + TamanhoAlvo) / 2 - y) + ((1 + Math.sin(-Phi) * Math.cos(-Teta)) * (2 * zalvo + TamanhoAlvo) / 2 + z) * ((1 + Math.sin(-Phi) * Math.cos(-Teta)) * (2 * zalvo + TamanhoAlvo) / 2 + z)), (2 * Math.sqrt(3) * Math.max(LimiteXAlvo, Math.max(LimiteYAlvo, LimiteZAlvo)))) / (2 * Math.sqrt(3) * Math.max(LimiteXAlvo, Math.max(LimiteYAlvo, LimiteZAlvo))), 1 / FatorTonalidadeAproximacao);
+                double FatorCor = Math.pow(Math.min(Math.sqrt(((1 + Math.cos(-Phi) * Math.cos(-Teta)) * (2 * xalvo + TamanhoAlvo) / 2 - x) * ((1 + Math.cos(-Phi) * Math.cos(-Teta)) * (2 * xalvo + TamanhoAlvo) / 2 - x) + ((1 + Math.cos(-Phi) * Math.sin(-Teta)) * (2 * yalvo + TamanhoAlvo) / 2 - y) * ((1 + Math.cos(-Phi) * Math.sin(-Teta)) * (2 * yalvo + TamanhoAlvo) / 2 - y) + ((1 + Math.sin(-Phi)) * (2 * zalvo + TamanhoAlvo) / 2 + z) * ((1 + Math.sin(-Phi)) * (2 * zalvo + TamanhoAlvo) / 2 + z)), (2 * Math.sqrt(3) * Math.max(LimiteXAlvo, Math.max(LimiteYAlvo, LimiteZAlvo)))) / (2 * Math.sqrt(3) * Math.max(LimiteXAlvo, Math.max(LimiteYAlvo, LimiteZAlvo))), 1 / FatorTonalidadeAproximacao);
 
                 if (FlagPausa == 0) if (FlagFlashCatch == 0) FameAV3DSpaceCatch.getContentPane().setBackground(new Color((int) (64 - 64 * FatorCor), (int) (255 - 255 * FatorCor), (int) (64 - 64 * FatorCor)));
                 }
@@ -381,7 +385,7 @@ public class AV3DSpaceCatch extends JComponent
 
             if (FlagPausa == 0) DesenharEspaco(comp);
 
-            if (FlagPausa == 0) if (Math.sqrt(((1 + Math.cos(-Phi) * Math.cos(-Teta)) * (2 * xalvo + TamanhoAlvo) / 2 - x) * ((1 + Math.cos(-Phi) * Math.cos(-Teta)) * (2 * xalvo + TamanhoAlvo) / 2 - x) + ((1 + Math.cos(-Phi) * Math.sin(-Teta)) * (2 * yalvo + TamanhoAlvo) / 2 - y) * ((1 + Math.cos(-Phi) * Math.sin(-Teta)) * (2 * yalvo + TamanhoAlvo) / 2 - y) + ((1 + Math.sin(-Phi) * Math.cos(-Teta)) * (2 * zalvo + TamanhoAlvo) / 2 + z) * ((1 + Math.sin(-Phi) * Math.cos(-Teta)) * (2 * zalvo + TamanhoAlvo) / 2 + z)) <= DistanciaCapturaAlvo)
+            if (FlagPausa == 0) if (Math.sqrt(((1 + Math.cos(-Phi) * Math.cos(-Teta)) * (2 * xalvo + TamanhoAlvo) / 2 - x) * ((1 + Math.cos(-Phi) * Math.cos(-Teta)) * (2 * xalvo + TamanhoAlvo) / 2 - x) + ((1 + Math.cos(-Phi) * Math.sin(-Teta)) * (2 * yalvo + TamanhoAlvo) / 2 - y) * ((1 + Math.cos(-Phi) * Math.sin(-Teta)) * (2 * yalvo + TamanhoAlvo) / 2 - y) + ((1 + Math.sin(-Phi)) * (2 * zalvo + TamanhoAlvo) / 2 + z) * ((1 + Math.sin(-Phi)) * (2 * zalvo + TamanhoAlvo) / 2 + z)) <= DistanciaCapturaAlvo)
                 {
                 try {
                     if (FlagCatchSound == 1) Catch.close();
@@ -443,9 +447,9 @@ public class AV3DSpaceCatch extends JComponent
 
             double yd = (1 + Math.cos(-Phi) * Math.sin(-Teta)) * Double.parseDouble(CoordenadasDest[1]) - y;
 
-            double zo = Math.cos(-Teta) * ((1 + Math.sin(-Phi) * Math.cos(-Teta)) * (-Double.parseDouble(CoordenadasOrig[2])) - z);
+            double zo = (1 + Math.sin(-Phi)) * (-Double.parseDouble(CoordenadasOrig[2])) - z;
 
-            double zd = Math.cos(-Teta) * ((1 + Math.sin(-Phi) * Math.cos(-Teta)) * (-Double.parseDouble(CoordenadasDest[2])) - z);
+            double zd = (1 + Math.sin(-Phi)) * (-Double.parseDouble(CoordenadasDest[2])) - z;
 
             int xi;
             int yi;
@@ -458,21 +462,21 @@ public class AV3DSpaceCatch extends JComponent
 
                 xf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.tan(Math.atan(yd / xd) + Teta)) - CorrecaoX;
 
-                yi = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.tan(Math.atan(zo / xo) + Phi)) - CorrecaoY;
+                yi = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.signum(Math.cos(-Teta)) * Math.tan(Math.atan(zo / xo) + Phi)) - CorrecaoY;
 
-                yf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.tan(Math.atan(zd / xd) + Phi)) - CorrecaoY;
+                yf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.signum(Math.cos(-Teta)) * Math.tan(Math.atan(zd / xd) + Phi)) - CorrecaoY;
 
-                double ProdutoEscalaro = xo * Math.cos(-Teta) * Math.cos(-Phi) + yo * Math.sin(-Teta) * Math.cos(-Phi) + zo * Math.sin(-Phi) * Math.cos(-Teta);
+                double ProdutoEscalaro = xo * Math.cos(-Teta) * Math.cos(-Phi) + yo * Math.sin(-Teta) * Math.cos(-Phi) + zo * Math.signum(Math.cos(-Teta)) * Math.sin(-Phi);
 
-                double ProdutoEscalard = xd * Math.cos(-Teta) * Math.cos(-Phi) + yd * Math.sin(-Teta) * Math.cos(-Phi) + zd * Math.sin(-Phi) * Math.cos(-Teta);
+                double ProdutoEscalard = xd * Math.cos(-Teta) * Math.cos(-Phi) + yd * Math.sin(-Teta) * Math.cos(-Phi) + zd * Math.signum(Math.cos(-Teta)) * Math.sin(-Phi);
 
                 double ProdutoEscalarXo = xo * Math.cos(-Teta) * Math.cos(-Phi) + yo * Math.sin(-Teta) * Math.cos(-Phi);
 
                 double ProdutoEscalarXd = xd * Math.cos(-Teta) * Math.cos(-Phi) + yd * Math.sin(-Teta) * Math.cos(-Phi);
 
-                double ProdutoEscalarZo = xo * Math.cos(-Teta) * Math.cos(-Phi) + zo * Math.sin(-Phi) * Math.cos(-Teta);
+                double ProdutoEscalarZo = xo * Math.cos(-Teta) * Math.cos(-Phi) + zo * Math.signum(Math.cos(-Teta)) * Math.sin(-Phi);
 
-                double ProdutoEscalarZd = xd * Math.cos(-Teta) * Math.cos(-Phi) + zd * Math.sin(-Phi) * Math.cos(-Teta);
+                double ProdutoEscalarZd = xd * Math.cos(-Teta) * Math.cos(-Phi) + zd * Math.signum(Math.cos(-Teta)) * Math.sin(-Phi);
 
                 if ((Math.acos(ProdutoEscalarXo / Math.sqrt(xo * xo + yo * yo)) <= 7 * Math.PI / 8) && (Math.acos(ProdutoEscalarXd / Math.sqrt(xd * xd + yd * yd)) <= 7 * Math.PI / 8))
                     {
