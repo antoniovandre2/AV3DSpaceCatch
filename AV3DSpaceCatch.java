@@ -41,39 +41,42 @@ public class AV3DSpaceCatch extends JComponent
     public int TamanhoPlanoY = 400; // Default: 400.
     public static int MinTamanhoPlanoX = 300; // Default: 300.
     public static int MinTamanhoPlanoY = 300; // Default: 300.
+    public static double PhiMax = Math.PI / 3; // Default: Math.PI / 3.
     public double Velocidade = 50; // Default inicial: 50.
-    public double LimiteSuperiorVelocidade = 100; // Default: 100.
-    public double LimiteInferiorVelocidade = 10; // Default: 10.
-    public double IncrementoVelocidade = 10; // Default: 10.
-    public int FramesPorSegundo = 60; // Default: 60.
+    public static double LimiteSuperiorVelocidade = 100; // Default: 100.
+    public static double LimiteInferiorVelocidade = 10; // Default: 10.
+    public static double IncrementoVelocidade = 10; // Default: 10.
+    public static int FramesPorSegundo = 60; // Default: 60.
     public static String AV3DSpaceCatchIconFilePath = "AV3DSpaceCatch - Logo - 200p.png";
     public static int TamanhoEspacoLabelStatus = 280; // Default: 280.
     public static int TamanhoFonteLabelStatus = 11; // Default: 11.
-    public double DistanciaTela = 2; // Default: 2.
+    public static double DistanciaTela = 2; // Default: 2.
     public static double DeslocamentoLinear = 1; // Default: 1.
     public static double DeslocamentoAngular = 0.1; // Default: 0.1.
-    public int TamanhoAlvo = 1; // Default: 10.
-    public int DivisoesAlvo = 4; // Default: 4.
-    public double FatorCorrecaoAspecto = 2; // Default: 2.
-    public double LimiteXAlvo = 20; // Default: 200.
-    public double LimiteYAlvo = 20; // Default: 200.
-    public double LimiteZAlvo = 10; // Default: 100.
-    public double DistanciaCapturaAlvo = 2; // Default: 30.
-    public Color CorAlvo = Color.WHITE;
-    public Color CorGuias = Color.GREEN;
-    public double FatorTonalidadeAproximacao = 30; // Default: 30.
-    public String ArquivoSomCatch = "ES_PREL Hit Laser 4 - SFX Producer.wav";
-    public String ArquivoSomBGM10x = "ES_Wind Drone Winter - SFX Producer - 1x.wav";
-    public String ArquivoSomBGM15x = "ES_Wind Drone Winter - SFX Producer - 1.5x.wav";
-    public String ArquivoSomBGM20x = "ES_Wind Drone Winter - SFX Producer - 2x.wav";
+    public static int TamanhoAlvo = 1; // Default: 10.
+    public static int DivisoesAlvo = 4; // Default: 4.
+    public static double FatorCorrecaoAspecto = 1; // Default: 1.
+    public static double LimiteXAlvo = 20; // Default: 200.
+    public static double LimiteYAlvo = 20; // Default: 200.
+    public static double LimiteZAlvo = 7; // Default: 100.
+    public static double DistanciaCapturaAlvo = 2; // Default: 30.
+    public static Color CorAlvo = Color.WHITE;
+    public static Color CorGuias = Color.GREEN;
+    public static double FatorTonalidadeAproximacao = 30; // Default: 30.
+    public static String ArquivoSomCatch = "ES_PREL Hit Laser 4 - SFX Producer.wav";
+    public static String ArquivoSomBGM10x = "ES_Wind Drone Winter - SFX Producer - 1x.wav";
+    public static String ArquivoSomBGM15x = "ES_Wind Drone Winter - SFX Producer - 1.5x.wav";
+    public static String ArquivoSomBGM20x = "ES_Wind Drone Winter - SFX Producer - 2x.wav";
 
     // Variáveis de funcionamento interno. Evite alterar.
 
-    public int CorrecaoX = 10;
-    public int CorrecaoY = 0;
+    public static int CorrecaoX = 10;
+    public static int CorrecaoY = 0;
     public double AnguloVisao;
     public double FatorZ;
     public double FatorX;
+    public int FlagPhiSuperior = 0;
+    public int FlagPhiInferior = 0;
     public int Sair = 0;
     public long Pontuacao = 0;
     public long TempoR = System.currentTimeMillis();
@@ -246,10 +249,10 @@ public class AV3DSpaceCatch extends JComponent
                         }
 
                 if (keyCode == KeyEvent.VK_UP) if (FlagPausa == 0) 
-                    {if (Math.abs(Phi) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) Phi += Math.signum(FatorZ) * DeslocamentoAngular; else VariavelLimiteAtingido();}
+                    {if (Math.abs(Phi) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) {if (Math.abs(Phi) < PhiMax - DeslocamentoAngular) {Phi += Math.signum(FatorZ) * DeslocamentoAngular; FlagPhiSuperior = 0;} else {Phi -= Math.signum(Phi) * DeslocamentoAngular; FlagPhiSuperior = 1;}} else VariavelLimiteAtingido();}
 
                 if (keyCode == KeyEvent.VK_DOWN) if (FlagPausa == 0) 
-                    {if (Math.abs(Phi) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) Phi -= Math.signum(FatorZ) * DeslocamentoAngular; else VariavelLimiteAtingido();}
+                    {if (Math.abs(Phi) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) {if (Math.abs(Phi) < PhiMax - DeslocamentoAngular) {Phi -= Math.signum(FatorZ) * DeslocamentoAngular; FlagPhiInferior = 0;} else {Phi -= Math.signum(Phi) * DeslocamentoAngular; FlagPhiInferior = 1;}} else VariavelLimiteAtingido();}
 
                 if (keyCode == KeyEvent.VK_LEFT) if (FlagPausa == 0) 
                     {if (Math.abs(Teta) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) Teta += DeslocamentoAngular; else VariavelLimiteAtingido();}
@@ -307,9 +310,9 @@ public class AV3DSpaceCatch extends JComponent
                     FlagPausa = 1;
                     }
 
-            FatorZ = Math.signum(Math.cos(-Teta)) * Math.abs(Math.pow(Math.cos(-Teta), FatorCorrecaoAspecto));
+            FatorZ = Math.signum(Math.cos(-Teta)) * Math.pow(Math.abs(Math.cos(-Teta)), FatorCorrecaoAspecto);
 
-            FatorX = Math.abs(Math.pow(Math.cos(-Phi), FatorCorrecaoAspecto));
+            FatorX = Math.pow(Math.abs(Math.cos(-Phi)), FatorCorrecaoAspecto);
 
             try {
                 if (FlagPausa == 0)
@@ -446,6 +449,20 @@ public class AV3DSpaceCatch extends JComponent
 
             String [] CoordenadasOrig = Pontos[0].split(",");
             String [] CoordenadasDest = Pontos[1].split(",");
+
+            if (FlagPhiSuperior == 1)
+                {
+                comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - 30 - CorrecaoX, 30 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 30 - CorrecaoX, 30 - CorrecaoY, CorGuias);
+
+                FlagPhiSuperior = 0;
+                }
+
+            if (FlagPhiInferior == 1)
+                {
+                comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - 30 - CorrecaoX, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 30 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 30 - CorrecaoX, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 30 - CorrecaoY, CorGuias);
+
+                FlagPhiInferior = 0;
+                }
 
             double xo = (1 + Math.cos(-Phi) * Math.cos(-Teta)) * Double.parseDouble(CoordenadasOrig[0]) - x;
 
