@@ -42,8 +42,8 @@ public class AV3DSpaceCatch extends JComponent
     public static int MinTamanhoPlanoX = 300; // Default: 300.
     public static int MinTamanhoPlanoY = 300; // Default: 300.
     public static double PhiMax = Double.MAX_VALUE; // Default: Math.PI / 3.
-    public static double InfimoCossenoTetaIgnorar = 0.05; // Default: 0.05.
-    public static double InfimoCossenoPhiIgnorar = 0.05; // Default: 0.05.
+    public static double InfimoCossenoTetaIgnorar = 0.15; // Default: 0.15.
+    public static double InfimoCossenoPhiIgnorar = 0.15; // Default: 0.15.
     public double Velocidade = 50; // Default inicial: 50.
     public static double LimiteSuperiorVelocidade = 100; // Default: 100.
     public static double LimiteInferiorVelocidade = 10; // Default: 10.
@@ -52,9 +52,10 @@ public class AV3DSpaceCatch extends JComponent
     public static String AV3DSpaceCatchIconFilePath = "AV3DSpaceCatch - Logo - 200p.png";
     public static int TamanhoEspacoLabelStatus = 280; // Default: 280.
     public static int TamanhoFonteLabelStatus = 11; // Default: 11.
+    public static int TamanhoFonteLabelDistancia = 10; // Default: 10.
     public static double DistanciaTela = 2; // Default: 2.
     public static double DeslocamentoLinear = 1; // Default: 1.
-    public static double DeslocamentoAngular = 0.1; // Default: 0.1.
+    public static double DeslocamentoAngular = 0.08; // Default: 0.08.
     public static int TamanhoAlvo = 1; // Default: 10.
     public static int DivisoesAlvo = 8; // Default: 4.
     public static double FatorCorrecaoAspecto = 1; // Default: 1.
@@ -64,6 +65,9 @@ public class AV3DSpaceCatch extends JComponent
     public static double DistanciaCapturaAlvo = 2; // Default: 30.
     public static Color CorAlvo = Color.WHITE;
     public static Color CorGuias = Color.GREEN;
+    public static Color StatusBackgroundCor = new Color(32, 32, 32);
+    public static Color StatusTextoCor = Color.WHITE;
+    public static Color StatusDistanciaCor = Color.GREEN;
     public static double FatorTonalidadeAproximacao = 30; // Default: 30.
     public static String ArquivoSomCatch = "ES_PREL Hit Laser 4 - SFX Producer.wav";
     public static String ArquivoSomBGM10x = "ES_Wind Drone Winter - SFX Producer - 1x.wav";
@@ -192,15 +196,23 @@ public class AV3DSpaceCatch extends JComponent
         FameAV3DSpaceCatch.getContentPane().add(comp, BorderLayout.PAGE_START);
 
         JLabel LabelStatus = new JLabel("");
+        JLabel LabelDistancia = new JLabel("");
 
         if (FlagPausa == 0)
-            LabelStatus.setText("<html>Pontuação = " + String.valueOf(Pontuacao) + ".<br><br>Velocidade = " + String.valueOf(Velocidade) + "<br><br>Setas para direcionar.<br><br>\"A\" para aumentar velocidade. \"Z\" para reduzir.<br><br>\"P\" para pausar.<br><br>Barra de espaço para resetar as variáveis de localização.<br><br>ESC para sair.</html>");
+            LabelStatus.setText("<html>&nbsp;Pontuação = " + String.valueOf(Pontuacao) + ".<br><br>&nbsp;Velocidade = " + String.valueOf(Velocidade) + "<br><br>&nbsp;Setas para direcionar.<br><br>&nbsp;\"A\" para aumentar velocidade. \"Z\" para reduzir.<br><br>&nbsp;\"P\" para pausar.<br><br>&nbsp;Barra de espaço para resetar as<br>&nbsp;variáveis de localização.<br><br>&nbsp;ESC para sair.</html>");
         else
-            LabelStatus.setText("<html>Pontuação: " + String.valueOf(Pontuacao) + ".<br><br>Jogo pausado.<br><br>Aperte \"P\" para continuar.</html>");
+            LabelStatus.setText("<html>&nbsp;Pontuação: " + String.valueOf(Pontuacao) + ".<br><br>&nbsp;Jogo pausado.<br><br>&nbsp;Aperte \"P\" para continuar.</html>");
 
         LabelStatus.setFont(new Font("DialogInput", Font.BOLD | Font.ITALIC, TamanhoFonteLabelStatus));
+        LabelStatus.setBackground(StatusBackgroundCor);
+        LabelStatus.setForeground(StatusTextoCor);
         LabelStatus.setOpaque(true);
-        LabelStatus.setLocation(5, TamanhoPlanoY + 5);
+
+        LabelDistancia.setFont(new Font("DialogInput", Font.PLAIN, TamanhoFonteLabelDistancia));
+        LabelDistancia.setForeground(StatusDistanciaCor);
+        LabelDistancia.setBounds(TamanhoPlanoX - 120 - CorrecaoX, TamanhoPlanoY - 30 - CorrecaoY, 120, 30);
+
+        FameAV3DSpaceCatch.add(LabelDistancia);
         FameAV3DSpaceCatch.add(LabelStatus);
 
         FameAV3DSpaceCatch.getContentPane().setBackground(Color.BLACK);
@@ -311,6 +323,8 @@ public class AV3DSpaceCatch extends JComponent
 
                     FlagPausa = 1;
                     }
+
+            LabelDistancia.setText("<html>" + String.valueOf(Math.sqrt(((1 + Math.cos(-Phi) * Math.cos(-Teta)) * (2 * xalvo + TamanhoAlvo) / 2 - x) * ((1 + Math.cos(-Phi) * Math.cos(-Teta)) * (2 * xalvo + TamanhoAlvo) / 2 - x) + ((1 + Math.cos(-Phi) * Math.sin(-Teta)) * (2 * yalvo + TamanhoAlvo) / 2 - y) * ((1 + Math.cos(-Phi) * Math.sin(-Teta)) * (2 * yalvo + TamanhoAlvo) / 2 - y) + ((1 + Math.sin(-Phi)) * (2 * zalvo + TamanhoAlvo) / 2 + z) * ((1 + Math.sin(-Phi)) * (2 * zalvo + TamanhoAlvo) / 2 + z))) + "</html>");
 
             FatorZ = Math.signum(Math.cos(-Teta)) * Math.pow(Math.abs(Math.cos(-Teta)), FatorCorrecaoAspecto);
 
@@ -428,9 +442,9 @@ public class AV3DSpaceCatch extends JComponent
             try {Thread.sleep(10);} catch(InterruptedException e) {}
 
             if (FlagPausa == 0)
-                LabelStatus.setText("<html>Pontuação = " + String.valueOf(Pontuacao) + ".<br><br>Velocidade = " + String.valueOf(Velocidade) + "<br><br>Setas para direcionar.<br><br>\"A\" para aumentar velocidade. \"Z\" para reduzir.<br><br>\"P\" para pausar.<br><br>Barra de espaço para resetar as variáveis de localização.<br><br>ESC para sair.</html>");
+                LabelStatus.setText("<html>&nbsp;Pontuação = " + String.valueOf(Pontuacao) + ".<br><br>&nbsp;Velocidade = " + String.valueOf(Velocidade) + "<br><br>&nbsp;Setas para direcionar.<br><br>&nbsp;\"A\" para aumentar velocidade. \"Z\" para reduzir.<br><br>&nbsp;\"P\" para pausar.<br><br>&nbsp;Barra de espaço para resetar as<br>&nbsp;variáveis de localização.<br><br>&nbsp;ESC para sair.</html>");
             else
-                LabelStatus.setText("<html>Pontuação: " + String.valueOf(Pontuacao) + ".<br><br>Jogo pausado.<br><br>Aperte \"P\" para continuar.</html>");
+                LabelStatus.setText("<html>&nbsp;Pontuação: " + String.valueOf(Pontuacao) + ".<br><br>&nbsp;Jogo pausado.<br><br>&nbsp;Aperte \"P\" para continuar.</html>");
             }
 
         System.exit(0);
