@@ -41,7 +41,9 @@ public class AV3DSpaceCatch extends JComponent
     public int TamanhoPlanoY = 400; // Default: 400.
     public static int MinTamanhoPlanoX = 300; // Default: 300.
     public static int MinTamanhoPlanoY = 300; // Default: 300.
-    public static double PhiMax = Math.PI / 3; // Default: Math.PI / 3.
+    public static double PhiMax = Double.MAX_VALUE; // Default: Math.PI / 3.
+    public static double InfimoCossenoTetaIgnorar = 0.05; // Default: 0.05.
+    public static double InfimoCossenoPhiIgnorar = 0.05; // Default: 0.05.
     public double Velocidade = 50; // Default inicial: 50.
     public static double LimiteSuperiorVelocidade = 100; // Default: 100.
     public static double LimiteInferiorVelocidade = 10; // Default: 10.
@@ -54,11 +56,11 @@ public class AV3DSpaceCatch extends JComponent
     public static double DeslocamentoLinear = 1; // Default: 1.
     public static double DeslocamentoAngular = 0.1; // Default: 0.1.
     public static int TamanhoAlvo = 1; // Default: 10.
-    public static int DivisoesAlvo = 4; // Default: 4.
+    public static int DivisoesAlvo = 8; // Default: 4.
     public static double FatorCorrecaoAspecto = 1; // Default: 1.
-    public static double LimiteXAlvo = 20; // Default: 200.
-    public static double LimiteYAlvo = 20; // Default: 200.
-    public static double LimiteZAlvo = 7; // Default: 100.
+    public static double LimiteXAlvo = 25; // Default: 25.
+    public static double LimiteYAlvo = 25; // Default: 25.
+    public static double LimiteZAlvo = 15; // Default: 15.
     public static double DistanciaCapturaAlvo = 2; // Default: 30.
     public static Color CorAlvo = Color.WHITE;
     public static Color CorGuias = Color.GREEN;
@@ -481,7 +483,7 @@ public class AV3DSpaceCatch extends JComponent
             int xf;
             int yf;
 
-            if ((xo != 0) && (xd != 0))
+            if ((xo != 0) && (xd != 0) && (Math.abs(Math.cos(-Teta)) > InfimoCossenoTetaIgnorar) && (Math.abs(Math.cos(-Phi)) > InfimoCossenoPhiIgnorar))
                 {
                 xi = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * FatorX * Math.tan(Math.atan(yo / xo) + Teta)) - CorrecaoX;
 
