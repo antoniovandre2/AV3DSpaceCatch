@@ -42,8 +42,8 @@ public class AV3DSpaceCatch extends JComponent
     public static int MinTamanhoPlanoX = 300; // Default: 300.
     public static int MinTamanhoPlanoY = 300; // Default: 300.
     public static double PhiMax = Double.MAX_VALUE; // Default: Math.PI / 3.
-    public static double InfimoCossenoTetaIgnorar = 0.15; // Default: 0.15.
-    public static double InfimoCossenoPhiIgnorar = 0.15; // Default: 0.15.
+    public static double InfimoCossenoTetaIgnorar = 0.2; // Default: 0.2.
+    public static double InfimoCossenoPhiIgnorar = 0; // Default: 0.
     public double Velocidade = 50; // Default inicial: 50.
     public static double LimiteSuperiorVelocidade = 100; // Default: 100.
     public static double LimiteInferiorVelocidade = 10; // Default: 10.
@@ -63,11 +63,12 @@ public class AV3DSpaceCatch extends JComponent
     public static double LimiteYAlvo = 25; // Default: 25.
     public static double LimiteZAlvo = 15; // Default: 15.
     public static double DistanciaCapturaAlvo = 2; // Default: 30.
-    public static Color CorAlvo = Color.WHITE;
-    public static Color CorGuias = Color.GREEN;
-    public static Color StatusBackgroundCor = new Color(32, 32, 32);
-    public static Color StatusTextoCor = Color.WHITE;
-    public static Color StatusDistanciaCor = Color.GREEN;
+    public static Color BackgroundCor = Color.BLACK; // Default: Color.BLACK.
+    public static Color CorAlvo = Color.WHITE; // Default: Color.WHITE.
+    public static Color CorGuias = Color.GREEN; // Default: Color.GREEN.
+    public static Color StatusBackgroundCor = new Color(32, 32, 32); // Default: Color(32, 32, 32).
+    public static Color StatusTextoCor = Color.WHITE; // Default: Color.WHITE.
+    public static Color StatusDistanciaCor = Color.GREEN; // Default: Color.GREEN.
     public static double FatorTonalidadeAproximacao = 30; // Default: 30.
     public static String ArquivoSomCatch = "ES_PREL Hit Laser 4 - SFX Producer.wav";
     public static String ArquivoSomBGM10x = "ES_Wind Drone Winter - SFX Producer - 1x.wav";
@@ -215,7 +216,7 @@ public class AV3DSpaceCatch extends JComponent
         FameAV3DSpaceCatch.add(LabelDistancia);
         FameAV3DSpaceCatch.add(LabelStatus);
 
-        FameAV3DSpaceCatch.getContentPane().setBackground(Color.BLACK);
+        FameAV3DSpaceCatch.getContentPane().setBackground(BackgroundCor);
 
         FameAV3DSpaceCatch.addKeyListener(new KeyListener()
             {
@@ -263,16 +264,16 @@ public class AV3DSpaceCatch extends JComponent
                         }
 
                 if (keyCode == KeyEvent.VK_UP) if (FlagPausa == 0) 
-                    {if (Math.abs(Phi) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) {if (Math.abs(Phi) < PhiMax - DeslocamentoAngular) {Phi += Math.signum(FatorZ) * DeslocamentoAngular; FlagPhiSuperior = 0;} else {Phi -= Math.signum(Phi) * DeslocamentoAngular; FlagPhiSuperior = 1;}} else VariavelLimiteAtingido();}
+                    {if (Math.abs(Phi) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) {if (Math.abs(Phi) < PhiMax - DeslocamentoAngular) {Phi += Math.signum(FatorZ) * DeslocamentoAngular; while (Math.abs(Math.cos(-Phi)) <= InfimoCossenoPhiIgnorar) Phi += Math.signum(FatorZ) * DeslocamentoAngular; FlagPhiSuperior = 0;} else {Phi -= Math.signum(Phi) * DeslocamentoAngular; FlagPhiSuperior = 1;}} else VariavelLimiteAtingido();}
 
                 if (keyCode == KeyEvent.VK_DOWN) if (FlagPausa == 0) 
-                    {if (Math.abs(Phi) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) {if (Math.abs(Phi) < PhiMax - DeslocamentoAngular) {Phi -= Math.signum(FatorZ) * DeslocamentoAngular; FlagPhiInferior = 0;} else {Phi -= Math.signum(Phi) * DeslocamentoAngular; FlagPhiInferior = 1;}} else VariavelLimiteAtingido();}
+                    {if (Math.abs(Phi) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) {if (Math.abs(Phi) < PhiMax - DeslocamentoAngular) {Phi -= Math.signum(FatorZ) * DeslocamentoAngular; while (Math.abs(Math.cos(-Phi)) <= InfimoCossenoPhiIgnorar) Phi -= Math.signum(FatorZ) * DeslocamentoAngular; FlagPhiInferior = 0;} else {Phi -= Math.signum(Phi) * DeslocamentoAngular; FlagPhiInferior = 1;}} else VariavelLimiteAtingido();}
 
                 if (keyCode == KeyEvent.VK_LEFT) if (FlagPausa == 0) 
-                    {if (Math.abs(Teta) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) Teta += DeslocamentoAngular; else VariavelLimiteAtingido();}
+                    {if (Math.abs(Teta) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) {Teta += DeslocamentoAngular; while (Math.abs(Math.cos(-Teta)) <= InfimoCossenoTetaIgnorar) Teta += DeslocamentoAngular;} else VariavelLimiteAtingido();}
 
                 if (keyCode == KeyEvent.VK_RIGHT) if (FlagPausa == 0) 
-                    {if (Math.abs(Teta) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) Teta -= DeslocamentoAngular; else VariavelLimiteAtingido();}
+                    {if (Math.abs(Teta) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) {Teta -= DeslocamentoAngular; while (Math.abs(Math.cos(-Teta)) <= InfimoCossenoTetaIgnorar) Teta -= DeslocamentoAngular;} else VariavelLimiteAtingido();}
                 }
 
             public void keyReleased(KeyEvent ke){}
@@ -326,9 +327,12 @@ public class AV3DSpaceCatch extends JComponent
 
             LabelDistancia.setText("<html>" + String.valueOf(Math.sqrt(((1 + Math.cos(-Phi) * Math.cos(-Teta)) * (2 * xalvo + TamanhoAlvo) / 2 - x) * ((1 + Math.cos(-Phi) * Math.cos(-Teta)) * (2 * xalvo + TamanhoAlvo) / 2 - x) + ((1 + Math.cos(-Phi) * Math.sin(-Teta)) * (2 * yalvo + TamanhoAlvo) / 2 - y) * ((1 + Math.cos(-Phi) * Math.sin(-Teta)) * (2 * yalvo + TamanhoAlvo) / 2 - y) + ((1 + Math.sin(-Phi)) * (2 * zalvo + TamanhoAlvo) / 2 + z) * ((1 + Math.sin(-Phi)) * (2 * zalvo + TamanhoAlvo) / 2 + z))) + "</html>");
 
-            FatorZ = Math.signum(Math.cos(-Teta)) * Math.pow(Math.abs(Math.cos(-Teta)), FatorCorrecaoAspecto);
+            FatorZ = Math.signum(Math.cos(-Teta));
+            FatorX = 1;
 
-            FatorX = Math.pow(Math.abs(Math.cos(-Phi)), FatorCorrecaoAspecto);
+//            FatorZ = Math.signum(Math.cos(-Teta)) * Math.pow(Math.abs(Math.cos(-Teta)), FatorCorrecaoAspecto);
+
+//            FatorX = Math.pow(Math.abs(Math.cos(-Phi)), FatorCorrecaoAspecto);
 
             try {
                 if (FlagPausa == 0)
@@ -497,7 +501,7 @@ public class AV3DSpaceCatch extends JComponent
             int xf;
             int yf;
 
-            if ((xo != 0) && (xd != 0) && (Math.abs(Math.cos(-Teta)) > InfimoCossenoTetaIgnorar) && (Math.abs(Math.cos(-Phi)) > InfimoCossenoPhiIgnorar))
+            if ((xo != 0) && (xd != 0))
                 {
                 xi = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * FatorX * Math.tan(Math.atan(yo / xo) + Teta)) - CorrecaoX;
 
@@ -519,7 +523,7 @@ public class AV3DSpaceCatch extends JComponent
 
                 double ProdutoEscalarZd = FatorX * xd * Math.cos(-Teta) * Math.cos(-Phi) + FatorZ * zd * Math.sin(-Phi);
 
-                if ((Math.acos(ProdutoEscalarXo / Math.sqrt(xo * xo + yo * yo)) <= 7 * Math.PI / 8) && (Math.acos(ProdutoEscalarXd / Math.sqrt(xd * xd + yd * yd)) <= 7 * Math.PI / 8))
+                if ((Math.acos(ProdutoEscalarXo / Math.sqrt(FatorX * xo * FatorX * xo + yo * yo)) <= 7 * Math.PI / 8) && (Math.acos(ProdutoEscalarXd / Math.sqrt(xd * xd + yd * yd)) <= 7 * Math.PI / 8))
                     {
                     if (Math.min(xi - CorrecaoX, xf - CorrecaoX) < 0)
                         {
@@ -546,7 +550,7 @@ public class AV3DSpaceCatch extends JComponent
                     comp.addLineG(Math.min(TamanhoPlanoX, TamanhoPlanoY) - 50 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 20 - CorrecaoY, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 40  - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoY, CorGuias);
                     }
 
-                if ((Math.acos(ProdutoEscalarZo / Math.sqrt(FatorX * xo * FatorX * xo + FatorZ * zo * FatorZ * zo)) <= 7 * Math.PI / 8) && (Math.acos(ProdutoEscalarZd / Math.sqrt(xd * xd +  FatorZ * zd *  FatorZ * zd)) <= 7 * Math.PI / 8))
+                if ((Math.acos(ProdutoEscalarZo / Math.sqrt(FatorX * xo * FatorX * xo + FatorZ * zo * FatorZ * zo)) <= 7 * Math.PI / 8) && (Math.acos(ProdutoEscalarZd / Math.sqrt(FatorX * xd * FatorX * xd +  FatorZ * zd *  FatorZ * zd)) <= 7 * Math.PI / 8))
                     {
                     if (Math.max(yi - CorrecaoY, yf - CorrecaoY) > Math.min(TamanhoPlanoX, TamanhoPlanoY))
                         {
