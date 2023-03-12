@@ -9,7 +9,7 @@
  * 
  * Licença de uso: Atribuição-NãoComercial-CompartilhaIgual (CC BY-NC-SA).
  * 
- * Última atualização: 11-03-2023
+ * Última atualização: 12-03-2023
  */
 
 import java.awt.*;
@@ -42,6 +42,7 @@ public class AV3DSpaceCatch extends JComponent
     public static int MinTamanhoPlanoX = 300; // Default: 300.
     public static int MinTamanhoPlanoY = 300; // Default: 300.
     public static double PhiMax = Double.MAX_VALUE; // Default: Math.PI / 3.
+    public static double InfimoCossenoTeta = 0.15; // Default: 0.15.
     public static double InfimoCossenoTetaIgnorar = 0; // Default: 0.
     public static double InfimoCossenoPhiIgnorar = 0; // Default: 0.
     public double Velocidade = 50; // Default inicial: 50.
@@ -53,17 +54,19 @@ public class AV3DSpaceCatch extends JComponent
     public static int TamanhoEspacoLabelStatus = 280; // Default: 280.
     public static int TamanhoFonteLabelStatus = 11; // Default: 11.
     public static int TamanhoFonteLabelDistancia = 10; // Default: 10.
-    public static double DistanciaTela = 2; // Default: 2.
+    public static double DistanciaTela = 1; // Default: 1.
     public static double DeslocamentoLinear = 1; // Default: 1.
     public static double DeslocamentoAngular = 0.08; // Default: 0.08.
     public static int TamanhoAlvo = 2; // Default: 2.
-    public static int DivisoesAlvo = 4; // Default: 4.
+    public static int DivisoesAlvo = 8; // Default: 8.
+    public int TipoAlvo = 0; // Default: 0.
     public static double FatorArestasNaoOrtogonaisAlvo = 0.3; // Default: 0.3.
-    public static double FatorCorrecaoAspecto = 1; // Default: 1.
-    public static double LimiteXAlvo = 25; // Default: 25.
-    public static double LimiteYAlvo = 25; // Default: 25.
-    public static double LimiteZAlvo = 15; // Default: 15.
-    public static double DistanciaCapturaAlvo = 2; // Default: 30.
+    public static double FatorCorrecaoAspecto = 2; // Default: 2.
+    public static double FatorMaxCorrecaoAspecto = 10; // Default: 2.
+    public static double LimiteXAlvo = 100; // Default: 100.
+    public static double LimiteYAlvo = 100; // Default: 100.
+    public static double LimiteZAlvo = 50; // Default: 50.
+    public static double DistanciaCapturaAlvo = 5; // Default: 5.
     public static Color BackgroundCor = Color.BLACK; // Default: Color.BLACK.
     public static Color CorAlvo = Color.WHITE; // Default: Color.WHITE.
     public static Color CorGuias = Color.GREEN; // Default: Color.GREEN.
@@ -85,6 +88,7 @@ public class AV3DSpaceCatch extends JComponent
     public double FatorX;
     public int FlagPhiSuperior = 0;
     public int FlagPhiInferior = 0;
+    public int FlagTetaShift = 0;
     public int Sair = 0;
     public long Pontuacao = 0;
     public long TempoR = System.currentTimeMillis();
@@ -97,9 +101,9 @@ public class AV3DSpaceCatch extends JComponent
     public Clip Catch = null;
     public Clip BGM = null;
 
-    public double x = 0;
-    public double y = 0;
-    public double z = 0;
+    public double x = 50;
+    public double y = 50;
+    public double z = 50;
     public double xalvo;
     public double yalvo;
     public double zalvo;
@@ -264,6 +268,9 @@ public class AV3DSpaceCatch extends JComponent
                         FlagBGM = 0;
                         }
 
+                if (keyCode == KeyEvent.VK_Q)
+                    {TipoAlvo++; TipoAlvo %= 2;}
+
                 if (keyCode == KeyEvent.VK_UP) if (FlagPausa == 0) 
                     {if (Math.abs(Phi) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) {if (Math.abs(Phi) < PhiMax - DeslocamentoAngular) {Phi += Math.signum(FatorZ) * DeslocamentoAngular; while (Math.abs(Math.cos(-Phi)) <= InfimoCossenoPhiIgnorar) Phi += Math.signum(FatorZ) * DeslocamentoAngular; FlagPhiSuperior = 0;} else {Phi -= Math.signum(Phi) * DeslocamentoAngular; FlagPhiSuperior = 1;}} else VariavelLimiteAtingido();}
 
@@ -326,7 +333,7 @@ public class AV3DSpaceCatch extends JComponent
                     FlagPausa = 1;
                     }
 
-            LabelDistancia.setText("<html>" + String.valueOf(Math.sqrt(((1 + Math.cos(-Phi) * Math.cos(-Teta)) * (2 * xalvo + TamanhoAlvo) / 2 - x) * ((1 + Math.cos(-Phi) * Math.cos(-Teta)) * (2 * xalvo + TamanhoAlvo) / 2 - x) + ((1 + Math.cos(-Phi) * Math.sin(-Teta)) * (2 * yalvo + TamanhoAlvo) / 2 - y) * ((1 + Math.cos(-Phi) * Math.sin(-Teta)) * (2 * yalvo + TamanhoAlvo) / 2 - y) + ((1 + Math.sin(-Phi)) * (2 * zalvo + TamanhoAlvo) / 2 + z) * ((1 + Math.sin(-Phi)) * (2 * zalvo + TamanhoAlvo) / 2 + z))) + "</html>");
+            LabelDistancia.setText("<html>" + String.valueOf(Math.sqrt(((2 * xalvo + TamanhoAlvo) / 2 - x) * ((2 * xalvo + TamanhoAlvo) / 2 - x) + ((2 * yalvo + TamanhoAlvo) / 2 - y) * ((2 * yalvo + TamanhoAlvo) / 2 - y) + ((2 * zalvo + TamanhoAlvo) / 2 + z) * ((2 * zalvo + TamanhoAlvo) / 2 + z))) + "</html>");
 
             FatorZ = Math.signum(Math.cos(-Teta));
             FatorX = 1;
@@ -366,6 +373,54 @@ public class AV3DSpaceCatch extends JComponent
                     }
             } catch(Exception ex) {}
 
+            if (FlagPausa == 0) if (Espaco.equals(""))
+                {
+                do
+                    {
+                    xalvo = (int) (Math.random() * LimiteXAlvo * Math.signum(Math.random() - 0.5));
+
+                    yalvo = (int) (Math.random() * LimiteYAlvo * Math.signum(Math.random() - 0.5));
+
+                    zalvo = (int) (Math.random() * LimiteZAlvo * Math.signum(Math.random() - 0.5));
+
+                    } while (Math.sqrt(((2 * xalvo + TamanhoAlvo) / 2 - x) * ((2 * xalvo + TamanhoAlvo) / 2 - x) + ((2 * yalvo + TamanhoAlvo) / 2 - y) * ((2 * yalvo + TamanhoAlvo) / 2 - y) + ((2 * zalvo + TamanhoAlvo) / 2 + z) * ((2 * zalvo + TamanhoAlvo) / 2 + z)) <= DistanciaCapturaAlvo);
+                }
+
+            if (Math.abs(Math.cos(-Teta)) <= InfimoCossenoTeta)
+                {
+                xalvo += DeslocamentoLinear;
+                yalvo += DeslocamentoLinear;
+
+                FlagTetaShift = 1;
+                }
+            else if (FlagTetaShift == 1)
+                {
+                xalvo -= DeslocamentoLinear;
+                yalvo -= DeslocamentoLinear;
+
+                FlagTetaShift = 0;
+                }
+
+            switch (TipoAlvo)
+                {
+                case 0:
+                    Espaco = String.valueOf(xalvo + FatorArestasNaoOrtogonaisAlvo * TamanhoAlvo) + "," + String.valueOf(yalvo + FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "," + String.valueOf(zalvo + FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + ";" + String.valueOf(xalvo + TamanhoAlvo - FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo - FatorArestasNaoOrtogonaisAlvo * TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo - FatorArestasNaoOrtogonaisAlvo * TamanhoAlvo) + "|" + String.valueOf(xalvo + TamanhoAlvo - FatorArestasNaoOrtogonaisAlvo * TamanhoAlvo) + "," + String.valueOf(yalvo + FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "," + String.valueOf(zalvo + FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + ";" + String.valueOf(xalvo + FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo - FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo - FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "|" + String.valueOf(xalvo + FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo - FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "," + String.valueOf(zalvo + FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + ";" + String.valueOf(xalvo + TamanhoAlvo - FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "," + String.valueOf(yalvo + FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo - FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "|" + String.valueOf(xalvo + FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "," + String.valueOf(yalvo + FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo - FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + ";" + String.valueOf(xalvo + TamanhoAlvo - FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo - FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "," + String.valueOf(zalvo + FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "|" + String.valueOf(xalvo + TamanhoAlvo / 2) + "," + String.valueOf(yalvo + TamanhoAlvo / 2) + "," + String.valueOf(zalvo) + ";" + String.valueOf(xalvo + TamanhoAlvo / 2) + "," + String.valueOf(yalvo + TamanhoAlvo / 2) + "," + String.valueOf(zalvo + TamanhoAlvo) + "|" + String.valueOf(xalvo + TamanhoAlvo / 2) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + TamanhoAlvo / 2) + ";" + String.valueOf(xalvo + TamanhoAlvo / 2) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo / 2) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + TamanhoAlvo / 2) + "," + String.valueOf(zalvo + TamanhoAlvo / 2) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo / 2) + "," + String.valueOf(zalvo + TamanhoAlvo / 2);
+
+                    break;
+                case 1:
+                    Espaco = "";
+
+                    for (int i = 0; i < DivisoesAlvo; i++)
+                        {
+                        Espaco = Espaco + String.valueOf(xalvo) + "," + String.valueOf(yalvo + i * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(zalvo) + ";" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + (i + 1) * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(zalvo) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + i * TamanhoAlvo / DivisoesAlvo) + ";" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + (i + 1) * TamanhoAlvo / DivisoesAlvo) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + (i + 1) * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + ";" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + i * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + (i + 1) * TamanhoAlvo / DivisoesAlvo) + ";" + String.valueOf(xalvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + i * TamanhoAlvo / DivisoesAlvo) + "|" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + i * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(zalvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + (i + 1) * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(zalvo) + "|" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + i * TamanhoAlvo / DivisoesAlvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + (i + 1) * TamanhoAlvo / DivisoesAlvo) + "|" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + (i + 1) * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + i * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + "|" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + (i + 1) * TamanhoAlvo / DivisoesAlvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + i * TamanhoAlvo / DivisoesAlvo) + "|" + String.valueOf(xalvo + i * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo) + ";" + String.valueOf(xalvo + (i + 1) * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo) + "|" + String.valueOf(xalvo + i * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo) + ";" + String.valueOf(xalvo + (i + 1) * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo) + "|" + String.valueOf(xalvo + i * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + ";" + String.valueOf(xalvo + (i + 1) * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + "|" + String.valueOf(xalvo + i * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + ";" + String.valueOf(xalvo + (i + 1) * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + TamanhoAlvo);
+
+                        if (i < DivisoesAlvo - 1) Espaco = Espaco + "|";
+                        }
+
+                    break;
+                default:
+                }
+
             long Tempo = System.currentTimeMillis();
 
             if (FlagPausa == 0) if (Tempo - TempoR > (int) (1000 / (FramesPorSegundo)))
@@ -388,35 +443,9 @@ public class AV3DSpaceCatch extends JComponent
 
             if (FlagFlashCatch == 1) if ((Tempo2 - TempoR2) > 100) FlagFlashCatch = 0;
 
-            if (FlagPausa == 0) if (Espaco.equals(""))
-                {
-                do
-                    {
-                    xalvo = (int) (Math.random() * LimiteXAlvo * Math.signum(Math.random() - 0.5));
-
-                    yalvo = (int) (Math.random() * LimiteYAlvo * Math.signum(Math.random() - 0.5));
-
-                    zalvo = (int) (Math.random() * LimiteZAlvo * Math.signum(Math.random() - 0.5));
-
-                    } while (Math.sqrt(((1 + Math.cos(-Phi) * Math.cos(-Teta)) * (2 * xalvo + TamanhoAlvo) / 2 - x) * ((1 + Math.cos(-Phi) * Math.cos(-Teta)) * (2 * xalvo + TamanhoAlvo) / 2 - x) + ((1 + Math.cos(-Phi) * Math.sin(-Teta)) * (2 * yalvo + TamanhoAlvo) / 2 - y) * ((1 + Math.cos(-Phi) * Math.sin(-Teta)) * (2 * yalvo + TamanhoAlvo) / 2 - y) + ((1 + Math.sin(-Phi)) * (2 * zalvo + TamanhoAlvo) / 2 + z) * ((1 + Math.sin(-Phi)) * (2 * zalvo + TamanhoAlvo) / 2 + z)) <= DistanciaCapturaAlvo);
-
-                Espaco = String.valueOf(xalvo + FatorArestasNaoOrtogonaisAlvo * TamanhoAlvo) + "," + String.valueOf(yalvo + FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "," + String.valueOf(zalvo + FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + ";" + String.valueOf(xalvo + TamanhoAlvo - FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo - FatorArestasNaoOrtogonaisAlvo * TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo - FatorArestasNaoOrtogonaisAlvo * TamanhoAlvo) + "|" + String.valueOf(xalvo + TamanhoAlvo - FatorArestasNaoOrtogonaisAlvo * TamanhoAlvo) + "," + String.valueOf(yalvo + FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "," + String.valueOf(zalvo + FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + ";" + String.valueOf(xalvo + FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo - FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo - FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "|" + String.valueOf(xalvo + FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo - FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "," + String.valueOf(zalvo + FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + ";" + String.valueOf(xalvo + TamanhoAlvo - FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "," + String.valueOf(yalvo+ FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo - FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "|" + String.valueOf(xalvo + FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "," + String.valueOf(yalvo + FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo - FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + ";" + String.valueOf(xalvo + TamanhoAlvo - FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo - FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "," + String.valueOf(zalvo + FatorArestasNaoOrtogonaisAlvo  * TamanhoAlvo) + "|" + String.valueOf(xalvo + TamanhoAlvo / 2) + "," + String.valueOf(yalvo + TamanhoAlvo / 2) + "," + String.valueOf(zalvo) + ";" + String.valueOf(xalvo + TamanhoAlvo / 2) + "," + String.valueOf(yalvo + TamanhoAlvo / 2) + "," + String.valueOf(zalvo + TamanhoAlvo) + "|" + String.valueOf(xalvo + TamanhoAlvo / 2) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + TamanhoAlvo / 2) + ";" + String.valueOf(xalvo + TamanhoAlvo / 2) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo / 2) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + TamanhoAlvo / 2) + "," + String.valueOf(zalvo + TamanhoAlvo / 2) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo / 2) + "," + String.valueOf(zalvo + TamanhoAlvo / 2);
-
-                /*
-                Espaco = "";
-
-                for (int i = 0; i < DivisoesAlvo; i++)
-                    {
-                    Espaco = Espaco + String.valueOf(xalvo) + "," + String.valueOf(yalvo + i * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(zalvo) + ";" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + (i + 1) * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(zalvo) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + i * TamanhoAlvo / DivisoesAlvo) + ";" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + (i + 1) * TamanhoAlvo / DivisoesAlvo) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + (i + 1) * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + ";" + String.valueOf(xalvo) + "," + String.valueOf(yalvo + i * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + "|" + String.valueOf(xalvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + (i + 1) * TamanhoAlvo / DivisoesAlvo) + ";" + String.valueOf(xalvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + i * TamanhoAlvo / DivisoesAlvo) + "|" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + i * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(zalvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + (i + 1) * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(zalvo) + "|" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + i * TamanhoAlvo / DivisoesAlvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + (i + 1) * TamanhoAlvo / DivisoesAlvo) + "|" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + (i + 1) * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo + i * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + "|" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + (i + 1) * TamanhoAlvo / DivisoesAlvo) + ";" + String.valueOf(xalvo + TamanhoAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + i * TamanhoAlvo / DivisoesAlvo) + "|" + String.valueOf(xalvo + i * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo) + ";" + String.valueOf(xalvo + (i + 1) * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo) + "|" + String.valueOf(xalvo + i * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo) + ";" + String.valueOf(xalvo + (i + 1) * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo) + "|" + String.valueOf(xalvo + i * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + ";" + String.valueOf(xalvo + (i + 1) * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(yalvo + TamanhoAlvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + "|" + String.valueOf(xalvo + i * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + TamanhoAlvo) + ";" + String.valueOf(xalvo + (i + 1) * TamanhoAlvo / DivisoesAlvo) + "," + String.valueOf(yalvo) + "," + String.valueOf(zalvo + TamanhoAlvo);
-
-                    if (i < DivisoesAlvo - 1) Espaco = Espaco + "|";
-                    }
-                */
-                }
-
             if (FlagPausa == 0)
                 {
-                double FatorCor = Math.pow(Math.min(Math.sqrt(((1 + Math.cos(-Phi) * Math.cos(-Teta)) * (2 * xalvo + TamanhoAlvo) / 2 - x) * ((1 + Math.cos(-Phi) * Math.cos(-Teta)) * (2 * xalvo + TamanhoAlvo) / 2 - x) + ((1 + Math.cos(-Phi) * Math.sin(-Teta)) * (2 * yalvo + TamanhoAlvo) / 2 - y) * ((1 + Math.cos(-Phi) * Math.sin(-Teta)) * (2 * yalvo + TamanhoAlvo) / 2 - y) + ((1 + Math.sin(-Phi)) * (2 * zalvo + TamanhoAlvo) / 2 + z) * ((1 + Math.sin(-Phi)) * (2 * zalvo + TamanhoAlvo) / 2 + z)), (2 * Math.sqrt(3) * Math.max(LimiteXAlvo, Math.max(LimiteYAlvo, LimiteZAlvo)))) / (2 * Math.sqrt(3) * Math.max(LimiteXAlvo, Math.max(LimiteYAlvo, LimiteZAlvo))), 1 / FatorTonalidadeAproximacao);
+                double FatorCor = Math.pow(Math.min(Math.sqrt(((2 * xalvo + TamanhoAlvo) / 2 - x) * ((2 * xalvo + TamanhoAlvo) / 2 - x) + ((2 * yalvo + TamanhoAlvo) / 2 - y) * ((2 * yalvo + TamanhoAlvo) / 2 - y) + ((2 * zalvo + TamanhoAlvo) / 2 + z) * ((2 * zalvo + TamanhoAlvo) / 2 + z)), (2 * Math.sqrt(3) * Math.max(LimiteXAlvo, Math.max(LimiteYAlvo, LimiteZAlvo)))) / (2 * Math.sqrt(3) * Math.max(LimiteXAlvo, Math.max(LimiteYAlvo, LimiteZAlvo))), 1 / FatorTonalidadeAproximacao);
 
                 if (FlagPausa == 0) if (FlagFlashCatch == 0) FameAV3DSpaceCatch.getContentPane().setBackground(new Color((int) (64 - 64 * FatorCor), (int) (255 - 255 * FatorCor), (int) (64 - 64 * FatorCor)));
                 }
@@ -426,7 +455,7 @@ public class AV3DSpaceCatch extends JComponent
 
             if (FlagPausa == 0) DesenharEspaco(comp);
 
-            if (FlagPausa == 0) if (Math.sqrt(((1 + Math.cos(-Phi) * Math.cos(-Teta)) * (2 * xalvo + TamanhoAlvo) / 2 - x) * ((1 + Math.cos(-Phi) * Math.cos(-Teta)) * (2 * xalvo + TamanhoAlvo) / 2 - x) + ((1 + Math.cos(-Phi) * Math.sin(-Teta)) * (2 * yalvo + TamanhoAlvo) / 2 - y) * ((1 + Math.cos(-Phi) * Math.sin(-Teta)) * (2 * yalvo + TamanhoAlvo) / 2 - y) + ((1 + Math.sin(-Phi)) * (2 * zalvo + TamanhoAlvo) / 2 + z) * ((1 + Math.sin(-Phi)) * (2 * zalvo + TamanhoAlvo) / 2 + z)) <= DistanciaCapturaAlvo)
+            if (FlagPausa == 0) if (Math.sqrt(((2 * xalvo + TamanhoAlvo) / 2 - x) * ((2 * xalvo + TamanhoAlvo) / 2 - x) + ((2 * yalvo + TamanhoAlvo) / 2 - y) * ((2 * yalvo + TamanhoAlvo) / 2 - y) + ((2 * zalvo + TamanhoAlvo) / 2 + z) * ((2 * zalvo + TamanhoAlvo) / 2 + z)) <= DistanciaCapturaAlvo)
                 {
                 try {
                     if (FlagCatchSound == 1) Catch.close();
@@ -453,12 +482,12 @@ public class AV3DSpaceCatch extends JComponent
                 System.out.println("Pontuação: " + String.valueOf(Pontuacao) + ".\n");
                 }
 
-            try {Thread.sleep(10);} catch(InterruptedException e) {}
-
             if (FlagPausa == 0)
                 LabelStatus.setText("<html>&nbsp;Pontuação = " + String.valueOf(Pontuacao) + ".<br><br>&nbsp;Velocidade = " + String.valueOf(Velocidade) + "<br><br>&nbsp;Setas para direcionar.<br><br>&nbsp;\"A\" para aumentar velocidade. \"Z\" para reduzir.<br><br>&nbsp;\"P\" para pausar.<br><br>&nbsp;Barra de espaço para resetar as<br>&nbsp;variáveis de localização.<br><br>&nbsp;ESC para sair.</html>");
             else
                 LabelStatus.setText("<html>&nbsp;Pontuação: " + String.valueOf(Pontuacao) + ".<br><br>&nbsp;Jogo pausado.<br><br>&nbsp;Aperte \"P\" para continuar.</html>");
+
+            try {Thread.sleep(10);} catch(InterruptedException e) {}
             }
 
         System.exit(0);
@@ -494,17 +523,17 @@ public class AV3DSpaceCatch extends JComponent
                 FlagPhiInferior = 0;
                 }
 
-            double xo = (1 + Math.cos(-Phi) * Math.cos(-Teta)) * Double.parseDouble(CoordenadasOrig[0]) - x;
+            double xo = Double.parseDouble(CoordenadasOrig[0]) - x;
 
-            double xd = (1 + Math.cos(-Phi) * Math.cos(-Teta)) * Double.parseDouble(CoordenadasDest[0]) - x;
+            double xd = Double.parseDouble(CoordenadasDest[0]) - x;
 
-            double yo = (1 + Math.cos(-Phi) * Math.sin(-Teta)) * Double.parseDouble(CoordenadasOrig[1]) - y;
+            double yo = Double.parseDouble(CoordenadasOrig[1]) - y;
 
-            double yd = (1 + Math.cos(-Phi) * Math.sin(-Teta)) * Double.parseDouble(CoordenadasDest[1]) - y;
+            double yd = Double.parseDouble(CoordenadasDest[1]) - y;
 
-            double zo = (1 + Math.sin(-Phi)) * (-Double.parseDouble(CoordenadasOrig[2])) - z;
+            double zo = (-Double.parseDouble(CoordenadasOrig[2])) - z;
 
-            double zd = (1 + Math.sin(-Phi)) * (-Double.parseDouble(CoordenadasDest[2])) - z;
+            double zd = (-Double.parseDouble(CoordenadasDest[2])) - z;
 
             int xi;
             int yi;
@@ -513,13 +542,13 @@ public class AV3DSpaceCatch extends JComponent
 
             if ((xo != 0) && (xd != 0))
                 {
-                xi = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * FatorX * Math.tan(Math.atan(yo / xo) + Teta)) - CorrecaoX;
+                xi = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * FatorX * Math.tan(Math.atan(yo / xo) + Teta) / Math.max(Math.pow(Math.abs(Math.cos(-Teta)), FatorCorrecaoAspecto), 1 / FatorMaxCorrecaoAspecto)) - CorrecaoX;
 
-                xf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * FatorX * Math.tan(Math.atan(yd / xd) + Teta)) - CorrecaoX;
+                xf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * FatorX * Math.tan(Math.atan(yd / xd) + Teta) / Math.max(Math.pow(Math.abs(Math.cos(-Teta)), FatorCorrecaoAspecto), 1 / FatorMaxCorrecaoAspecto)) - CorrecaoX;
 
-                yi = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * FatorZ * Math.tan(Math.atan(zo / xo) + Phi)) - CorrecaoY;
+                yi = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * FatorZ * Math.tan(Math.atan(zo / xo) + Phi) / Math.max(Math.pow(Math.abs(Math.cos(-Phi)), FatorCorrecaoAspecto), 1 / FatorMaxCorrecaoAspecto)) - CorrecaoY;
 
-                yf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * FatorZ * Math.tan(Math.atan(zd / xd) + Phi)) - CorrecaoY;
+                yf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * FatorZ * Math.tan(Math.atan(zd / xd) + Phi) / Math.max(Math.pow(Math.abs(Math.cos(-Phi)), FatorCorrecaoAspecto), 1 / FatorMaxCorrecaoAspecto)) - CorrecaoY;
 
                 double ProdutoEscalaro = FatorX * xo * Math.cos(-Teta) * Math.cos(-Phi) + yo * Math.sin(-Teta) * Math.cos(-Phi) + FatorZ * zo * Math.sin(-Phi);
 
