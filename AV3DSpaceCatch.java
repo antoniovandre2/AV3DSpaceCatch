@@ -384,6 +384,8 @@ public class AV3DSpaceCatch extends JComponent
                     zalvo = (int) (Math.random() * LimiteZAlvo * Math.signum(Math.random() - 0.5));
 
                     } while (Math.sqrt(((2 * xalvo + TamanhoAlvo) / 2 - x) * ((2 * xalvo + TamanhoAlvo) / 2 - x) + ((2 * yalvo + TamanhoAlvo) / 2 - y) * ((2 * yalvo + TamanhoAlvo) / 2 - y) + ((2 * zalvo + TamanhoAlvo) / 2 + z) * ((2 * zalvo + TamanhoAlvo) / 2 + z)) <= DistanciaCapturaAlvo);
+
+                FlagTetaShift = 0;
                 }
 
             if (Math.abs(Math.cos(-Teta)) <= InfimoCossenoTeta)
