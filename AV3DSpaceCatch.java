@@ -59,11 +59,11 @@ public class AV3DSpaceCatch extends JComponent
     public static double DeslocamentoLinear = 1; // Default: 1.
     public static double DeslocamentoAngular = 0.08; // Default: 0.08.
     public static int TamanhoAlvo = 2; // Default: 2.
-    public static int DivisoesAlvo = 8; // Default: 8.
+    public static int DivisoesAlvo = 4; // Default: 4.
     public int TipoAlvo = 0; // Default: 0.
     public static double FatorArestasNaoOrtogonaisAlvo = 0.3; // Default: 0.3.
-    public static double FatorCorrecaoAspecto = 2; // Default: 2.
-    public static double FatorMaxCorrecaoAspecto = 10; // Default: 2.
+    public static double FatorCorrecaoAspecto = 0; // Default: 0.
+    public static double FatorMaxCorrecaoAspecto = 1; // Default: 1.
     public static double LimiteXAlvo = 100; // Default: 100.
     public static double LimiteYAlvo = 100; // Default: 100.
     public static double LimiteZAlvo = 50; // Default: 50.
@@ -379,6 +379,7 @@ public class AV3DSpaceCatch extends JComponent
                     } while (Math.sqrt(((2 * xalvo + TamanhoAlvo) / 2 - x) * ((2 * xalvo + TamanhoAlvo) / 2 - x) + ((2 * yalvo + TamanhoAlvo) / 2 - y) * ((2 * yalvo + TamanhoAlvo) / 2 - y) + ((2 * zalvo + TamanhoAlvo) / 2 + z) * ((2 * zalvo + TamanhoAlvo) / 2 + z)) <= DistanciaCapturaAlvo);
 
                 FlagTetaShift = 0;
+                FlagPhiShift = 0;
                 }
 
             if (Math.abs(Math.cos(Teta)) <= InfimoCossenoTeta)
@@ -400,8 +401,8 @@ public class AV3DSpaceCatch extends JComponent
                 {
                 xalvo += DeslocamentoLinear;
                 zalvo += DeslocamentoLinear;
-
                 FlagPhiShift = 1;
+
                 }
             else if (FlagPhiShift == 1)
                 {
