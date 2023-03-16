@@ -64,6 +64,7 @@ public class AV3DSpaceCatch extends JComponent
     public static double FatorArestasNaoOrtogonaisAlvo = 0.3; // Default: 0.3.
     public static double FatorCorrecaoAspecto = 0; // Default: 0.
     public static double FatorMaxCorrecaoAspecto = 1; // Default: 1.
+    public static double DeslocamentoShift = 1; // Default: 1.
     public static double LimiteXalvo = 100; // Default: 100.
     public static double LimiteYalvo = 100; // Default: 100.
     public static double LimiteZalvo = 50; // Default: 50.
@@ -89,15 +90,13 @@ public class AV3DSpaceCatch extends JComponent
     public int FlagPhiInferior = 0;
     public int FlagTetaShift = 0;
     public int FlagPhiShift = 0;
+    public double XalvoTTeta;
+    public double XalvoTPhi;
     public int Sair = 0;
     public long Pontuacao = 0;
     public long TempoR = System.currentTimeMillis();
     public long TempoR2 = System.currentTimeMillis();
     public String Espaco = "";
-    public double XalvoTTeta;
-    public double YalvoTTeta;
-    public double XalvoTPhi;
-    public double ZalvoTPhi;
     public int FlagPausa = 1;
     public int FlagFlashCatch = 0;
     public int FlagCatchSound = 0;
@@ -386,36 +385,32 @@ public class AV3DSpaceCatch extends JComponent
                 FlagPhiShift = 0;
                 }
 
-            if (Math.abs(Math.cos(Teta)) <= InfimoCossenoTeta)
+            if ((Math.abs(Math.cos(Teta)) <= InfimoCossenoTeta) && (FlagTetaShift == 0))
                 {
-                if (FlagTetaShift == 0) {XalvoTTeta = Xalvo; YalvoTTeta = Yalvo;}
+                if (FlagTetaShift == 0) XalvoTTeta = Xalvo;
 
-                Xalvo += DeslocamentoLinear;
-                Yalvo += DeslocamentoLinear;
+                Xalvo += Math.signum(Xalvo) * DeslocamentoShift;
 
                 FlagTetaShift = 1;
                 }
             else if (FlagTetaShift == 1)
                 {
                 Xalvo = XalvoTTeta;
-                Yalvo = YalvoTTeta;
 
                 FlagTetaShift = 0;
                 }
 
-            if (Math.abs(Math.cos(Teta)) <= InfimoCossenoPhi)
+            if ((Math.abs(Math.cos(Teta)) <= InfimoCossenoPhi) && (FlagPhiShift == 0))
                 {
-                if (FlagPhiShift == 0) {XalvoTPhi = Xalvo; ZalvoTPhi = Zalvo;}
+                if (FlagPhiShift == 0) XalvoTPhi = Xalvo;
 
-                Xalvo += DeslocamentoLinear;
-                Zalvo += DeslocamentoLinear;
+                Xalvo += Math.signum(Xalvo) * DeslocamentoShift;
 
                 FlagPhiShift = 1;
                 }
             else if (FlagPhiShift == 1)
                 {
                 Xalvo = XalvoTPhi;
-                Zalvo = ZalvoTPhi;
 
                 FlagPhiShift = 0;
                 }
