@@ -64,7 +64,7 @@ public class AV3DSpaceCatch extends JComponent
     public static double FatorArestasNaoOrtogonaisAlvo = 0.3; // Default: 0.3.
     public static double FatorCorrecaoAspecto = 0; // Default: 0.
     public static double FatorMaxCorrecaoAspecto = 1; // Default: 1.
-    public static double FatorDeslocamentoShift = 1; // Default: 1.
+    public static double FatorDeslocamentoShift = 1.5; // Default: 1.5.
     public static double LimiteXalvo = 100; // Default: 100.
     public static double LimiteYalvo = 100; // Default: 100.
     public static double LimiteZalvo = 50; // Default: 50.
@@ -88,10 +88,6 @@ public class AV3DSpaceCatch extends JComponent
     public double AnguloVisao;
     public int FlagPhiSuperior = 0;
     public int FlagPhiInferior = 0;
-    public int FlagTetaShift = 0;
-    public int FlagPhiShift = 0;
-    public double XalvoTTeta;
-    public double XalvoTPhi;
     public int Sair = 0;
     public long Pontuacao = 0;
     public long TempoR = System.currentTimeMillis();
@@ -380,39 +376,6 @@ public class AV3DSpaceCatch extends JComponent
                     Zalvo = (int) (Math.random() * LimiteZalvo * Math.signum(Math.random() - 0.5));
 
                     } while (Math.sqrt(((2 * Xalvo + TamanhoAlvo) / 2 - x) * ((2 * Xalvo + TamanhoAlvo) / 2 - x) + ((2 * Yalvo + TamanhoAlvo) / 2 - y) * ((2 * Yalvo + TamanhoAlvo) / 2 - y) + ((2 * Zalvo + TamanhoAlvo) / 2 - z) * ((2 * Zalvo + TamanhoAlvo) / 2 - z)) <= DistanciaCapturaAlvo);
-
-                FlagTetaShift = 0;
-                FlagPhiShift = 0;
-                }
-
-            if ((Math.abs(Math.cos(Teta)) <= InfimoCossenoTeta) && (FlagTetaShift == 0))
-                {
-                if (FlagTetaShift == 0) XalvoTTeta = Xalvo;
-
-                Xalvo += Math.signum(Xalvo - x) * FatorDeslocamentoShift;
-
-                FlagTetaShift = 1;
-                }
-            else if (FlagTetaShift == 1)
-                {
-                Xalvo = XalvoTTeta;
-
-                FlagTetaShift = 0;
-                }
-
-            if ((Math.abs(Math.cos(Teta)) <= InfimoCossenoPhi) && (FlagPhiShift == 0))
-                {
-                if (FlagPhiShift == 0) XalvoTPhi = Xalvo;
-
-                Xalvo += Math.signum(Xalvo - x) * FatorDeslocamentoShift;
-
-                FlagPhiShift = 1;
-                }
-            else if (FlagPhiShift == 1)
-                {
-                Xalvo = XalvoTPhi;
-
-                FlagPhiShift = 0;
                 }
 
             switch (TipoAlvo)
@@ -553,6 +516,12 @@ public class AV3DSpaceCatch extends JComponent
             int yi;
             int xf;
             int yf;
+
+            if ((Math.abs(Math.cos(Teta)) <= InfimoCossenoTeta) || (Math.abs(Math.cos(Phi)) <= InfimoCossenoPhi))
+                {
+                xo *= FatorDeslocamentoShift;
+                xd *= FatorDeslocamentoShift;
+                }
 
             if ((xo != 0) && (xd != 0))
                 {
