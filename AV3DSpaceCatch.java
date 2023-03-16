@@ -64,7 +64,7 @@ public class AV3DSpaceCatch extends JComponent
     public static double FatorArestasNaoOrtogonaisAlvo = 0.3; // Default: 0.3.
     public static double FatorCorrecaoAspecto = 0; // Default: 0.
     public static double FatorMaxCorrecaoAspecto = 1; // Default: 1.
-    public static double DeslocamentoShift = 1; // Default: 1.
+    public static double FatorDeslocamentoShift = 1.0001; // Default: 1.0001.
     public static double LimiteXalvo = 100; // Default: 100.
     public static double LimiteYalvo = 100; // Default: 100.
     public static double LimiteZalvo = 50; // Default: 50.
@@ -389,7 +389,7 @@ public class AV3DSpaceCatch extends JComponent
                 {
                 if (FlagTetaShift == 0) XalvoTTeta = Xalvo;
 
-                Xalvo += Math.signum(Xalvo) * DeslocamentoShift;
+                Xalvo *= Math.signum(Xalvo - x) * FatorDeslocamentoShift;
 
                 FlagTetaShift = 1;
                 }
@@ -404,7 +404,7 @@ public class AV3DSpaceCatch extends JComponent
                 {
                 if (FlagPhiShift == 0) XalvoTPhi = Xalvo;
 
-                Xalvo += Math.signum(Xalvo) * DeslocamentoShift;
+                Xalvo *= Math.signum(Xalvo - x) * FatorDeslocamentoShift;
 
                 FlagPhiShift = 1;
                 }
