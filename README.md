@@ -1,31 +1,53 @@
-# AV3DSpaceCatch
-![AV3DSpaceCatch logo](https://antoniovandre2.github.io/AV3DSpaceCatch/AV3DSpaceCatch%20-%20Logo%20-%20200p.png)
+# AV3DNavigator
+![AV3DNavigator logo](https://antoniovandre2.github.io/AV3DNavigator/AV3DNavigator%20-%20Logo%20-%20200p.png)
 ____________________
 
 Proprietário: Antonio Vandré Pedrosa Furtunato Gomes ([bit.ly/antoniovandre_legadoontologico](https://bit.ly/antoniovandre_legadoontologico)).
 
-README do "AV3DSpaceCatch".
+README do "AV3DNavigator".
 ____________________
 
-Um simples game de navegação 3D, desenvolvido em Java.
+Um simples software de navegação 3D, desenvolvido em Java.
 _____
 
 Execute com:
 
-java -jar AV3DSpaceCatchLauncher.jar [ARQUIVO DE ESTATISTICAS]
+java -jar AV3DNavigatorLauncher.jar <ARQUIVO DE ESPAÇO>
 
-O argumento "ARQUIVO DE ESTATISTICAS" é opcional, e serve para armazenar e recuperar a pontuação conquistada.
+O arquivo de espaço consiste em um plain txt composto de, primeiro, linhas separadas por barra vertical "|", cada linha composta dos dois pontos extremos separados por ponto e vírgula ";", cada ponto consiste na abscissa, ordenada e cota separadas por vírgula ","; e, segundo, após o arroba "@", os vértices dos polígonos preenchidos, polígonos separados por barra vertical "|".
+
+Há como exemplo o arquivo de espaço "Casa.txt" anexo.
 ____________________
 
 Comandos:
 
-Setas para direcionar.
+"A" para incrementar x. "Z" para decrementar.
 
-"A" para aumentar velocidade. "Z" para reduzir.
+"S" para incrementar y. "X" para decrementar.
 
-"P" para pausar / recontinuar.
+"D" para incrementar z. "C" para decrementar.
 
-Barra de espaços para resetar as variáveis de localização.
+"F" para incrementar Teta. "V" para decrementar.
+
+"G" para incrementar Phi. "B" para decrementar.
+
+"H" para incrementar a rotação da tela. "N" para decrementar.
+
+"W" para aumentar a distância da tela. "Q" para reduzir.
+
+"E" para reduzir o fator redutor do ângulo de visão. "R" para aumentar.
+
+"T" para shift negativo na cor da linha. "Y" para shift positivo.
+
+"U" para shift negativo na cor de fundo. "I" para shift positivo.
+
+"O" para shift negativo na cor dos polígonos preenchidos. "P" para shift positivo.
+
+"0" para toggle alta precisão Apfloat (com custo computacional).
+
+Setas para strafe. Mouse pode ser utilizado para movimentar.
+
+Aperte barra de espaços para resetar as variáveis.
 
 ESC para sair.
 ____________________
