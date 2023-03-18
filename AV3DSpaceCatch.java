@@ -5,11 +5,13 @@
  * 
  * Dependências: AntonioVandre.
  * 
+ * Motor Gráfico: AV3D-f (para objetos distantes).
+ * 
  * Sugestões ou comunicar erros: "a.vandre.g@gmail.com".
  * 
  * Licença de uso: Atribuição-NãoComercial-CompartilhaIgual (CC BY-NC-SA).
  * 
- * Última atualização: 16-03-2023
+ * Última atualização: 18-03-2023
  */
 
 import java.awt.*;
@@ -42,8 +44,8 @@ public class AV3DSpaceCatch extends JComponent
     public static int MinTamanhoPlanoX = 300; // Default: 300.
     public static int MinTamanhoPlanoY = 300; // Default: 300.
     public static double PhiMax = Double.MAX_VALUE; // Default: Math.PI / 3.
-    public static double InfimoCossenoTeta = 0.15; // Default: 0.15.
-    public static double InfimoCossenoPhi = 0.15; // Default: 0.15.
+    public static double InfimoCossenoTeta = 0.1; // Default: 0.1.
+    public static double InfimoCossenoPhi = 0.1; // Default: 0.1.
     public static double InfimoCossenoTetaIgnorar = 0; // Default: 0.
     public static double InfimoCossenoPhiIgnorar = 0; // Default: 0.
     public double Velocidade = 50; // Default inicial: 50.
@@ -520,9 +522,10 @@ public class AV3DSpaceCatch extends JComponent
             if ((Math.abs(Math.cos(Teta)) <= InfimoCossenoTeta) || (Math.abs(Math.cos(Phi)) <= InfimoCossenoPhi))
                 {
                 xo *= FatorDeslocamentoShift;
+                yo *= FatorDeslocamentoShift;
                 xd *= FatorDeslocamentoShift;
+                yd *= FatorDeslocamentoShift;
                 }
-
             if ((xo != 0) && (xd != 0))
                 {
                 xi = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela  * Math.tan(Math.atan(yo / xo) + Teta) / Math.max(Math.pow(Math.abs(Math.cos(Teta)), FatorCorrecaoAspecto), 1 / FatorMaxCorrecaoAspecto)) - CorrecaoX;
@@ -533,17 +536,17 @@ public class AV3DSpaceCatch extends JComponent
 
                 yf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.tan(Math.asin(zd / Math.sqrt(xo * xo + zo * zo)) + Phi) / Math.max(Math.pow(Math.abs(Math.cos(Phi)), FatorCorrecaoAspecto), 1 / FatorMaxCorrecaoAspecto)) - CorrecaoY;
 
-                double ProdutoEscalaro = xo * Math.cos(Teta) * Math.cos(Phi) - yo * Math.sin(Teta) * Math.cos(Phi) - zo * Math.signum(Math.cos(Phi)) * Math.sin(Phi);
+                double ProdutoEscalaro = xo * Math.cos(Teta) * Math.cos(Phi) - yo * Math.sin(Teta) * Math.cos(Phi) - zo * Math.cos(Phi) * Math.sin(Phi);
 
-                double ProdutoEscalard = xd * Math.cos(Teta) * Math.cos(Phi) - yd * Math.sin(Teta) * Math.cos(Phi) - zd * Math.signum(Math.cos(Phi)) * Math.sin(Phi);
+                double ProdutoEscalard = xd * Math.cos(Teta) * Math.cos(Phi) - yd * Math.sin(Teta) * Math.cos(Phi) - zd * Math.cos(Phi) * Math.sin(Phi);
 
                 double ProdutoEscalarXo = xo * Math.cos(Teta) * Math.cos(Phi) - yo * Math.sin(Teta) * Math.cos(Phi);
 
                 double ProdutoEscalarXd = xd * Math.cos(Teta) * Math.cos(Phi) - yd * Math.sin(Teta) * Math.cos(Phi);
 
-                double ProdutoEscalarZo = xo * Math.cos(Teta) * Math.cos(Phi) - zo * Math.signum(Math.cos(Phi)) * Math.sin(Phi);
+                double ProdutoEscalarZo = xo * Math.cos(Teta) * Math.cos(Phi) - zo * Math.cos(Phi) * Math.sin(Phi);
 
-                double ProdutoEscalarZd = xd * Math.cos(Teta) * Math.cos(Phi) - zd * Math.signum(Math.cos(Phi)) * Math.sin(Phi);
+                double ProdutoEscalarZd = xd * Math.cos(Teta) * Math.cos(Phi) - zd * Math.cos(Phi) * Math.sin(Phi);
 
                 if ((Math.acos(ProdutoEscalarXo / Math.sqrt(xo  * xo + yo * yo)) <= 7 * Math.PI / 8) && (Math.acos(ProdutoEscalarXd / Math.sqrt(xd * xd + yd * yd)) <= 7 * Math.PI / 8))
                     {
