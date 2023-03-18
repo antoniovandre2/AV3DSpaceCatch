@@ -43,9 +43,10 @@ public class AV3DSpaceCatch extends JComponent
     public int TamanhoPlanoY = 400; // Default: 400.
     public static int MinTamanhoPlanoX = 300; // Default: 300.
     public static int MinTamanhoPlanoY = 300; // Default: 300.
-    public static double PhiMax = Double.MAX_VALUE; // Default: Math.PI / 3.
-    public static double InfimoCossenoTeta = 0.1; // Default: 0.1.
-    public static double InfimoCossenoPhi = 0.1; // Default: 0.1.
+    public static double TetaMax = Double.MAX_VALUE; // Opção: Math.PI / 3.
+    public static double PhiMax = Double.MAX_VALUE; // Opção: Math.PI / 3.
+    public static double InfimoCossenoTeta = 0.15; // Default: 0.15.
+    public static double InfimoCossenoPhi = 0.15; // Default: 0.15.
     public static double InfimoCossenoTetaIgnorar = 0; // Default: 0.
     public static double InfimoCossenoPhiIgnorar = 0; // Default: 0.
     public double Velocidade = 50; // Default inicial: 50.
@@ -64,9 +65,11 @@ public class AV3DSpaceCatch extends JComponent
     public static int DivisoesAlvo = 4; // Default: 4.
     public int TipoAlvo = 0; // Default: 0.
     public static double FatorArestasNaoOrtogonaisAlvo = 0.3; // Default: 0.3.
-    public static double FatorCorrecaoAspecto = 0; // Default: 0.
-    public static double FatorMaxCorrecaoAspecto = 1; // Default: 1.
-    public static double FatorDeslocamentoShift = 1.5; // Default: 1.5.
+    public static double FatorCorrecaoAspectoTeta = 2; // Default: 2.
+    public static double FatorMaxCorrecaoAspectoTeta = 4; // Default: 4.
+    public static double FatorCorrecaoAspectoPhi = 2; // Default: 2.
+    public static double FatorMaxCorrecaoAspectoPhi = 4; // Default: 4.
+    public static double FatorDeslocamentoShift = 2; // Default: 2.
     public static double LimiteXalvo = 100; // Default: 100.
     public static double LimiteYalvo = 100; // Default: 100.
     public static double LimiteZalvo = 50; // Default: 50.
@@ -88,6 +91,8 @@ public class AV3DSpaceCatch extends JComponent
     public static int CorrecaoX = 10;
     public static int CorrecaoY = 0;
     public double AnguloVisao;
+    public int FlagTetaSuperior = 0;
+    public int FlagTetaInferior = 0;
     public int FlagPhiSuperior = 0;
     public int FlagPhiInferior = 0;
     public int Sair = 0;
@@ -235,9 +240,9 @@ public class AV3DSpaceCatch extends JComponent
 
                 if (keyCode == KeyEvent.VK_SPACE)
                     {
-                    x = 0;
-                    y = 0;
-                    z = 0;
+                    x = 50;
+                    y = 50;
+                    z = 50;
                     Teta = 0;
                     Phi = 0;
 
@@ -279,10 +284,10 @@ public class AV3DSpaceCatch extends JComponent
                     {if (Math.abs(Phi) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) {if (Math.abs(Phi) < PhiMax - DeslocamentoAngular) {Phi -= DeslocamentoAngular; while (Math.abs(Math.cos(Phi)) <= InfimoCossenoPhiIgnorar) Phi -= DeslocamentoAngular; FlagPhiInferior = 0;} else {Phi -= Math.signum(Phi) * DeslocamentoAngular; FlagPhiInferior = 1;}} else VariavelLimiteAtingido();}
 
                 if (keyCode == KeyEvent.VK_LEFT) if (FlagPausa == 0) 
-                    {if (Math.abs(Teta) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) {Teta += DeslocamentoAngular; while (Math.abs(Math.cos(Teta)) <= InfimoCossenoTetaIgnorar) Teta += DeslocamentoAngular;} else VariavelLimiteAtingido();}
+                    {if (Math.abs(Teta) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) {if (Math.abs(Teta) < TetaMax - DeslocamentoAngular) {Teta += DeslocamentoAngular; while (Math.abs(Math.cos(Teta)) <= InfimoCossenoTetaIgnorar) Teta += DeslocamentoAngular;} else {Teta -= Math.signum(Math.sin(Teta)) * DeslocamentoAngular;FlagTetaSuperior = 1;}} else VariavelLimiteAtingido();}
 
                 if (keyCode == KeyEvent.VK_RIGHT) if (FlagPausa == 0) 
-                    {if (Math.abs(Teta) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) {Teta -= DeslocamentoAngular; while (Math.abs(Math.cos(Teta)) <= InfimoCossenoTetaIgnorar) Teta -= DeslocamentoAngular;} else VariavelLimiteAtingido();}
+                    {if (Math.abs(Teta) - DeslocamentoAngular <= Double.MAX_VALUE - DeslocamentoAngular) {if (Math.abs(Teta) < TetaMax - DeslocamentoAngular) {Teta -= DeslocamentoAngular; while (Math.abs(Math.cos(Teta)) <= InfimoCossenoTetaIgnorar) Teta -= DeslocamentoAngular;} else {Teta -= Math.signum(Math.sin(Teta)) * DeslocamentoAngular; FlagTetaInferior = 1;}} else VariavelLimiteAtingido();}
                 }
 
             public void keyReleased(KeyEvent ke){}
@@ -521,20 +526,20 @@ public class AV3DSpaceCatch extends JComponent
 
             if ((Math.abs(Math.cos(Teta)) <= InfimoCossenoTeta) || (Math.abs(Math.cos(Phi)) <= InfimoCossenoPhi))
                 {
-                xo *= FatorDeslocamentoShift;
-                yo *= FatorDeslocamentoShift;
-                xd *= FatorDeslocamentoShift;
-                yd *= FatorDeslocamentoShift;
+                xo *= FatorDeslocamentoShift; xd *= FatorDeslocamentoShift;
+                yo *= FatorDeslocamentoShift; yd *= FatorDeslocamentoShift;
+                zo *= FatorDeslocamentoShift; zd *= FatorDeslocamentoShift;
                 }
+
             if ((xo != 0) && (xd != 0))
                 {
-                xi = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela  * Math.tan(Math.atan(yo / xo) + Teta) / Math.max(Math.pow(Math.abs(Math.cos(Teta)), FatorCorrecaoAspecto), 1 / FatorMaxCorrecaoAspecto)) - CorrecaoX;
+                xi = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela  * Math.tan(Math.atan(yo / xo) + Teta) / Math.max(Math.pow(Math.abs(Math.cos(Teta)), FatorCorrecaoAspectoTeta), 1 / FatorMaxCorrecaoAspectoTeta)) - CorrecaoX;
 
-                xf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela  * Math.tan(Math.atan(yd / xd) + Teta) / Math.max(Math.pow(Math.abs(Math.cos(Teta)), FatorCorrecaoAspecto), 1 / FatorMaxCorrecaoAspecto)) - CorrecaoX;
+                xf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela  * Math.tan(Math.atan(yd / xd) + Teta) / Math.max(Math.pow(Math.abs(Math.cos(Teta)), FatorCorrecaoAspectoTeta), 1 / FatorMaxCorrecaoAspectoTeta)) - CorrecaoX;
 
-                yi = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.tan(Math.asin(zo / Math.sqrt(xo * xo + zo * zo)) + Phi) / Math.max(Math.pow(Math.abs(Math.cos(Phi)), FatorCorrecaoAspecto), 1 / FatorMaxCorrecaoAspecto)) - CorrecaoY;
+                yi = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.tan(Math.asin(zo / Math.sqrt(xo * xo + zo * zo)) + Phi) / Math.max(Math.pow(Math.abs(Math.cos(Phi)), FatorCorrecaoAspectoPhi), 1 / FatorMaxCorrecaoAspectoPhi)) - CorrecaoY;
 
-                yf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.tan(Math.asin(zd / Math.sqrt(xd * xd + zd * zd)) + Phi) / Math.max(Math.pow(Math.abs(Math.cos(Phi)), FatorCorrecaoAspecto), 1 / FatorMaxCorrecaoAspecto)) - CorrecaoY;
+                yf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.tan(Math.asin(zd / Math.sqrt(xd * xd + zd * zd)) + Phi) / Math.max(Math.pow(Math.abs(Math.cos(Phi)), FatorCorrecaoAspectoPhi), 1 / FatorMaxCorrecaoAspectoPhi)) - CorrecaoY;
 
                 double ProdutoEscalaro = xo * Math.cos(Teta) * Math.cos(Phi) - yo * Math.sin(Teta) * Math.cos(Phi) - zo * Math.cos(Phi) * Math.sin(Phi);
 
