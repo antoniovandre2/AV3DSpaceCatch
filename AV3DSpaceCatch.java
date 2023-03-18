@@ -534,7 +534,7 @@ public class AV3DSpaceCatch extends JComponent
 
                 yi = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.tan(Math.asin(zo / Math.sqrt(xo * xo + zo * zo)) + Phi) / Math.max(Math.pow(Math.abs(Math.cos(Phi)), FatorCorrecaoAspecto), 1 / FatorMaxCorrecaoAspecto)) - CorrecaoY;
 
-                yf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.tan(Math.asin(zd / Math.sqrt(xo * xo + zo * zo)) + Phi) / Math.max(Math.pow(Math.abs(Math.cos(Phi)), FatorCorrecaoAspecto), 1 / FatorMaxCorrecaoAspecto)) - CorrecaoY;
+                yf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.tan(Math.asin(zd / Math.sqrt(xd * xd + zd * zd)) + Phi) / Math.max(Math.pow(Math.abs(Math.cos(Phi)), FatorCorrecaoAspecto), 1 / FatorMaxCorrecaoAspecto)) - CorrecaoY;
 
                 double ProdutoEscalaro = xo * Math.cos(Teta) * Math.cos(Phi) - yo * Math.sin(Teta) * Math.cos(Phi) - zo * Math.cos(Phi) * Math.sin(Phi);
 
