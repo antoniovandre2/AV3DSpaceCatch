@@ -11,7 +11,7 @@
  * 
  * Licença de uso: Atribuição-NãoComercial-CompartilhaIgual (CC BY-NC-SA).
  * 
- * Última atualização: 18-03-2023
+ * Última atualização: 19-03-2023.
  */
 
 import java.awt.*;
@@ -65,11 +65,11 @@ public class AV3DSpaceCatch extends JComponent
     public static int DivisoesAlvo = 4; // Default: 4.
     public int TipoAlvo = 0; // Default: 0.
     public static double FatorArestasNaoOrtogonaisAlvo = 0.3; // Default: 0.3.
-    public static double FatorCorrecaoAspectoTeta = 2; // Default: 2.
+    public static double FatorCorrecaoAspectoTeta = 3; // Default: 3.
     public static double FatorMaxCorrecaoAspectoTeta = 4; // Default: 4.
-    public static double FatorCorrecaoAspectoPhi = 2; // Default: 2.
+    public static double FatorCorrecaoAspectoPhi = 3; // Default: 3.
     public static double FatorMaxCorrecaoAspectoPhi = 4; // Default: 4.
-    public static double FatorDeslocamentoShift = 2; // Default: 2.
+    public static double FatorDeslocamentoShift = 1.5; // Default: 1.5.
     public static double LimiteXalvo = 100; // Default: 100.
     public static double LimiteYalvo = 100; // Default: 100.
     public static double LimiteZalvo = 50; // Default: 50.
@@ -541,17 +541,17 @@ public class AV3DSpaceCatch extends JComponent
 
                 yf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.tan(Math.asin(zd / Math.sqrt(xd * xd + zd * zd)) + Phi) / Math.max(Math.pow(Math.abs(Math.cos(Phi)), FatorCorrecaoAspectoPhi), 1 / FatorMaxCorrecaoAspectoPhi)) - CorrecaoY;
 
-                double ProdutoEscalaro = xo * Math.cos(Teta) * Math.cos(Phi) - yo * Math.sin(Teta) * Math.cos(Phi) - zo * Math.cos(Phi) * Math.sin(Phi);
+                double ProdutoEscalaro = xo * Math.cos(Teta) * Math.cos(Phi) - yo * Math.sin(Teta) * Math.cos(Phi) - zo * Math.sin(Phi);
 
-                double ProdutoEscalard = xd * Math.cos(Teta) * Math.cos(Phi) - yd * Math.sin(Teta) * Math.cos(Phi) - zd * Math.cos(Phi) * Math.sin(Phi);
+                double ProdutoEscalard = xd * Math.cos(Teta) * Math.cos(Phi) - yd * Math.sin(Teta) * Math.cos(Phi) - zd * Math.sin(Phi);
 
                 double ProdutoEscalarXo = xo * Math.cos(Teta) * Math.cos(Phi) - yo * Math.sin(Teta) * Math.cos(Phi);
 
                 double ProdutoEscalarXd = xd * Math.cos(Teta) * Math.cos(Phi) - yd * Math.sin(Teta) * Math.cos(Phi);
 
-                double ProdutoEscalarZo = xo * Math.cos(Teta) * Math.cos(Phi) - zo * Math.cos(Phi) * Math.sin(Phi);
+                double ProdutoEscalarZo = xo * Math.cos(Teta) * Math.cos(Phi) - zo * Math.sin(Phi);
 
-                double ProdutoEscalarZd = xd * Math.cos(Teta) * Math.cos(Phi) - zd * Math.cos(Phi) * Math.sin(Phi);
+                double ProdutoEscalarZd = xd * Math.cos(Teta) * Math.cos(Phi) - zd * Math.sin(Phi);
 
                 if ((Math.acos(ProdutoEscalarXo / Math.sqrt(xo  * xo + yo * yo)) <= 7 * Math.PI / 8) && (Math.acos(ProdutoEscalarXd / Math.sqrt(xd * xd + yd * yd)) <= 7 * Math.PI / 8))
                     {
@@ -607,7 +607,7 @@ public class AV3DSpaceCatch extends JComponent
                     comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoX, 40 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 20 - CorrecaoX, 50 - CorrecaoY, CorGuias);
                     }
 
-                if ((ProdutoEscalaro > 0) && (ProdutoEscalard > 0) && (Math.acos(ProdutoEscalaro / Math.sqrt(xo  * xo + yo * yo +  zo *  zo)) < AnguloVisao) && (Math.acos(ProdutoEscalard / Math.sqrt(xd  * xd + yd * yd +  zd *  zd)) < AnguloVisao) && (Math.min(xi, Math.min(yi, Math.min(xf, yf))) > 0) && (Math.max(xi, Math.max(yi, Math.max(xf, yf))) < Math.min(TamanhoPlanoX, TamanhoPlanoY)))
+                if ((Math.signum(xo) * Math.signum(Math.cos(Teta)) > 0) && (Math.signum(xd) * Math.signum(Math.cos(Teta)) > 0) && (Math.acos(ProdutoEscalaro / Math.sqrt(xo * xo + yo * yo +  zo * zo)) < AnguloVisao) && (Math.acos(ProdutoEscalard / Math.sqrt(xd * xd + yd * yd +  zd * zd)) < AnguloVisao) && (Math.min(xi, Math.min(yi, Math.min(xf, yf))) > 0) && (Math.max(xi, Math.max(yi, Math.max(xf, yf))) < Math.min(TamanhoPlanoX, TamanhoPlanoY)))
                     comp.addLine(xi, yi, xf, yf, CorAlvo);
                 }
             }
