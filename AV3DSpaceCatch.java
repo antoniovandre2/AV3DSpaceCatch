@@ -45,8 +45,8 @@ public class AV3DSpaceCatch extends JComponent
     public static int MinTamanhoPlanoY = 300; // Default: 300.
     public static double TetaMax = Double.MAX_VALUE; // Opção: Math.PI / 3.
     public static double PhiMax = Double.MAX_VALUE; // Opção: Math.PI / 3.
-    public static double InfimoCossenoTeta = 0.15; // Default: 0.15.
-    public static double InfimoCossenoPhi = 0.15; // Default: 0.15.
+    public static double InfimoCossenoTeta = 0.2; // Default: 0.2.
+    public static double InfimoCossenoPhi = 0.2; // Default: 0.2.
     public static double InfimoCossenoTetaIgnorar = 0; // Default: 0.
     public static double InfimoCossenoPhiIgnorar = 0; // Default: 0.
     public double Velocidade = 50; // Default inicial: 50.
@@ -69,7 +69,7 @@ public class AV3DSpaceCatch extends JComponent
     public static double FatorMaxCorrecaoAspectoTeta = 4; // Default: 4.
     public static double FatorCorrecaoAspectoPhi = 3; // Default: 3.
     public static double FatorMaxCorrecaoAspectoPhi = 4; // Default: 4.
-    public static double ParcelaDeslocamentoShift = 2; // Default: 2.
+    public static double FatorDeslocamentoShift = 1.5; // Default: 1.5.
     public static double LimiteXalvo = 100; // Default: 100.
     public static double LimiteYalvo = 100; // Default: 100.
     public static double LimiteZalvo = 50; // Default: 50.
@@ -526,9 +526,8 @@ public class AV3DSpaceCatch extends JComponent
 
             if ((Math.abs(Math.cos(Teta)) <= InfimoCossenoTeta) || (Math.abs(Math.cos(Phi)) <= InfimoCossenoPhi))
                 {
-                xo += ParcelaDeslocamentoShift; xd += ParcelaDeslocamentoShift;
-                yo += ParcelaDeslocamentoShift; yd += ParcelaDeslocamentoShift;
-                zo += ParcelaDeslocamentoShift; zd += ParcelaDeslocamentoShift;
+                xo *= FatorDeslocamentoShift; xd *= FatorDeslocamentoShift;
+                yo *= FatorDeslocamentoShift; yd *= FatorDeslocamentoShift;
                 }
 
             if ((xo != 0) && (xd != 0))
