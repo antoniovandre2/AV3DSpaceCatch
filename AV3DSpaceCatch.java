@@ -69,7 +69,7 @@ public class AV3DSpaceCatch extends JComponent
     public static double FatorMaxCorrecaoAspectoTeta = 4; // Default: 4.
     public static double FatorCorrecaoAspectoPhi = 3; // Default: 3.
     public static double FatorMaxCorrecaoAspectoPhi = 4; // Default: 4.
-    public static double FatorDeslocamentoShift = 1.5; // Default: 1.5.
+    public static double ParcelaDeslocamentoShift = 2; // Default: 2.
     public static double LimiteXalvo = 100; // Default: 100.
     public static double LimiteYalvo = 100; // Default: 100.
     public static double LimiteZalvo = 50; // Default: 50.
@@ -526,9 +526,9 @@ public class AV3DSpaceCatch extends JComponent
 
             if ((Math.abs(Math.cos(Teta)) <= InfimoCossenoTeta) || (Math.abs(Math.cos(Phi)) <= InfimoCossenoPhi))
                 {
-                xo *= FatorDeslocamentoShift; xd *= FatorDeslocamentoShift;
-                yo *= FatorDeslocamentoShift; yd *= FatorDeslocamentoShift;
-                zo *= FatorDeslocamentoShift; zd *= FatorDeslocamentoShift;
+                xo += ParcelaDeslocamentoShift; xd += ParcelaDeslocamentoShift;
+                yo += ParcelaDeslocamentoShift; yd += ParcelaDeslocamentoShift;
+                zo += ParcelaDeslocamentoShift; zd += ParcelaDeslocamentoShift;
                 }
 
             if ((xo != 0) && (xd != 0))
