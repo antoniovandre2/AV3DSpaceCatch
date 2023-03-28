@@ -11,7 +11,7 @@
  * 
  * Licença de uso: Atribuição-NãoComercial-CompartilhaIgual (CC BY-NC-SA).
  * 
- * Última atualização: 24-03-2023.
+ * Última atualização: 28-03-2023.
  */
 
 import java.awt.*;
@@ -65,9 +65,9 @@ public class AV3DSpaceCatch extends JComponent
     public static int DivisoesAlvo = 4; // Default: 4.
     public int TipoAlvo = 0; // Default: 0.
     public static double FatorArestasNaoOrtogonaisAlvo = 0.3; // Default: 0.3.
-    public static double FatorCorrecaoAspectoTeta = 3; // Default: 3.
+    public static double FatorCorrecaoAspectoTeta = 0; // Default: 0.
     public static double FatorMaxCorrecaoAspectoTeta = 4; // Default: 4.
-    public static double FatorCorrecaoAspectoPhi = 3; // Default: 3.
+    public static double FatorCorrecaoAspectoPhi = 0; // Default: 0.
     public static double FatorMaxCorrecaoAspectoPhi = 4; // Default: 4.
     public static double FatorDeslocamentoShift = 1.5; // Default: 1.5.
     public static double LimiteXalvo = 100; // Default: 100.
@@ -525,91 +525,111 @@ public class AV3DSpaceCatch extends JComponent
             int xf;
             int yf;
 
-            if ((Math.abs(Math.cos(Teta)) <= InfimoCossenoTeta) || (Math.abs(Math.cos(Phi)) <= InfimoCossenoPhi))
+            if ((Math.abs(xo) > Math.abs(yo)) && (Math.abs(xd) > Math.abs(yd)))
                 {
-                xo *= FatorDeslocamentoShift; xd *= FatorDeslocamentoShift;
-                yo *= FatorDeslocamentoShift; yd *= FatorDeslocamentoShift;
+                double AnguloXi = Math.atan(yo / xo) + Teta;
+                double AnguloXf = Math.atan(yd / xd) + Teta;
+                double AnguloYi = Math.asin(zo / Math.sqrt(xo * xo + zo * zo)) + Phi;
+                double AnguloYf = Math.asin(zd / Math.sqrt(xd * xd + zd * zd)) + Phi;
+
+                if ((Math.abs(Math.cos((AnguloXi + AnguloXf) / 2)) <= InfimoCossenoTeta) || (Math.abs(Math.cos((AnguloYi + AnguloYf) / 2)) <= InfimoCossenoPhi))
+                    {xo *= FatorDeslocamentoShift; xd *= FatorDeslocamentoShift;}
+
+                xi = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela  * Math.tan(AnguloXi) / Math.max(Math.pow(Math.abs(Math.cos(AnguloXi)), FatorCorrecaoAspectoTeta), 1 / FatorMaxCorrecaoAspectoTeta)) - CorrecaoX;
+
+                xf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela  * Math.tan(AnguloXf) / Math.max(Math.pow(Math.abs(Math.cos(AnguloXf)), FatorCorrecaoAspectoTeta), 1 / FatorMaxCorrecaoAspectoTeta)) - CorrecaoX;
+
+                yi = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.tan(AnguloYi) / Math.max(Math.pow(Math.abs(Math.cos(AnguloYi)), FatorCorrecaoAspectoPhi), 1 / FatorMaxCorrecaoAspectoPhi)) - CorrecaoY;
+
+                yf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.tan(AnguloYf) / Math.max(Math.pow(Math.abs(Math.cos(AnguloYf)), FatorCorrecaoAspectoPhi), 1 / FatorMaxCorrecaoAspectoPhi)) - CorrecaoY;
+                }
+            else
+                {
+                double AnguloXi = Math.PI / 2 - Math.atan(xo / yo) + Teta;
+                double AnguloXf = Math.PI / 2 - Math.atan(xd / yd) + Teta;
+                double AnguloYi = Math.asin(zo / Math.sqrt(yo * yo + zo * zo)) + Phi;
+                double AnguloYf = Math.asin(zd / Math.sqrt(yd * yd + zd * zd)) + Phi;
+
+                if ((Math.abs(Math.cos((AnguloXi + AnguloXf) / 2)) <= InfimoCossenoTeta) || (Math.abs(Math.cos((AnguloYi + AnguloYf) / 2)) <= InfimoCossenoPhi))
+                    {xo *= FatorDeslocamentoShift; xd *= FatorDeslocamentoShift;}
+
+                xi = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela  * Math.tan(AnguloXi) / Math.max(Math.pow(Math.abs(Math.cos(AnguloXi)), FatorCorrecaoAspectoTeta), 1 / FatorMaxCorrecaoAspectoTeta)) - CorrecaoX;
+
+                xf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela  * Math.tan(AnguloXf) / Math.max(Math.pow(Math.abs(Math.cos(AnguloXf)), FatorCorrecaoAspectoTeta), 1 / FatorMaxCorrecaoAspectoTeta)) - CorrecaoX;
+
+                yi = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.tan(AnguloYi) / Math.max(Math.pow(Math.abs(Math.cos(AnguloYi)), FatorCorrecaoAspectoPhi), 1 / FatorMaxCorrecaoAspectoPhi)) - CorrecaoY;
+
+                yf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.tan(AnguloYf) / Math.max(Math.pow(Math.abs(Math.cos(AnguloYf)), FatorCorrecaoAspectoPhi), 1 / FatorMaxCorrecaoAspectoPhi)) - CorrecaoY;
                 }
 
-            if ((xo != 0) && (xd != 0))
+            double ProdutoEscalaro = xo * Math.cos(Teta) * Math.cos(Phi) - yo * Math.sin(Teta) * Math.cos(Phi) - zo * Math.sin(Phi);
+
+            double ProdutoEscalard = xd * Math.cos(Teta) * Math.cos(Phi) - yd * Math.sin(Teta) * Math.cos(Phi) - zd * Math.sin(Phi);
+
+            double ProdutoEscalarXo = xo * Math.cos(Teta) * Math.cos(Phi) - yo * Math.sin(Teta) * Math.cos(Phi);
+
+            double ProdutoEscalarXd = xd * Math.cos(Teta) * Math.cos(Phi) - yd * Math.sin(Teta) * Math.cos(Phi);
+
+            double ProdutoEscalarZo = xo * Math.cos(Teta) * Math.cos(Phi) - zo * Math.sin(Phi);
+
+            double ProdutoEscalarZd = xd * Math.cos(Teta) * Math.cos(Phi) - zd * Math.sin(Phi);
+
+            if ((Math.acos(ProdutoEscalarXo / Math.sqrt(xo  * xo + yo * yo)) <= AnguloDirecaoIr) && (Math.acos(ProdutoEscalarXd / Math.sqrt(xd * xd + yd * yd)) <= AnguloDirecaoIr))
                 {
-                xi = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela  * Math.tan(Math.atan(yo / xo) + Teta) / Math.max(Math.pow(Math.abs(Math.cos(Teta)), FatorCorrecaoAspectoTeta), 1 / FatorMaxCorrecaoAspectoTeta)) - CorrecaoX;
-
-                xf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela  * Math.tan(Math.atan(yd / xd) + Teta) / Math.max(Math.pow(Math.abs(Math.cos(Teta)), FatorCorrecaoAspectoTeta), 1 / FatorMaxCorrecaoAspectoTeta)) - CorrecaoX;
-
-                yi = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.tan(Math.asin(zo / Math.sqrt(xo * xo + zo * zo)) + Phi) / Math.max(Math.pow(Math.abs(Math.cos(Phi)), FatorCorrecaoAspectoPhi), 1 / FatorMaxCorrecaoAspectoPhi)) - CorrecaoY;
-
-                yf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.tan(Math.asin(zd / Math.sqrt(xd * xd + zd * zd)) + Phi) / Math.max(Math.pow(Math.abs(Math.cos(Phi)), FatorCorrecaoAspectoPhi), 1 / FatorMaxCorrecaoAspectoPhi)) - CorrecaoY;
-
-                double ProdutoEscalaro = xo * Math.cos(Teta) * Math.cos(Phi) - yo * Math.sin(Teta) * Math.cos(Phi) - zo * Math.sin(Phi);
-
-                double ProdutoEscalard = xd * Math.cos(Teta) * Math.cos(Phi) - yd * Math.sin(Teta) * Math.cos(Phi) - zd * Math.sin(Phi);
-
-                double ProdutoEscalarXo = xo * Math.cos(Teta) * Math.cos(Phi) - yo * Math.sin(Teta) * Math.cos(Phi);
-
-                double ProdutoEscalarXd = xd * Math.cos(Teta) * Math.cos(Phi) - yd * Math.sin(Teta) * Math.cos(Phi);
-
-                double ProdutoEscalarZo = xo * Math.cos(Teta) * Math.cos(Phi) - zo * Math.sin(Phi);
-
-                double ProdutoEscalarZd = xd * Math.cos(Teta) * Math.cos(Phi) - zd * Math.sin(Phi);
-
-                if ((Math.acos(ProdutoEscalarXo / Math.sqrt(xo  * xo + yo * yo)) <= AnguloDirecaoIr) && (Math.acos(ProdutoEscalarXd / Math.sqrt(xd * xd + yd * yd)) <= AnguloDirecaoIr))
-                    {
-                    if (Math.min(xi - CorrecaoX, xf - CorrecaoX) < 0)
-                        {
-                        comp.addLineG(50 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - 20 - CorrecaoY, 40 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoY, CorGuias);
-
-                        comp.addLineG(50 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 20 - CorrecaoY, 40 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoY, CorGuias);
-                        }
-        
-                    if (Math.max(xi - CorrecaoX, xf - CorrecaoX) > Math.min(TamanhoPlanoX, TamanhoPlanoY))
-                        {
-                        comp.addLineG(Math.min(TamanhoPlanoX, TamanhoPlanoY) - 50 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - 20 - CorrecaoY, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 40  - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoY, CorGuias);
-
-                        comp.addLineG(Math.min(TamanhoPlanoX, TamanhoPlanoY) - 50 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 20 - CorrecaoY, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 40  - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoY, CorGuias);
-                        }
-                    }
-                else if ((Math.acos(ProdutoEscalarXo / Math.sqrt(xo  * xo + yo * yo)) > AnguloDirecaoIr) || (Math.acos(ProdutoEscalarXd / Math.sqrt(xd  * xd + yd * yd)) > AnguloDirecaoIr))
+                if (Math.min(xi - CorrecaoX, xf - CorrecaoX) < 0)
                     {
                     comp.addLineG(50 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - 20 - CorrecaoY, 40 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoY, CorGuias);
 
                     comp.addLineG(50 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 20 - CorrecaoY, 40 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoY, CorGuias);
-
+                    }
+    
+                if (Math.max(xi - CorrecaoX, xf - CorrecaoX) > Math.min(TamanhoPlanoX, TamanhoPlanoY))
+                    {
                     comp.addLineG(Math.min(TamanhoPlanoX, TamanhoPlanoY) - 50 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - 20 - CorrecaoY, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 40  - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoY, CorGuias);
 
                     comp.addLineG(Math.min(TamanhoPlanoX, TamanhoPlanoY) - 50 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 20 - CorrecaoY, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 40  - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoY, CorGuias);
                     }
+                }
+            else if ((Math.acos(ProdutoEscalarXo / Math.sqrt(xo  * xo + yo * yo)) > AnguloDirecaoIr) || (Math.acos(ProdutoEscalarXd / Math.sqrt(xd  * xd + yd * yd)) > AnguloDirecaoIr))
+                {
+                comp.addLineG(50 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - 20 - CorrecaoY, 40 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoY, CorGuias);
 
-                if ((Math.acos(ProdutoEscalarZo / Math.sqrt(xo  * xo + zo * zo)) <= AnguloDirecaoIr) && (Math.acos(ProdutoEscalarZd / Math.sqrt(xd  * xd +  zd *  zd)) <= AnguloDirecaoIr))
-                    {
-                    if (Math.max(yi - CorrecaoY, yf - CorrecaoY) > Math.min(TamanhoPlanoX, TamanhoPlanoY))
-                        {
-                        comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - 20 - CorrecaoX, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 50 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoX, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 40 - CorrecaoY, CorGuias);
+                comp.addLineG(50 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 20 - CorrecaoY, 40 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoY, CorGuias);
 
-                        comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoX, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 40 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 20 - CorrecaoX, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 50 - CorrecaoY, CorGuias);
-                        }
-        
-                    if (Math.min(yi - CorrecaoY, yf - CorrecaoY) < 0)
-                        {
-                        comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - 20 - CorrecaoX, 50 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoX, 40 - CorrecaoY, CorGuias);
+                comp.addLineG(Math.min(TamanhoPlanoX, TamanhoPlanoY) - 50 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - 20 - CorrecaoY, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 40  - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoY, CorGuias);
 
-                        comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoX, 40 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 20 - CorrecaoX, 50 - CorrecaoY, CorGuias);
-                        }
-                    }
-                else if ((Math.acos(ProdutoEscalarZo / Math.sqrt(xo  * xo + zo * zo)) > AnguloDirecaoIr) || (Math.acos(ProdutoEscalarZd / Math.sqrt(xd  * xd +  zd *  zd)) > AnguloDirecaoIr))
+                comp.addLineG(Math.min(TamanhoPlanoX, TamanhoPlanoY) - 50 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 20 - CorrecaoY, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 40  - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoY, CorGuias);
+                }
+
+            if ((Math.acos(ProdutoEscalarZo / Math.sqrt(xo  * xo + zo * zo)) <= AnguloDirecaoIr) && (Math.acos(ProdutoEscalarZd / Math.sqrt(xd  * xd +  zd *  zd)) <= AnguloDirecaoIr))
+                {
+                if (Math.max(yi - CorrecaoY, yf - CorrecaoY) > Math.min(TamanhoPlanoX, TamanhoPlanoY))
                     {
                     comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - 20 - CorrecaoX, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 50 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoX, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 40 - CorrecaoY, CorGuias);
 
                     comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoX, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 40 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 20 - CorrecaoX, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 50 - CorrecaoY, CorGuias);
-
+                    }
+    
+                if (Math.min(yi - CorrecaoY, yf - CorrecaoY) < 0)
+                    {
                     comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - 20 - CorrecaoX, 50 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoX, 40 - CorrecaoY, CorGuias);
 
                     comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoX, 40 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 20 - CorrecaoX, 50 - CorrecaoY, CorGuias);
                     }
-
-                if ((Math.signum(xo) * Math.signum(Math.cos(Teta)) > 0) && (Math.signum(xd) * Math.signum(Math.cos(Teta)) > 0) && (Math.acos(ProdutoEscalaro / Math.sqrt(xo * xo + yo * yo +  zo * zo)) < AnguloVisao) && (Math.acos(ProdutoEscalard / Math.sqrt(xd * xd + yd * yd +  zd * zd)) < AnguloVisao) && (Math.min(xi, Math.min(yi, Math.min(xf, yf))) > 0) && (Math.max(xi, Math.max(yi, Math.max(xf, yf))) < Math.min(TamanhoPlanoX, TamanhoPlanoY)))
-                    comp.addLine(xi, yi, xf, yf, CorAlvo);
                 }
+            else if ((Math.acos(ProdutoEscalarZo / Math.sqrt(xo  * xo + zo * zo)) > AnguloDirecaoIr) || (Math.acos(ProdutoEscalarZd / Math.sqrt(xd  * xd +  zd *  zd)) > AnguloDirecaoIr))
+                {
+                comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - 20 - CorrecaoX, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 50 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoX, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 40 - CorrecaoY, CorGuias);
+
+                comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoX, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 40 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 20 - CorrecaoX, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 50 - CorrecaoY, CorGuias);
+
+                comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - 20 - CorrecaoX, 50 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoX, 40 - CorrecaoY, CorGuias);
+
+                comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoX, 40 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 20 - CorrecaoX, 50 - CorrecaoY, CorGuias);
+                }
+
+            if ((Math.acos(ProdutoEscalaro / Math.sqrt(xo * xo + yo * yo +  zo * zo)) < AnguloVisao) && (Math.acos(ProdutoEscalard / Math.sqrt(xd * xd + yd * yd +  zd * zd)) < AnguloVisao) && (Math.min(xi, Math.min(yi, Math.min(xf, yf))) > 0) && (Math.max(xi, Math.max(yi, Math.max(xf, yf))) < Math.min(TamanhoPlanoX, TamanhoPlanoY)))
+                comp.addLine(xi, yi, xf, yf, CorAlvo);
             }
         }
 
