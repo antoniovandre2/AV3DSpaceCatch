@@ -11,7 +11,7 @@
  * 
  * Licença de uso: Atribuição-NãoComercial-CompartilhaIgual (CC BY-NC-SA).
  * 
- * Última atualização: 28-03-2023.
+ * Última atualização: 01-04-2023.
  */
 
 import java.awt.*;
@@ -49,6 +49,7 @@ public class AV3DSpaceCatch extends JComponent
     public static double InfimoCossenoPhi = 0; // Opção: 0.2.
     public static double InfimoCossenoTetaIgnorar = 0; // Default: 0.
     public static double InfimoCossenoPhiIgnorar = 0; // Default: 0.
+    public static double MargemAnguloVisao = -Math.PI / 48; // Opção: 0.
     public double Velocidade = 50; // Default inicial: 50.
     public static double LimiteSuperiorVelocidade = 100; // Default: 100.
     public static double LimiteInferiorVelocidade = 10; // Default: 10.
@@ -574,7 +575,7 @@ public class AV3DSpaceCatch extends JComponent
 
             double ProdutoEscalarZd = xd * Math.cos(Teta) * Math.cos(Phi) - zd * Math.sin(Phi);
 
-            if ((Math.acos(ProdutoEscalarXo / Math.sqrt(xo  * xo + yo * yo)) <= AnguloDirecaoIr) && (Math.acos(ProdutoEscalarXd / Math.sqrt(xd * xd + yd * yd)) <= AnguloDirecaoIr))
+            if ((Math.acos(ProdutoEscalarXo / Math.sqrt(xo * xo + yo * yo)) <= AnguloDirecaoIr) && (Math.acos(ProdutoEscalarXd / Math.sqrt(xd * xd + yd * yd)) <= AnguloDirecaoIr))
                 {
                 if (Math.min(xi - CorrecaoX, xf - CorrecaoX) < 0)
                     {
@@ -590,7 +591,7 @@ public class AV3DSpaceCatch extends JComponent
                     comp.addLineG(Math.min(TamanhoPlanoX, TamanhoPlanoY) - 50 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 20 - CorrecaoY, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 40  - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoY, CorGuias);
                     }
                 }
-            else if ((Math.acos(ProdutoEscalarXo / Math.sqrt(xo  * xo + yo * yo)) > AnguloDirecaoIr) || (Math.acos(ProdutoEscalarXd / Math.sqrt(xd  * xd + yd * yd)) > AnguloDirecaoIr))
+            else if ((Math.acos(ProdutoEscalarXo / Math.sqrt(xo * xo + yo * yo)) > AnguloDirecaoIr) || (Math.acos(ProdutoEscalarXd / Math.sqrt(xd * xd + yd * yd)) > AnguloDirecaoIr))
                 {
                 comp.addLineG(50 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - 20 - CorrecaoY, 40 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoY, CorGuias);
 
@@ -601,7 +602,7 @@ public class AV3DSpaceCatch extends JComponent
                 comp.addLineG(Math.min(TamanhoPlanoX, TamanhoPlanoY) - 50 - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 20 - CorrecaoY, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 40  - CorrecaoX, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoY, CorGuias);
                 }
 
-            if ((Math.acos(ProdutoEscalarZo / Math.sqrt(xo  * xo + zo * zo)) <= AnguloDirecaoIr) && (Math.acos(ProdutoEscalarZd / Math.sqrt(xd  * xd +  zd *  zd)) <= AnguloDirecaoIr))
+            if ((Math.acos(ProdutoEscalarZo / Math.sqrt(xo * xo + zo * zo)) <= AnguloDirecaoIr) && (Math.acos(ProdutoEscalarZd / Math.sqrt(xd * xd + zd *  zd)) <= AnguloDirecaoIr))
                 {
                 if (Math.max(yi - CorrecaoY, yf - CorrecaoY) > Math.min(TamanhoPlanoX, TamanhoPlanoY))
                     {
@@ -617,7 +618,7 @@ public class AV3DSpaceCatch extends JComponent
                     comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoX, 40 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 20 - CorrecaoX, 50 - CorrecaoY, CorGuias);
                     }
                 }
-            else if ((Math.acos(ProdutoEscalarZo / Math.sqrt(xo  * xo + zo * zo)) > AnguloDirecaoIr) || (Math.acos(ProdutoEscalarZd / Math.sqrt(xd  * xd +  zd *  zd)) > AnguloDirecaoIr))
+            else if ((Math.acos(ProdutoEscalarZo / Math.sqrt(xo * xo + zo * zo)) > AnguloDirecaoIr) || (Math.acos(ProdutoEscalarZd / Math.sqrt(xd * xd + zd *  zd)) > AnguloDirecaoIr))
                 {
                 comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - 20 - CorrecaoX, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 50 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoX, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 40 - CorrecaoY, CorGuias);
 
@@ -628,7 +629,7 @@ public class AV3DSpaceCatch extends JComponent
                 comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoX, 40 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 20 - CorrecaoX, 50 - CorrecaoY, CorGuias);
                 }
 
-            if ((Math.acos(ProdutoEscalaro / Math.sqrt(xo * xo + yo * yo +  zo * zo)) < AnguloVisao) && (Math.acos(ProdutoEscalard / Math.sqrt(xd * xd + yd * yd +  zd * zd)) < AnguloVisao) && (Math.min(xi, Math.min(yi, Math.min(xf, yf))) > 0) && (Math.max(xi, Math.max(yi, Math.max(xf, yf))) < Math.min(TamanhoPlanoX, TamanhoPlanoY)))
+            if ((Math.acos(ProdutoEscalaro / Math.sqrt(xo * xo + yo * yo + zo * zo)) < AnguloVisao + MargemAnguloVisao) && (Math.acos(ProdutoEscalard / Math.sqrt(xd * xd + yd * yd + zd * zd)) < AnguloVisao + MargemAnguloVisao) && (Math.min(xi, Math.min(yi, Math.min(xf, yf))) > 0) && (Math.max(xi, Math.max(yi, Math.max(xf, yf))) < Math.min(TamanhoPlanoX, TamanhoPlanoY)))
                 comp.addLine(xi, yi, xf, yf, CorAlvo);
             }
         }
