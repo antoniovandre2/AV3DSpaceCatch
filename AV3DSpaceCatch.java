@@ -49,7 +49,7 @@ public class AV3DSpaceCatch extends JComponent
     public static double InfimoCossenoPhi = 0; // Opção: 0.2.
     public static double InfimoCossenoTetaIgnorar = 0; // Default: 0.
     public static double InfimoCossenoPhiIgnorar = 0; // Default: 0.
-    public static double MargemAnguloVisao = -Math.PI / 48; // Opção: 0.
+    public static double MargemAnguloVisao = - Math.PI / 20; // Opção: 0.
     public double Velocidade = 50; // Default inicial: 50.
     public static double LimiteSuperiorVelocidade = 100; // Default: 100.
     public static double LimiteInferiorVelocidade = 10; // Default: 10.
@@ -526,6 +526,13 @@ public class AV3DSpaceCatch extends JComponent
             int xf;
             int yf;
 
+            double ProdutoEscalaro;
+            double ProdutoEscalard;
+            double ProdutoEscalarXo;
+            double ProdutoEscalarXd;
+            double ProdutoEscalarZo;
+            double ProdutoEscalarZd;
+
             if ((Math.abs(xo) > Math.abs(yo)) && (Math.abs(xd) > Math.abs(yd)))
                 {
                 double AnguloXi = Math.atan(yo / xo) + Teta;
@@ -533,6 +540,18 @@ public class AV3DSpaceCatch extends JComponent
                 double AnguloYi = Math.asin(zo / Math.sqrt(xo * xo + zo * zo)) + Phi;
                 double AnguloYf = Math.asin(zd / Math.sqrt(xd * xd + zd * zd)) + Phi;
 
+                ProdutoEscalaro = xo * Math.cos(Teta) * Math.cos(Phi) - yo * Math.sin(Teta) * Math.cos(Phi) - zo * Math.sin(Phi);
+
+                ProdutoEscalard = xd * Math.cos(Teta) * Math.cos(Phi) - yd * Math.sin(Teta) * Math.cos(Phi) - zd * Math.sin(Phi);
+    
+                ProdutoEscalarXo = xo * Math.cos(Teta) * Math.cos(Phi) - yo * Math.sin(Teta) * Math.cos(Phi);
+    
+                ProdutoEscalarXd = xd * Math.cos(Teta) * Math.cos(Phi) - yd * Math.sin(Teta) * Math.cos(Phi);
+    
+                ProdutoEscalarZo = xo * Math.cos(Teta) * Math.cos(Phi) - zo * Math.sin(Phi);
+    
+                ProdutoEscalarZd = xd * Math.cos(Teta) * Math.cos(Phi) - zd * Math.sin(Phi);
+    
                 if ((Math.abs(Math.cos((AnguloXi + AnguloXf) / 2)) <= InfimoCossenoTeta) || (Math.abs(Math.cos((AnguloYi + AnguloYf) / 2)) <= InfimoCossenoPhi))
                     {xo *= FatorDeslocamentoShift; xd *= FatorDeslocamentoShift;}
 
@@ -551,6 +570,18 @@ public class AV3DSpaceCatch extends JComponent
                 double AnguloYi = Math.asin(zo / Math.sqrt(yo * yo + zo * zo)) + Phi;
                 double AnguloYf = Math.asin(zd / Math.sqrt(yd * yd + zd * zd)) + Phi;
 
+                ProdutoEscalaro = xo * Math.cos(Teta) * Math.cos(Phi) - yo * Math.sin(Teta) * Math.cos(Phi) - zo * Math.sin(Phi);
+
+                ProdutoEscalard = xd * Math.cos(Teta) * Math.cos(Phi) - yd * Math.sin(Teta) * Math.cos(Phi) - zd * Math.sin(Phi);
+    
+                ProdutoEscalarXo = xo * Math.cos(Teta) * Math.cos(Phi) - yo * Math.sin(Teta) * Math.cos(Phi);
+    
+                ProdutoEscalarXd = xd * Math.cos(Teta) * Math.cos(Phi) - yd * Math.sin(Teta) * Math.cos(Phi);
+    
+                ProdutoEscalarZo = xo * Math.cos(Teta) * Math.cos(Phi) - zo * Math.sin(Phi);
+    
+                ProdutoEscalarZd = xd * Math.cos(Teta) * Math.cos(Phi) - zd * Math.sin(Phi);
+    
                 if ((Math.abs(Math.cos((AnguloXi + AnguloXf) / 2)) <= InfimoCossenoTeta) || (Math.abs(Math.cos((AnguloYi + AnguloYf) / 2)) <= InfimoCossenoPhi))
                     {xo *= FatorDeslocamentoShift; xd *= FatorDeslocamentoShift;}
 
@@ -562,18 +593,6 @@ public class AV3DSpaceCatch extends JComponent
 
                 yf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.tan(AnguloYf) / Math.max(Math.pow(Math.abs(Math.cos(AnguloYf)), FatorCorrecaoAspectoPhi), 1 / FatorMaxCorrecaoAspectoPhi)) - CorrecaoY;
                 }
-
-            double ProdutoEscalaro = xo * Math.cos(Teta) * Math.cos(Phi) - yo * Math.sin(Teta) * Math.cos(Phi) - zo * Math.sin(Phi);
-
-            double ProdutoEscalard = xd * Math.cos(Teta) * Math.cos(Phi) - yd * Math.sin(Teta) * Math.cos(Phi) - zd * Math.sin(Phi);
-
-            double ProdutoEscalarXo = xo * Math.cos(Teta) * Math.cos(Phi) - yo * Math.sin(Teta) * Math.cos(Phi);
-
-            double ProdutoEscalarXd = xd * Math.cos(Teta) * Math.cos(Phi) - yd * Math.sin(Teta) * Math.cos(Phi);
-
-            double ProdutoEscalarZo = xo * Math.cos(Teta) * Math.cos(Phi) - zo * Math.sin(Phi);
-
-            double ProdutoEscalarZd = xd * Math.cos(Teta) * Math.cos(Phi) - zd * Math.sin(Phi);
 
             if ((Math.acos(ProdutoEscalarXo / Math.sqrt(xo * xo + yo * yo)) <= AnguloDirecaoIr) && (Math.acos(ProdutoEscalarXd / Math.sqrt(xd * xd + yd * yd)) <= AnguloDirecaoIr))
                 {
