@@ -11,7 +11,7 @@
  * 
  * Licença de uso: Atribuição-NãoComercial-CompartilhaIgual (CC BY-NC-SA).
  * 
- * Última atualização: 01-04-2023.
+ * Última atualização: 02-04-2023.
  */
 
 import java.awt.*;
@@ -526,12 +526,17 @@ public class AV3DSpaceCatch extends JComponent
             int xf;
             int yf;
 
-            double ProdutoEscalaro;
-            double ProdutoEscalard;
-            double ProdutoEscalarXo;
-            double ProdutoEscalarXd;
-            double ProdutoEscalarZo;
-            double ProdutoEscalarZd;
+            double ProdutoEscalaro = xo * Math.cos(Teta) * Math.cos(Phi) - yo * Math.sin(Teta) * Math.cos(Phi) - zo * Math.signum(Math.cos(Phi)) * Math.sin(Phi);
+
+            double ProdutoEscalard = xd * Math.cos(Teta) * Math.cos(Phi) - yd * Math.sin(Teta) * Math.cos(Phi) - zd * Math.signum(Math.cos(Phi)) * Math.sin(Phi);
+
+            double ProdutoEscalarXo = xo * Math.cos(Teta) * Math.cos(Phi) - yo * Math.sin(Teta) * Math.cos(Phi);
+
+            double ProdutoEscalarXd = xd * Math.cos(Teta) * Math.cos(Phi) - yd * Math.sin(Teta) * Math.cos(Phi);
+
+            double ProdutoEscalarZo = xo * Math.cos(Teta) * Math.cos(Phi) - zo * Math.signum(Math.cos(Phi)) * Math.sin(Phi);
+
+            double ProdutoEscalarZd = xd * Math.cos(Teta) * Math.cos(Phi) - zd * Math.signum(Math.cos(Phi)) * Math.sin(Phi);
 
             if ((Math.abs(xo) > Math.abs(yo)) && (Math.abs(xd) > Math.abs(yd)))
                 {
@@ -539,18 +544,6 @@ public class AV3DSpaceCatch extends JComponent
                 double AnguloXf = Math.atan(yd / xd) + Teta;
                 double AnguloYi = Math.asin(zo / Math.sqrt(xo * xo + zo * zo)) + Phi;
                 double AnguloYf = Math.asin(zd / Math.sqrt(xd * xd + zd * zd)) + Phi;
-
-                ProdutoEscalaro = xo * Math.cos(Teta) * Math.cos(Phi) - yo * Math.sin(Teta) * Math.cos(Phi) - zo * Math.signum(Math.cos(Phi)) * Math.sin(Phi);
-
-                ProdutoEscalard = xd * Math.cos(Teta) * Math.cos(Phi) - yd * Math.sin(Teta) * Math.cos(Phi) - zd * Math.signum(Math.cos(Phi)) * Math.sin(Phi);
-    
-                ProdutoEscalarXo = xo * Math.cos(Teta) * Math.cos(Phi) - yo * Math.sin(Teta) * Math.cos(Phi);
-    
-                ProdutoEscalarXd = xd * Math.cos(Teta) * Math.cos(Phi) - yd * Math.sin(Teta) * Math.cos(Phi);
-    
-                ProdutoEscalarZo = xo * Math.cos(Teta) * Math.cos(Phi) - zo * Math.signum(Math.cos(Phi)) * Math.sin(Phi);
-    
-                ProdutoEscalarZd = xd * Math.cos(Teta) * Math.cos(Phi) - zd * Math.signum(Math.cos(Phi)) * Math.sin(Phi);
     
                 if ((Math.abs(Math.cos((AnguloXi + AnguloXf) / 2)) <= InfimoCossenoTeta) || (Math.abs(Math.cos((AnguloYi + AnguloYf) / 2)) <= InfimoCossenoPhi))
                     {xo *= FatorDeslocamentoShift; xd *= FatorDeslocamentoShift;}
@@ -569,18 +562,6 @@ public class AV3DSpaceCatch extends JComponent
                 double AnguloXf = Math.PI / 2 - Math.atan(xd / yd) + Teta;
                 double AnguloYi = Math.asin(zo / Math.sqrt(yo * yo + zo * zo)) + Phi;
                 double AnguloYf = Math.asin(zd / Math.sqrt(yd * yd + zd * zd)) + Phi;
-
-                ProdutoEscalaro = xo * Math.cos(Teta) * Math.cos(Phi) - yo * Math.sin(Teta) * Math.cos(Phi) - zo * Math.signum(Math.cos(Phi)) * Math.sin(Phi);
-
-                ProdutoEscalard = xd * Math.cos(Teta) * Math.cos(Phi) - yd * Math.sin(Teta) * Math.cos(Phi) - zd * Math.signum(Math.cos(Phi)) * Math.sin(Phi);
-    
-                ProdutoEscalarXo = xo * Math.cos(Teta) * Math.cos(Phi) - yo * Math.sin(Teta) * Math.cos(Phi);
-    
-                ProdutoEscalarXd = xd * Math.cos(Teta) * Math.cos(Phi) - yd * Math.sin(Teta) * Math.cos(Phi);
-    
-                ProdutoEscalarZo = xo * Math.cos(Teta) * Math.cos(Phi) - zo * Math.signum(Math.cos(Phi)) * Math.sin(Phi);
-    
-                ProdutoEscalarZd = xd * Math.cos(Teta) * Math.cos(Phi) - zd * Math.signum(Math.cos(Phi)) * Math.sin(Phi);
     
                 if ((Math.abs(Math.cos((AnguloXi + AnguloXf) / 2)) <= InfimoCossenoTeta) || (Math.abs(Math.cos((AnguloYi + AnguloYf) / 2)) <= InfimoCossenoPhi))
                     {xo *= FatorDeslocamentoShift; xd *= FatorDeslocamentoShift;}
@@ -648,7 +629,7 @@ public class AV3DSpaceCatch extends JComponent
                 comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - CorrecaoX, 40 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 20 - CorrecaoX, 50 - CorrecaoY, CorGuias);
                 }
 
-            if ((ProdutoEscalarXo > 0) && (ProdutoEscalarXd > 0) && (Math.acos(ProdutoEscalaro / Math.sqrt(xo * xo + yo * yo + zo * zo)) < AnguloVisao + MargemAnguloVisao) && (Math.acos(ProdutoEscalard / Math.sqrt(xd * xd + yd * yd + zd * zd)) < AnguloVisao + MargemAnguloVisao) && (Math.min(xi, Math.min(yi, Math.min(xf, yf))) > 0) && (Math.max(xi, Math.max(yi, Math.max(xf, yf))) < Math.min(TamanhoPlanoX, TamanhoPlanoY)))
+            if ((Math.acos(ProdutoEscalaro / Math.sqrt(xo * xo + yo * yo + zo * zo)) < AnguloVisao + MargemAnguloVisao) && (Math.acos(ProdutoEscalard / Math.sqrt(xd * xd + yd * yd + zd * zd)) < AnguloVisao + MargemAnguloVisao) && (Math.min(xi, Math.min(yi, Math.min(xf, yf))) > 0) && (Math.max(xi, Math.max(yi, Math.max(xf, yf))) < Math.min(TamanhoPlanoX, TamanhoPlanoY)))
                 comp.addLine(xi, yi, xf, yf, CorAlvo);
             }
         }
