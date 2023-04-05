@@ -11,7 +11,7 @@
  * 
  * Licença de uso: Atribuição-NãoComercial-CompartilhaIgual (CC BY-NC-SA).
  * 
- * Última atualização: 02-04-2023.
+ * Última atualização: 05-04-2023.
  */
 
 import java.awt.*;
@@ -526,17 +526,17 @@ public class AV3DSpaceCatch extends JComponent
             int xf;
             int yf;
 
-            double ProdutoEscalaro = xo * Math.cos(Teta) * Math.cos(Phi) - yo * Math.sin(Teta) * Math.cos(Phi) - zo * Math.signum(Math.cos(Phi)) * Math.sin(Phi);
+            double ProdutoEscalaro = xo * Math.cos(Teta) * Math.cos(Phi) - yo * Math.sin(Teta) * Math.cos(Phi) - zo * Math.cos(Phi) * Math.sin(Phi);
 
-            double ProdutoEscalard = xd * Math.cos(Teta) * Math.cos(Phi) - yd * Math.sin(Teta) * Math.cos(Phi) - zd * Math.signum(Math.cos(Phi)) * Math.sin(Phi);
+            double ProdutoEscalard = xd * Math.cos(Teta) * Math.cos(Phi) - yd * Math.sin(Teta) * Math.cos(Phi) - zd * Math.cos(Phi) * Math.sin(Phi);
 
             double ProdutoEscalarXo = xo * Math.cos(Teta) * Math.cos(Phi) - yo * Math.sin(Teta) * Math.cos(Phi);
 
             double ProdutoEscalarXd = xd * Math.cos(Teta) * Math.cos(Phi) - yd * Math.sin(Teta) * Math.cos(Phi);
 
-            double ProdutoEscalarZo = xo * Math.cos(Teta) * Math.cos(Phi) - zo * Math.signum(Math.cos(Phi)) * Math.sin(Phi);
+            double ProdutoEscalarZo = xo * Math.cos(Teta) * Math.cos(Phi) - zo * Math.cos(Phi) * Math.sin(Phi);
 
-            double ProdutoEscalarZd = xd * Math.cos(Teta) * Math.cos(Phi) - zd * Math.signum(Math.cos(Phi)) * Math.sin(Phi);
+            double ProdutoEscalarZd = xd * Math.cos(Teta) * Math.cos(Phi) - zd * Math.cos(Phi) * Math.sin(Phi);
 
             if ((Math.abs(xo) > Math.abs(yo)) && (Math.abs(xd) > Math.abs(yd)))
                 {
