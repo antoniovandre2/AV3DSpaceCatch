@@ -5,13 +5,13 @@
  * 
  * Dependências: AntonioVandre.
  * 
- * Motores Gráficos: AV3D-f (para objetos distantes) e AV3D-n (para objetos próximos).
+ * Motor Gráfico: AV3D-n (para objetos próximos).
  * 
  * Sugestões ou comunicar erros: "a.vandre.g@gmail.com".
  * 
  * Licença de uso: Atribuição-NãoComercial-CompartilhaIgual (CC BY-NC-SA).
  * 
- * Última atualização: 11-10-2023.
+ * Última atualização: 20-10-2023.
  */
 
 import java.awt.Dimension;
@@ -47,14 +47,13 @@ public class AV3DSpaceCatch extends JComponent
 
     // Variáveis globais.
 
-    public double DistanciaPermutaEngine = 150; // Default: 150.
     public int TamanhoPlanoX = 400; // Default: 400.
     public int TamanhoPlanoY = 400; // Default: 400.
     public static int MinTamanhoPlanoX = 300; // Default: 300.
     public static int MinTamanhoPlanoY = 300; // Default: 300.
     public static double TetaMax = Double.MAX_VALUE; // Opção: Math.PI / 3.
     public static double PhiMax = Double.MAX_VALUE; // Opção: Math.PI / 3.
-    public static double MargemAnguloVisao = 0; // Default: 0.
+    public static double MargemAnguloVisao = 0.5; // Default: 0.5.
     public double Velocidade = 50; // Default inicial: 50.
     public static double LimiteSuperiorVelocidade = 100; // Default: 100.
     public static double LimiteInferiorVelocidade = 10; // Default: 10.
@@ -64,18 +63,13 @@ public class AV3DSpaceCatch extends JComponent
     public static int TamanhoEspacoLabelStatus = 280; // Default: 280.
     public static int TamanhoFonteLabelStatus = 11; // Default: 11.
     public static int TamanhoFonteLabelDistancia = 10; // Default: 10.
-    public static double DistanciaTela = 1; // Default: 1.
+    public static double DistanciaTela = 2; // Default: 2.
     public static double DeslocamentoLinear = 1; // Default: 1.
     public static double DeslocamentoAngular = 0.08; // Default: 0.08.
     public static int TamanhoAlvo = 2; // Default: 2.
     public static int DivisoesAlvo = 4; // Default: 4.
     public int TipoAlvo = 0; // Default: 0.
     public static double FatorArestasNaoOrtogonaisAlvo = 0.3; // Default: 0.3.
-    public static double FatorCorrecaoAspectoTeta = 0; // Default: 0.
-    public static double FatorMaxCorrecaoAspectoTeta = 4; // Default: 4.
-    public static double FatorCorrecaoAspectoPhi = 0; // Default: 0.
-    public static double FatorMaxCorrecaoAspectoPhi = 4; // Default: 4.
-    public static double FatorDeslocamentoShift = 1.5; // Default: 1.5.
     public static double LimiteXalvo = 100; // Default: 100.
     public static double LimiteYalvo = 100; // Default: 100.
     public static double LimiteZalvo = 50; // Default: 50.
@@ -286,7 +280,7 @@ public class AV3DSpaceCatch extends JComponent
                         FlagBGM = 0;
                         }
 
-                if (keyCode == KeyEvent.VK_Q)
+                if (keyCode == KeyEvent.VK_Q) 
                     {TipoAlvo++; TipoAlvo %= 2;}
 
                 if (keyCode == KeyEvent.VK_UP) if (FlagPausa == 0) 
@@ -296,20 +290,10 @@ public class AV3DSpaceCatch extends JComponent
                     {Phi -= DeslocamentoAngular;}
 
                 if (keyCode == KeyEvent.VK_LEFT) if (FlagPausa == 0) 
-                    {
-                    if (Math.sqrt(((2 * Xalvo + TamanhoAlvo) / 2 - x) * ((2 * Xalvo + TamanhoAlvo) / 2 - x) + ((2 * Yalvo + TamanhoAlvo) / 2 - y) * ((2 * Yalvo + TamanhoAlvo) / 2 - y) + ((2 * Zalvo + TamanhoAlvo) / 2 - z) * ((2 * Zalvo + TamanhoAlvo) / 2 - z)) < DistanciaPermutaEngine)
-                        Teta += DeslocamentoAngular * Math.signum(Math.cos(Phi));
-                    else
-                        Teta += DeslocamentoAngular;
-                    }
+                    {Teta += DeslocamentoAngular * Math.signum(Math.cos(Phi));}
 
                 if (keyCode == KeyEvent.VK_RIGHT) if (FlagPausa == 0) 
-                    {
-                    if (Math.sqrt(((2 * Xalvo + TamanhoAlvo) / 2 - x) * ((2 * Xalvo + TamanhoAlvo) / 2 - x) + ((2 * Yalvo + TamanhoAlvo) / 2 - y) * ((2 * Yalvo + TamanhoAlvo) / 2 - y) + ((2 * Zalvo + TamanhoAlvo) / 2 - z) * ((2 * Zalvo + TamanhoAlvo) / 2 - z)) < DistanciaPermutaEngine)
-                        Teta -= DeslocamentoAngular * Math.signum(Math.cos(Phi));
-                    else
-                        Teta -= DeslocamentoAngular;
-                    }
+                    {Teta -= DeslocamentoAngular * Math.signum(Math.cos(Phi));}
                 }
 
             public void keyReleased(KeyEvent ke){}
@@ -431,22 +415,11 @@ public class AV3DSpaceCatch extends JComponent
 
             if (FlagPausa == 0) if (Tempo - TempoR > (int) (1000 / (FramesPorSegundo)))
                 {
-                if (Math.sqrt(((2 * Xalvo + TamanhoAlvo) / 2 - x) * ((2 * Xalvo + TamanhoAlvo) / 2 - x) + ((2 * Yalvo + TamanhoAlvo) / 2 - y) * ((2 * Yalvo + TamanhoAlvo) / 2 - y) + ((2 * Zalvo + TamanhoAlvo) / 2 - z) * ((2 * Zalvo + TamanhoAlvo) / 2 - z)) < DistanciaPermutaEngine)
-                    {
-                    x += Velocidade * Math.cos(Phi) * Math.cos(Teta) / FramesPorSegundo;
+                x += Velocidade * Math.cos(Phi) * Math.cos(Teta) / FramesPorSegundo;
 
-                    y -= Velocidade * Math.cos(Phi) * Math.sin(Teta) / FramesPorSegundo;
+                y -= Velocidade * Math.cos(Phi) * Math.sin(Teta) / FramesPorSegundo;
 
-                    z -= Velocidade * Math.sin(Phi) / FramesPorSegundo;
-                    }
-                else
-                    {
-                    x += Velocidade * Math.cos(Phi) * Math.cos(Teta) / FramesPorSegundo;
-
-                    y -= Velocidade * Math.cos(Phi) * Math.sin(Teta) / FramesPorSegundo;
-
-                    z -= Velocidade * Math.signum(Math.cos(Phi)) * Math.sin(Phi) / FramesPorSegundo;
-                    }
+                z -= Velocidade * Math.sin(Phi) / FramesPorSegundo;
 
                 TempoR = Tempo;
                 }
@@ -566,31 +539,13 @@ public class AV3DSpaceCatch extends JComponent
 
             try
                 {
-                if (Math.sqrt(((2 * Xalvo + TamanhoAlvo) / 2 - x) * ((2 * Xalvo + TamanhoAlvo) / 2 - x) + ((2 * Yalvo + TamanhoAlvo) / 2 - y) * ((2 * Yalvo + TamanhoAlvo) / 2 - y) + ((2 * Zalvo + TamanhoAlvo) / 2 - z) * ((2 * Zalvo + TamanhoAlvo) / 2 - z)) < DistanciaPermutaEngine)
-                    {
-                    xi = (int) (TamanhoPlanoX / 2 + TamanhoPlanoX / 2 * DistanciaTela * (xo * Math.sin(Teta) + yo * Math.cos(Teta)) / Math.sqrt(xo * xo + yo * yo + zo * zo)) - CorrecaoX;
+                xi = (int) (TamanhoPlanoX / 2 + TamanhoPlanoX / 2 * DistanciaTela * (xo * Math.sin(Teta) + yo * Math.cos(Teta)) / Math.sqrt(xo * xo + yo * yo + zo * zo)) - CorrecaoX;
 
-                    yi = (int) (TamanhoPlanoY / 2 + TamanhoPlanoY / 2 * DistanciaTela * (xo * Math.cos(Teta) * Math.sin(Phi) - yo * Math.sin(Teta) * Math.sin(Phi) + zo * Math.cos(Phi)) / Math.sqrt(xo * xo + yo * yo + zo * zo)) - CorrecaoY;
+                yi = (int) (TamanhoPlanoY / 2 + TamanhoPlanoY / 2 * DistanciaTela * (xo * Math.cos(Teta) * Math.sin(Phi) - yo * Math.sin(Teta) * Math.sin(Phi) + zo * Math.cos(Phi)) / Math.sqrt(xo * xo + yo * yo + zo * zo)) - CorrecaoY;
 
-                    xf = (int) (TamanhoPlanoX / 2 + TamanhoPlanoX / 2 * DistanciaTela * (xd * Math.sin(Teta) + yd * Math.cos(Teta)) / Math.sqrt(xd * xd + yd * yd + zd * zd)) - CorrecaoX;
+                xf = (int) (TamanhoPlanoX / 2 + TamanhoPlanoX / 2 * DistanciaTela * (xd * Math.sin(Teta) + yd * Math.cos(Teta)) / Math.sqrt(xd * xd + yd * yd + zd * zd)) - CorrecaoX;
 
-                    yf = (int) (TamanhoPlanoY / 2 + TamanhoPlanoY / 2 * DistanciaTela * (xd * Math.cos(Teta) * Math.sin(Phi) - yd * Math.sin(Teta) * Math.sin(Phi) + zd * Math.cos(Phi)) / Math.sqrt(xd * xd + yd * yd + zd * zd)) - CorrecaoY;
-                    }
-                else
-                    {
-                    double AnguloXi = Math.PI / 2 - Math.atan(xo / yo) + Teta;
-                    double AnguloXf = Math.PI / 2 - Math.atan(xd / yd) + Teta;
-                    double AnguloYi = Math.asin(zo / Math.sqrt(yo * yo + zo * zo)) + Phi;
-                    double AnguloYf = Math.asin(zd / Math.sqrt(yd * yd + zd * zd)) + Phi;
-        
-                    xi = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela  * Math.tan(AnguloXi) / Math.max(Math.pow(Math.abs(Math.cos(AnguloXi)), FatorCorrecaoAspectoTeta), 1 / FatorMaxCorrecaoAspectoTeta)) - CorrecaoX;
-
-                    xf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela  * Math.tan(AnguloXf) / Math.max(Math.pow(Math.abs(Math.cos(AnguloXf)), FatorCorrecaoAspectoTeta), 1 / FatorMaxCorrecaoAspectoTeta)) - CorrecaoX;
-
-                    yi = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.tan(AnguloYi) / Math.max(Math.pow(Math.abs(Math.cos(AnguloYi)), FatorCorrecaoAspectoPhi), 1 / FatorMaxCorrecaoAspectoPhi)) - CorrecaoY;
-
-                    yf = (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 + Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2 * DistanciaTela * Math.tan(AnguloYf) / Math.max(Math.pow(Math.abs(Math.cos(AnguloYf)), FatorCorrecaoAspectoPhi), 1 / FatorMaxCorrecaoAspectoPhi)) - CorrecaoY;
-                    }
+                yf = (int) (TamanhoPlanoY / 2 + TamanhoPlanoY / 2 * DistanciaTela * (xd * Math.cos(Teta) * Math.sin(Phi) - yd * Math.sin(Teta) * Math.sin(Phi) + zd * Math.cos(Phi)) / Math.sqrt(xd * xd + yd * yd + zd * zd)) - CorrecaoY;
 
                 if ((Math.acos(ProdutoEscalaro / Math.sqrt(xo * xo + yo * yo + zo * zo)) < AnguloVisao + MargemAnguloVisao) && ((Math.acos(ProdutoEscalard / Math.sqrt(xd * xd + yd * yd + zd * zd)) < AnguloVisao + MargemAnguloVisao) && (Math.min(xi, Math.min(yi, Math.min(xf, yf))) > 0) && (Math.max(xi + CorrecaoX, xf + CorrecaoX) < TamanhoPlanoX) && (Math.max(yi + CorrecaoY, yf + CorrecaoY) < TamanhoPlanoY)))
                 comp.addLine(xi, yi, xf, yf, CorAlvo);
