@@ -53,7 +53,7 @@ public class AV3DSpaceCatch extends JComponent
     public static int MinTamanhoPlanoY = 300; // Default: 300.
     public static double TetaMax = Double.MAX_VALUE; // Opção: Math.PI / 3.
     public static double PhiMax = Double.MAX_VALUE; // Opção: Math.PI / 3.
-    public static double MargemAnguloVisao = 0.5; // Default: 0.5.
+    public static double MargemAnguloVisao = 0.3; // Default: 0.3.
     public double Velocidade = 50; // Default inicial: 50.
     public static double LimiteSuperiorVelocidade = 100; // Default: 100.
     public static double LimiteInferiorVelocidade = 10; // Default: 10.
