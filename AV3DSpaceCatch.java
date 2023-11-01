@@ -3,7 +3,7 @@
  * 
  * Game AV3DSpaceCatch.
  * 
- * Dependências: AntonioVandre.
+ * Dependências: AntonioVandre >= 20231101.
  * 
  * Motor Gráfico: AV3D-n (para objetos próximos).
  * 
@@ -11,7 +11,7 @@
  * 
  * Licença de uso: Atribuição-NãoComercial-CompartilhaIgual (CC BY-NC-SA).
  * 
- * Última atualização: 21-10-2023.
+ * Última atualização: 01-11-2023.
  */
 
 import java.awt.Dimension;
@@ -86,9 +86,11 @@ public class AV3DSpaceCatch extends JComponent
     public static String ArquivoSomBGM10x = "ES_Wind Drone Winter - SFX Producer - 1x.wav";
     public static String ArquivoSomBGM15x = "ES_Wind Drone Winter - SFX Producer - 1.5x.wav";
     public static String ArquivoSomBGM20x = "ES_Wind Drone Winter - SFX Producer - 2x.wav";
+    public static String MensagemErroAntonioVandreLib = "Requer AntonioVandre >= 20231101.";
 
     // Variáveis de funcionamento interno. Evite alterar.
 
+    public long ValorInteiroLong;
     public static int CorrecaoX = 10;
     public static int CorrecaoY = 0;
     public double AnguloVisao;
@@ -186,6 +188,22 @@ public class AV3DSpaceCatch extends JComponent
     public void mainrun (String ArquivoEstatisticas)
         {
         String Versao = "Versão desconhecida.";
+
+        try
+            {
+            ValorInteiroLong = Long.parseLong(String.valueOf(AntonioVandre.Versao));
+            }
+        catch (NumberFormatException e)
+            {
+            System.out.println(MensagemErroAntonioVandreLib);
+            return;
+            }
+
+        if (AntonioVandre.Versao < 20231101)
+            {
+            System.out.println(MensagemErroAntonioVandreLib);
+            return;
+            }
 
         File fileVersao = new File(ArquivoAV3DSpaceCatchVersao);
 
@@ -615,7 +633,7 @@ public class AV3DSpaceCatch extends JComponent
             BufferedReader br = new BufferedReader(new FileReader(file));
             String PontuacaoStr = "";
             PontuacaoStr = br.readLine();
-            if (AntonioVandre.NumeroInteiroLong(PontuacaoStr))
+            if (AntonioVandre.NumeroNaturalPositivoLong(PontuacaoStr))
                 return Long.valueOf(PontuacaoStr);
             else
                 return -1;
