@@ -11,11 +11,13 @@
  * 
  * Licença de uso: Atribuição-NãoComercial-CompartilhaIgual (CC BY-NC-SA).
  * 
- * Última atualização: 01-11-2023.
+ * Última atualização: 10-11-2023.
  */
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GradientPaint;
 import java.awt.event.AWTEventListener;
 import java.awt.Paint;
 import java.awt.Color;
@@ -120,6 +122,51 @@ public class AV3DSpaceCatch extends JComponent
     public double Phi = 0;
 
     public int FlagArquivo;
+
+    public class GradientLabel extends JLabel
+        {
+        private Color CorInicial;
+        private Color CorFinal;
+
+        public GradientLabel(String Texto)
+            {
+            super(Texto);
+
+            CorInicial = new Color(0, 100, 0);
+            CorFinal = Color.BLACK;
+            this.setForeground(Color.WHITE);
+            }
+
+        public GradientLabel(String Texto, Color CorInicial, Color CorFinal)
+            {
+            super(Texto);
+            this.CorInicial = CorInicial;
+            this.CorFinal = CorFinal;
+            this.setForeground(Color.WHITE);
+            }
+
+        public GradientLabel(String Texto, Color CorInicial, Color CorFinal, Color CorForeground)
+            {
+            super(Texto);
+            this.CorInicial = CorInicial;
+            this.CorFinal = CorFinal;
+            this.setForeground(CorForeground);
+            }
+
+        public void paint(Graphics g)
+            {
+            int width = getWidth();
+            int height = getHeight();
+
+            GradientPaint paint = new GradientPaint(0, 0, CorInicial, width, height, CorFinal, true);
+            Graphics2D g2d = (Graphics2D) g;
+            Paint oldPaint = g2d.getPaint();
+            g2d.setPaint(paint);
+            g2d.fillRect(0, 0, width, height);
+            g2d.setPaint(oldPaint);
+            super.paint(g);
+            }
+        }
 
     private static class LineType extends Object
         {
@@ -228,18 +275,15 @@ public class AV3DSpaceCatch extends JComponent
         comp.setPreferredSize(new Dimension(TamanhoPlanoX, TamanhoPlanoY));
         FameAV3DSpaceCatch.getContentPane().add(comp, BorderLayout.PAGE_START);
 
-        JLabel LabelStatus = new JLabel("");
+        GradientLabel LabelStatus;
         JLabel LabelDistancia = new JLabel("");
 
         if (FlagPausa == 0)
-            LabelStatus.setText("<html>&nbsp;Pontuação = " + String.valueOf(Pontuacao) + ".<br><br>&nbsp;Velocidade = " + String.valueOf(Velocidade) + "<br><br>&nbsp;Setas para direcionar.<br><br>&nbsp;\"A\" para aumentar velocidade. \"Z\" para reduzir.<br><br>&nbsp;\"P\" para pausar.<br><br>&nbsp;Barra de espaço para resetar as<br>&nbsp;variáveis de localização.<br><br>&nbsp;ESC para sair.</html>");
+            LabelStatus = new GradientLabel("<html>&nbsp;Pontuação = " + String.valueOf(Pontuacao) + ".<br><br>&nbsp;Velocidade = " + String.valueOf(Velocidade) + "<br><br>&nbsp;Setas para direcionar.<br><br>&nbsp;\"A\" para aumentar velocidade. \"Z\" para reduzir.<br><br>&nbsp;\"P\" para pausar.<br><br>&nbsp;Barra de espaço para resetar as<br>&nbsp;variáveis de localização.<br><br>&nbsp;ESC para sair.</html>", new Color(0,100,0), Color.BLACK, Color.WHITE);
         else
-            LabelStatus.setText("<html>&nbsp;Pontuação: " + String.valueOf(Pontuacao) + ".<br><br>&nbsp;Jogo pausado.<br><br>&nbsp;Aperte \"P\" para continuar.</html>");
+            LabelStatus = new GradientLabel("<html>&nbsp;Pontuação: " + String.valueOf(Pontuacao) + ".<br><br>&nbsp;Jogo pausado.<br><br>&nbsp;Aperte \"P\" para continuar.</html>", new Color(0,100,0), Color.BLACK, Color.WHITE);
 
         LabelStatus.setFont(new Font("DialogInput", Font.BOLD | Font.ITALIC, TamanhoFonteLabelStatus));
-        LabelStatus.setBackground(StatusBackgroundCor);
-        LabelStatus.setForeground(StatusTextoCor);
-        LabelStatus.setOpaque(true);
 
         LabelDistancia.setFont(new Font("DialogInput", Font.PLAIN, TamanhoFonteLabelDistancia));
         LabelDistancia.setForeground(StatusDistanciaCor);
