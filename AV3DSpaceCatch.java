@@ -65,7 +65,7 @@ public class AV3DSpaceCatch extends JComponent
     public static int TamanhoEspacoLabelStatus = 280; // Default: 280.
     public static int TamanhoFonteLabelStatus = 11; // Default: 11.
     public static int TamanhoFonteLabelDistancia = 10; // Default: 10.
-    public static double DistanciaTela = 2; // Default: 2.
+    public static double DistanciaTela = 2.5; // Default: 2.5.
     public static double DeslocamentoLinear = 1; // Default: 1.
     public static double DeslocamentoAngular = 0.08; // Default: 0.08.
     public static int TamanhoAlvo = 2; // Default: 2.
