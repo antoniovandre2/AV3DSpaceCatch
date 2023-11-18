@@ -11,7 +11,7 @@
  * 
  * Licença de uso: Atribuição-NãoComercial-CompartilhaIgual (CC BY-NC-SA).
  * 
- * Última atualização: 16-11-2023.
+ * Última atualização: 17-11-2023.
  */
 
 import java.awt.Dimension;
@@ -55,7 +55,7 @@ public class AV3DSpaceCatch extends JComponent
     public static int MinTamanhoPlanoY = 400; // Default: 400.
     public static double TetaMax = Double.MAX_VALUE; // Opção: Math.PI / 3.
     public static double PhiMax = Double.MAX_VALUE; // Opção: Math.PI / 3.
-    public static double MargemAnguloVisao = 0.1; // Default: 0.1.
+    public static double MargemAnguloVisao = 0.3; // Default: 0.3.
     public double Velocidade = 50; // Default inicial: 50.
     public static double LimiteSuperiorVelocidade = 100; // Default: 100.
     public static double LimiteInferiorVelocidade = 10; // Default: 10.
