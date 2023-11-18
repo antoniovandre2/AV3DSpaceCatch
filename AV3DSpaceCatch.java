@@ -56,7 +56,7 @@ public class AV3DSpaceCatch extends JComponent
     public static double TetaMax = Double.MAX_VALUE; // Opção: Math.PI / 3.
     public static double PhiMax = Double.MAX_VALUE; // Opção: Math.PI / 3.
     public static double MargemAnguloVisao = 1; // Default: 1.
-    public static double MargemPhiProdutoEscalarNegativo = Math.PI / 3; // Default: Math.PI / 3.
+    public static double MargemPhiProdutoEscalarNegativo = Math.PI / 2; // Default: Math.PI / 2.
     public double Velocidade = 50; // Default inicial: 50.
     public static double LimiteSuperiorVelocidade = 100; // Default: 100.
     public static double LimiteInferiorVelocidade = 10; // Default: 10.
