@@ -55,8 +55,9 @@ public class AV3DSpaceCatch extends JComponent
     public static int MinTamanhoPlanoY = 400; // Default: 400.
     public static double TetaMax = Double.MAX_VALUE; // Opção: Math.PI / 3.
     public static double PhiMax = Double.MAX_VALUE; // Opção: Math.PI / 3.
-    public static double MargemAnguloVisao = 1; // Default: 1.
-    public static double MargemPhiProdutoEscalarNegativo = 5 * Math.PI / 12; // Default: 5 * Math.PI / 12.
+    public static double MargemAnguloVisao = 0.2; // Default: 0.2.
+    public static double MargemPhiProdutoEscalarNegativo = Math.PI / 2; // Default: Math.PI / 2.
+    public static double MargemDistanciaProdutoEscalarNegativo = 5; // Default: 5.
     public double Velocidade = 50; // Default inicial: 50.
     public static double LimiteSuperiorVelocidade = 100; // Default: 100.
     public static double LimiteInferiorVelocidade = 10; // Default: 10.
@@ -610,7 +611,7 @@ public class AV3DSpaceCatch extends JComponent
 
             yf = (int) (TamanhoPlanoY / 2 + TamanhoPlanoY / 2 * DistanciaTela * (xd * Math.cos(Teta) * Math.sin(Phi) - yd * Math.sin(Teta) * Math.sin(Phi) + zd * Math.cos(Phi)) / Math.sqrt(xd * xd + yd * yd + zd * zd)) - CorrecaoY;
 
-            if (((ProdutoEscalaro > 0) || ((ProdutoEscalaro < 0) && (Phi % (2 * Math.PI) < Math.PI / 2 + MargemPhiProdutoEscalarNegativo) && (Phi % (2 * Math.PI) > Math.PI / 2 - MargemPhiProdutoEscalarNegativo) && (Zalvo < z)) || ((ProdutoEscalaro < 0) && (Phi % (2 * Math.PI) < 3 * Math.PI / 2 + MargemPhiProdutoEscalarNegativo) && (Phi % (2 * Math.PI) > 3 * Math.PI / 2 - MargemPhiProdutoEscalarNegativo) && (Zalvo > z))) && (Math.abs(Math.acos(ProdutoEscalaro / Math.sqrt(xo * xo + yo * yo + zo * zo))) < AnguloVisao + MargemAnguloVisao) && ((ProdutoEscalard > 0) || ((ProdutoEscalard < 0) && ((Phi - Math.PI / 2) % Math.PI > 0) && (Zalvo < z)) || ((ProdutoEscalard < 0) && ((Phi - Math.PI / 2) % Math.PI < 0) && (Zalvo > z))) && ((Math.abs(Math.acos(ProdutoEscalard / Math.sqrt(xd * xd + yd * yd + zd * zd))) < AnguloVisao + MargemAnguloVisao) && (Math.min(xi, Math.min(yi, Math.min(xf, yf))) > 0) && (Math.max(xi + CorrecaoX, xf + CorrecaoX) < TamanhoPlanoX) && (Math.max(yi + CorrecaoY, yf + CorrecaoY) < TamanhoPlanoY)))
+            if (((ProdutoEscalaro > 0) || ((ProdutoEscalaro < 0) && (Phi % (2 * Math.PI) < Math.PI / 2 + MargemPhiProdutoEscalarNegativo) && (Phi % (2 * Math.PI) > Math.PI / 2 - MargemPhiProdutoEscalarNegativo) && (Zalvo - z < -MargemDistanciaProdutoEscalarNegativo)) || ((ProdutoEscalaro < 0) && (Phi % (2 * Math.PI) < 3 * Math.PI / 2 + MargemPhiProdutoEscalarNegativo) && (Phi % (2 * Math.PI) > 3 * Math.PI / 2 - MargemPhiProdutoEscalarNegativo) && (Zalvo - z > MargemDistanciaProdutoEscalarNegativo))) && (Math.abs(Math.acos(ProdutoEscalaro / Math.sqrt(xo * xo + yo * yo + zo * zo))) < AnguloVisao + MargemAnguloVisao) && ((ProdutoEscalard > 0) || ((ProdutoEscalard < 0) && ((Phi - Math.PI / 2) % Math.PI > 0) && (Zalvo - z < -MargemDistanciaProdutoEscalarNegativo)) || ((ProdutoEscalard < 0) && ((Phi - Math.PI / 2) % Math.PI < 0) && (Zalvo - z > MargemDistanciaProdutoEscalarNegativo))) && ((Math.abs(Math.acos(ProdutoEscalard / Math.sqrt(xd * xd + yd * yd + zd * zd))) < AnguloVisao + MargemAnguloVisao) && (Math.min(xi, Math.min(yi, Math.min(xf, yf))) > 0) && (Math.max(xi + CorrecaoX, xf + CorrecaoX) < TamanhoPlanoX) && (Math.max(yi + CorrecaoY, yf + CorrecaoY) < TamanhoPlanoY)))
                 comp.addLine(xi, yi, xf, yf, CorAlvo);
 
             if ((Math.acos(ProdutoEscalarXo / Math.sqrt(xo * xo + yo * yo)) <= AnguloDirecaoIr) && (Math.acos(ProdutoEscalarXd / Math.sqrt(xd * xd + yd * yd)) <= AnguloDirecaoIr))
