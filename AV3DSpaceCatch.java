@@ -11,7 +11,7 @@
  * 
  * Licença de uso: Atribuição-NãoComercial-CompartilhaIgual (CC BY-NC-SA).
  * 
- * Última atualização: 03-07-2024.
+ * Última atualização: 04-07-2024.
  */
 
 import java.awt.Dimension;
@@ -356,10 +356,10 @@ public class AV3DSpaceCatch extends JComponent
 					{Teta0 = Teta; Phi0 = Phi; if (Math.abs(Phi) < Double.MAX_VALUE - MargemMaxValue) {Phi -= DeslocamentoAngular;} else {Phi = 0;}}
 
 				if (keyCode == KeyEvent.VK_LEFT) if (FlagPausa == 0) 
-					{if (Math.abs(Teta) < Double.MAX_VALUE - MargemMaxValue) {Teta += DeslocamentoAngular * Math.cos(Phi0); x += Velocidade * Math.abs(Math.sin(Phi0)) * Math.sin(Teta0); y -= Velocidade * Math.abs(Math.sin(Phi0)) * Math.cos(Teta0);} else {Teta = 0;}}
+					{if (Math.abs(Teta) < Double.MAX_VALUE - MargemMaxValue) {Teta += DeslocamentoAngular * Math.cos(Phi0); x -= DeslocamentoLinear * Math.abs(Math.sin(Phi0)) * Math.sin(Teta0); y -= DeslocamentoLinear * Math.abs(Math.sin(Phi0)) * Math.cos(Teta0);} else {Teta = 0;}}
 
 				if (keyCode == KeyEvent.VK_RIGHT) if (FlagPausa == 0) 
-					{if (Math.abs(Teta) < Double.MAX_VALUE - MargemMaxValue) {Teta -= DeslocamentoAngular * Math.cos(Phi0); x -= Velocidade * Math.abs(Math.sin(Phi0)) * Math.sin(Teta0); y += Velocidade * Math.abs(Math.sin(Phi0)) * Math.cos(Teta0);} else {Teta = 0;}}
+					{if (Math.abs(Teta) < Double.MAX_VALUE - MargemMaxValue) {Teta -= DeslocamentoAngular * Math.cos(Phi0); x += DeslocamentoLinear * Math.abs(Math.sin(Phi0)) * Math.sin(Teta0); y += DeslocamentoLinear * Math.abs(Math.sin(Phi0)) * Math.cos(Teta0);} else {Teta = 0;}}
 				}
 
 			public void keyReleased(KeyEvent ke){}
