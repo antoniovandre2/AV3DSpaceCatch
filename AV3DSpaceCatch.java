@@ -344,17 +344,19 @@ public class AV3DSpaceCatch extends JComponent
 				if (keyCode == KeyEvent.VK_Q) 
 					{TipoAlvo++; TipoAlvo %= 2;}
 
+				Rot = Math.PI / 2 * Math.abs(Math.sin(Phi));
+
 				if (keyCode == KeyEvent.VK_UP) {if (FlagPausa == 0) 
-					{if (Math.abs(Teta + DeslocamentoAngular * Math.sin(Rot)) < Double.MAX_VALUE) {if (Math.abs(Phi + DeslocamentoAngular * Math.cos(Rot)) < Double.MAX_VALUE) {if (Math.abs(Rot + DeslocamentoAngular * Math.sin(Phi)) < Double.MAX_VALUE) {if (ke.isShiftDown()) {Teta += DeslocamentoAngular * Math.sin(Rot) / 10; Phi += DeslocamentoAngular * Math.cos(Rot) / 10; Rot += DeslocamentoAngular * Math.sin(Phi) / 10;} else {Teta += DeslocamentoAngular * Math.sin(Rot); Phi += DeslocamentoAngular * Math.cos(Rot); Rot += DeslocamentoAngular * Math.sin(Phi);}} else {Rot = 0;}} else {Phi = 0;}} else {Teta = 0;}}}
+					{if (Math.abs(Teta + DeslocamentoAngular * Math.sin(Rot)) < Double.MAX_VALUE) {if (Math.abs(Phi + DeslocamentoAngular * Math.cos(Rot)) < Double.MAX_VALUE) {if (ke.isShiftDown()) {Teta += DeslocamentoAngular * Math.sin(Rot) / 10; Phi += DeslocamentoAngular * Math.cos(Rot) / 10;} else {Teta += DeslocamentoAngular * Math.sin(Rot); Phi += DeslocamentoAngular * Math.cos(Rot);}} else {Phi = 0;}} else {Teta = 0;}}}
 
 				if (keyCode == KeyEvent.VK_DOWN) {if (FlagPausa == 0) 
-					{if (Math.abs(Teta - DeslocamentoAngular * Math.sin(Rot)) < Double.MAX_VALUE) {if (Math.abs(Phi - DeslocamentoAngular * Math.cos(Rot)) < Double.MAX_VALUE) {if (Math.abs(Rot - DeslocamentoAngular * Math.sin(Phi)) < Double.MAX_VALUE) {if (ke.isShiftDown()) {Teta -= DeslocamentoAngular * Math.sin(Rot) / 10; Phi -= DeslocamentoAngular * Math.cos(Rot) / 10; Rot -= DeslocamentoAngular * Math.sin(Phi) / 10;} else {Teta -= DeslocamentoAngular * Math.sin(Rot); Phi -= DeslocamentoAngular * Math.cos(Rot); Rot -= DeslocamentoAngular * Math.sin(Phi);}} else {Rot = 0;}} else {Phi = 0;}} else {Teta = 0;}}}
+					{if (Math.abs(Teta - DeslocamentoAngular * Math.sin(Rot)) < Double.MAX_VALUE) {if (Math.abs(Phi - DeslocamentoAngular * Math.cos(Rot)) < Double.MAX_VALUE) {if (ke.isShiftDown()) {Teta -= DeslocamentoAngular * Math.sin(Rot) / 10; Phi -= DeslocamentoAngular * Math.cos(Rot) / 10;} else {Teta -= DeslocamentoAngular * Math.sin(Rot); Phi -= DeslocamentoAngular * Math.cos(Rot);}} else {Phi = 0;}} else {Teta = 0;}}}
 
 				if (keyCode == KeyEvent.VK_LEFT) {if (FlagPausa == 0) 
-					{if (Math.abs(Teta + DeslocamentoAngular * Math.sin(Rot)) < Double.MAX_VALUE) {if (Math.abs(Phi - DeslocamentoAngular * Math.cos(Rot)) < Double.MAX_VALUE) {if (Math.abs(Rot - DeslocamentoAngular * Math.sin(Phi)) < Double.MAX_VALUE) {if (ke.isShiftDown()) {Teta += DeslocamentoAngular * Math.cos(Rot) / 10; Phi -= DeslocamentoAngular * Math.sin(Rot) / 10; Rot -= DeslocamentoAngular * Math.sin(Phi) / 10;} else {Teta += DeslocamentoAngular * Math.cos(Rot); Phi -= DeslocamentoAngular * Math.sin(Rot); Rot -= DeslocamentoAngular * Math.sin(Phi);}} else {Rot = 0;}} else {Phi = 0;}} else {Teta = 0;}}}
+					{if (Math.abs(Teta + DeslocamentoAngular * Math.sin(Rot)) < Double.MAX_VALUE) {if (Math.abs(Phi - DeslocamentoAngular * Math.cos(Rot)) < Double.MAX_VALUE) {if (ke.isShiftDown()) {Teta += DeslocamentoAngular * Math.cos(Rot) / 10; Phi -= DeslocamentoAngular * Math.sin(Rot) / 10;} else {Teta += DeslocamentoAngular * Math.cos(Rot); Phi -= DeslocamentoAngular * Math.sin(Rot);}} else {Phi = 0;}} else {Teta = 0;}}}
 
 				if (keyCode == KeyEvent.VK_RIGHT) {if (FlagPausa == 0) 
-					{if (Math.abs(Teta - DeslocamentoAngular * Math.sin(Rot)) < Double.MAX_VALUE) {if (Math.abs(Phi + DeslocamentoAngular * Math.cos(Rot)) < Double.MAX_VALUE) {if (Math.abs(Rot + DeslocamentoAngular * Math.sin(Phi)) < Double.MAX_VALUE) {if (ke.isShiftDown()) {Teta -= DeslocamentoAngular * Math.cos(Rot) / 10; Phi += DeslocamentoAngular * Math.sin(Rot) / 10; Rot += DeslocamentoAngular * Math.sin(Phi) / 10;} else {Teta -= DeslocamentoAngular * Math.cos(Rot); Phi += DeslocamentoAngular * Math.sin(Rot); Rot += DeslocamentoAngular * Math.sin(Phi);}} else {Rot = 0;}} else {Phi = 0;}} else {Teta = 0;}}}
+					{if (Math.abs(Teta - DeslocamentoAngular * Math.sin(Rot)) < Double.MAX_VALUE) {if (Math.abs(Phi + DeslocamentoAngular * Math.cos(Rot)) < Double.MAX_VALUE) {if (ke.isShiftDown()) {Teta -= DeslocamentoAngular * Math.cos(Rot) / 10; Phi += DeslocamentoAngular * Math.sin(Rot) / 10;} else {Teta -= DeslocamentoAngular * Math.cos(Rot); Phi += DeslocamentoAngular * Math.sin(Rot);}} else {Phi = 0;}} else {Teta = 0;}}}
 				}
 
 			public void keyReleased(KeyEvent ke){}
