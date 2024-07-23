@@ -11,7 +11,7 @@
  * 
  * Licença de uso: Atribuição-NãoComercial-CompartilhaIgual (CC BY-NC-SA).
  * 
- * Última atualização: 04-07-2024.
+ * Última atualização: 23-07-2024.
  */
 
 import java.awt.Dimension;
@@ -66,7 +66,7 @@ public class AV3DSpaceCatch extends JComponent
 	public static int TamanhoEspacoLabelStatus = 280; // Default: 280.
 	public static int TamanhoFonteLabelStatus = 11; // Default: 11.
 	public static int TamanhoFonteLabelDistancia = 10; // Default: 10.
-	public static double DistanciaTela = 2.5; // Default: 2.5.
+	public static double DistanciaTela = 3; // Default: 3.
 	public static double DeslocamentoLinear = 1; // Default: 1.
 	public static double DeslocamentoAngular = 0.08; // Default: 0.08.
 	public static int TamanhoAlvo = 2; // Default: 2.
@@ -121,8 +121,7 @@ public class AV3DSpaceCatch extends JComponent
 	public double Zalvo;
 	public double Teta = 0;
 	public double Phi = 0;
-	public double Teta0;
-	public double Phi0;
+	public double Rot = 0;
 
 	public int FlagArquivo;
 
@@ -192,29 +191,25 @@ public class AV3DSpaceCatch extends JComponent
 	private final LinkedList<LineType> Linhas = new LinkedList<LineType>();
 	private final LinkedList<LineType> LinhasGuia = new LinkedList<LineType>();
 
-	public void addLine(int x1, int x2, int x3, int x4, Color color)
+	public void addLine(int x1, int x2, int x3, int x4, Color color, int n)
 		{
 		Linhas.add(new LineType(x1, x2, x3, x4, color));
-		repaint();
+
+		if (n == Integer.MAX_VALUE) repaint();
 		}
 
-	public void addLineG(int x1, int x2, int x3, int x4, Color color)
+	public void addLineG(int x1, int x2, int x3, int x4, Color color, int n)
 		{
 		LinhasGuia.add(new LineType(x1, x2, x3, x4, color));
-		repaint();
+
+		if (n == Integer.MAX_VALUE) repaint();
 		}
 
 	public void clearLines()
-		{
-		Linhas.clear();
-		repaint();
-		}
+		{Linhas.clear();}
 
 	public void clearLinesG()
-		{
-		LinhasGuia.clear();
-		repaint();
-		}
+		{LinhasGuia.clear();}
 
 	protected void paintComponent(Graphics g)
 		{
@@ -308,20 +303,20 @@ public class AV3DSpaceCatch extends JComponent
 
 				if (keyCode == KeyEvent.VK_SPACE)
 					{
-					Teta0 = Teta; Phi0 = Phi;
 					x = 50;
 					y = 50;
 					z = 50;
 					Teta = 0;
 					Phi = 0;
+					Rot = 0;
 
 					FlagPausa = 1;
 					}
 
 				if (keyCode == KeyEvent.VK_P)
-					{Teta0 = Teta; Phi0 = Phi; if (FlagPausa == 1) FlagPausa = 0; else FlagPausa = 1;}
+					{if (FlagPausa == 1) FlagPausa = 0; else FlagPausa = 1;}
 
-				if (keyCode == KeyEvent.VK_A) {Teta0 = Teta; Phi0 = Phi; if (FlagPausa == 0) 
+				if (keyCode == KeyEvent.VK_A) {if (FlagPausa == 0) 
 					if (Velocidade < LimiteSuperiorVelocidade)
 						{
 						Velocidade += IncrementoVelocidade;
@@ -332,7 +327,7 @@ public class AV3DSpaceCatch extends JComponent
 						FlagBGM = 0;
 						}}
 
-				if (keyCode == KeyEvent.VK_Z) {Teta0 = Teta; Phi0 = Phi; if (FlagPausa == 0) 
+				if (keyCode == KeyEvent.VK_Z) {if (FlagPausa == 0) 
 					if (Velocidade > LimiteInferiorVelocidade)
 						{
 						Velocidade -= IncrementoVelocidade;
@@ -347,19 +342,19 @@ public class AV3DSpaceCatch extends JComponent
 						}}
 
 				if (keyCode == KeyEvent.VK_Q) 
-					{Teta0 = Teta; Phi0 = Phi; TipoAlvo++; TipoAlvo %= 2;}
+					{TipoAlvo++; TipoAlvo %= 2;}
 
-				if (keyCode == KeyEvent.VK_UP) if (FlagPausa == 0) 
-					{Teta0 = Teta; Phi0 = Phi; if (Math.abs(Phi) < Double.MAX_VALUE - MargemMaxValue) {Phi += DeslocamentoAngular;} else {Phi = 0;}}
+				if (keyCode == KeyEvent.VK_UP) {if (FlagPausa == 0) 
+					{if (Math.abs(Teta + DeslocamentoAngular * Math.sin(Rot)) < Double.MAX_VALUE) {if (Math.abs(Phi + DeslocamentoAngular * Math.cos(Rot)) < Double.MAX_VALUE) {if (Math.abs(Rot + DeslocamentoAngular * Math.sin(Phi)) < Double.MAX_VALUE) {if (ke.isShiftDown()) {Teta += DeslocamentoAngular * Math.sin(Rot) / 10; Phi += DeslocamentoAngular * Math.cos(Rot) / 10; Rot += DeslocamentoAngular * Math.sin(Phi) / 10;} else {Teta += DeslocamentoAngular * Math.sin(Rot); Phi += DeslocamentoAngular * Math.cos(Rot); Rot += DeslocamentoAngular * Math.sin(Phi);}} else {Rot = 0;}} else {Phi = 0;}} else {Teta = 0;}}}
 
-				if (keyCode == KeyEvent.VK_DOWN) if (FlagPausa == 0) 
-					{Teta0 = Teta; Phi0 = Phi; if (Math.abs(Phi) < Double.MAX_VALUE - MargemMaxValue) {Phi -= DeslocamentoAngular;} else {Phi = 0;}}
+				if (keyCode == KeyEvent.VK_DOWN) {if (FlagPausa == 0) 
+					{if (Math.abs(Teta - DeslocamentoAngular * Math.sin(Rot)) < Double.MAX_VALUE) {if (Math.abs(Phi - DeslocamentoAngular * Math.cos(Rot)) < Double.MAX_VALUE) {if (Math.abs(Rot - DeslocamentoAngular * Math.sin(Phi)) < Double.MAX_VALUE) {if (ke.isShiftDown()) {Teta -= DeslocamentoAngular * Math.sin(Rot) / 10; Phi -= DeslocamentoAngular * Math.cos(Rot) / 10; Rot -= DeslocamentoAngular * Math.sin(Phi) / 10;} else {Teta -= DeslocamentoAngular * Math.sin(Rot); Phi -= DeslocamentoAngular * Math.cos(Rot); Rot -= DeslocamentoAngular * Math.sin(Phi);}} else {Rot = 0;}} else {Phi = 0;}} else {Teta = 0;}}}
 
-				if (keyCode == KeyEvent.VK_LEFT) if (FlagPausa == 0) 
-					{if (Math.abs(Teta) < Double.MAX_VALUE - MargemMaxValue) {Teta += DeslocamentoAngular * Math.cos(Phi0); x -= DeslocamentoLinear * Math.abs(Math.sin(Phi0)) * Math.sin(Teta0); y -= DeslocamentoLinear * Math.abs(Math.sin(Phi0)) * Math.cos(Teta0);} else {Teta = 0;}}
+				if (keyCode == KeyEvent.VK_LEFT) {if (FlagPausa == 0) 
+					{if (Math.abs(Teta + DeslocamentoAngular * Math.sin(Rot)) < Double.MAX_VALUE) {if (Math.abs(Phi - DeslocamentoAngular * Math.cos(Rot)) < Double.MAX_VALUE) {if (Math.abs(Rot - DeslocamentoAngular * Math.sin(Phi)) < Double.MAX_VALUE) {if (ke.isShiftDown()) {Teta += DeslocamentoAngular * Math.cos(Rot) / 10; Phi -= DeslocamentoAngular * Math.sin(Rot) / 10; Rot -= DeslocamentoAngular * Math.sin(Phi) / 10;} else {Teta += DeslocamentoAngular * Math.cos(Rot); Phi -= DeslocamentoAngular * Math.sin(Rot); Rot -= DeslocamentoAngular * Math.sin(Phi);}} else {Rot = 0;}} else {Phi = 0;}} else {Teta = 0;}}}
 
-				if (keyCode == KeyEvent.VK_RIGHT) if (FlagPausa == 0) 
-					{if (Math.abs(Teta) < Double.MAX_VALUE - MargemMaxValue) {Teta -= DeslocamentoAngular * Math.cos(Phi0); x += DeslocamentoLinear * Math.abs(Math.sin(Phi0)) * Math.sin(Teta0); y += DeslocamentoLinear * Math.abs(Math.sin(Phi0)) * Math.cos(Teta0);} else {Teta = 0;}}
+				if (keyCode == KeyEvent.VK_RIGHT) {if (FlagPausa == 0) 
+					{if (Math.abs(Teta - DeslocamentoAngular * Math.sin(Rot)) < Double.MAX_VALUE) {if (Math.abs(Phi + DeslocamentoAngular * Math.cos(Rot)) < Double.MAX_VALUE) {if (Math.abs(Rot + DeslocamentoAngular * Math.sin(Phi)) < Double.MAX_VALUE) {if (ke.isShiftDown()) {Teta -= DeslocamentoAngular * Math.cos(Rot) / 10; Phi += DeslocamentoAngular * Math.sin(Rot) / 10; Rot += DeslocamentoAngular * Math.sin(Phi) / 10;} else {Teta -= DeslocamentoAngular * Math.cos(Rot); Phi += DeslocamentoAngular * Math.sin(Rot); Rot += DeslocamentoAngular * Math.sin(Phi);}} else {Rot = 0;}} else {Phi = 0;}} else {Teta = 0;}}}
 				}
 
 			public void keyReleased(KeyEvent ke){}
@@ -540,11 +535,12 @@ public class AV3DSpaceCatch extends JComponent
 
 			if ((Math.abs(x) > Double.MAX_VALUE - MargemMaxValue) || (Math.abs(y) > Double.MAX_VALUE - MargemMaxValue) || (Math.abs(z) > Double.MAX_VALUE - MargemMaxValue)) {x = 50; y = 50; z = 50;}
 
-			if (FlagCatchSound == 1) Catch.close();
-
 			if (FlagPausa == 0) DesenharEspaco(comp);
 
-			try {Thread.sleep(10);} catch(InterruptedException e) {}
+			if (FlagCatchSound == 1)
+				{try {Thread.sleep(100);} catch(InterruptedException e){}; Catch.close();}
+			else
+				try {Thread.sleep(10);} catch(InterruptedException e) {}
 			}
 
 		System.exit(0);
@@ -570,14 +566,14 @@ public class AV3DSpaceCatch extends JComponent
 
 				if (FlagPhiSuperior == 1)
 					{
-					comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - 30 - CorrecaoX, 30 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 30 - CorrecaoX, 30 - CorrecaoY, CorGuias);
+					comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - 30 - CorrecaoX, 30 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 30 - CorrecaoX, 30 - CorrecaoY, CorGuias, i == EspacoLinhas.length - 1 ? Integer.MAX_VALUE : i);
 
 					FlagPhiSuperior = 0;
 					}
 
 				if (FlagPhiInferior == 1)
 					{
-					comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - 30 - CorrecaoX, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 30 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 30 - CorrecaoX, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 30 - CorrecaoY, CorGuias);
+					comp.addLineG((int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) - 30 - CorrecaoX, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 30 - CorrecaoY, (int) (Math.min(TamanhoPlanoX, TamanhoPlanoY) / 2) + 30 - CorrecaoX, Math.min(TamanhoPlanoX, TamanhoPlanoY) - 30 - CorrecaoY, CorGuias, i == EspacoLinhas.length - 1 ? Integer.MAX_VALUE : i);
 
 					FlagPhiInferior = 0;
 					}
@@ -611,69 +607,69 @@ public class AV3DSpaceCatch extends JComponent
 
 				double ProdutoEscalarZd = xd * Math.cos(Teta) * Math.cos(Phi) - zd * Math.cos(Teta) * Math.cos(Phi) * Math.sin(Phi);
 
-				xi = (int) (TamanhoPlanoX / 2 + TamanhoPlanoX / 2 * DistanciaTela * (xo * Math.sin(Teta) + yo * Math.cos(Teta)) / Math.sqrt(xo * xo + yo * yo + zo * zo)) - CorrecaoX;
+				xi = (int) (TamanhoPlanoX / 2 + TamanhoPlanoX / 2 * DistanciaTela * (Math.cos(Rot) * (xo * Math.sin(Teta) + yo * Math.cos(Teta)) - Math.sin(Rot) * (xo * Math.cos(Teta) * Math.sin(Phi) - yo * Math.sin(Teta) * Math.sin(Phi) + zo * Math.cos(Phi))) / Math.sqrt(xo * xo + yo * yo + zo * zo)) - CorrecaoX;
 
-				yi = (int) (TamanhoPlanoY / 2 + TamanhoPlanoY / 2 * DistanciaTela * (xo * Math.cos(Teta) * Math.sin(Phi) - yo * Math.sin(Teta) * Math.sin(Phi) + zo * Math.cos(Phi)) / Math.sqrt(xo * xo + yo * yo + zo * zo)) - CorrecaoY;
+				yi = (int) (TamanhoPlanoY / 2 + TamanhoPlanoY / 2 * DistanciaTela * (Math.sin(Rot) * (xo * Math.sin(Teta) + yo * Math.cos(Teta)) + Math.cos(Rot) * (xo * Math.cos(Teta) * Math.sin(Phi) - yo * Math.sin(Teta) * Math.sin(Phi) + zo * Math.cos(Phi))) / Math.sqrt(xo * xo + yo * yo + zo * zo)) - CorrecaoY;
 
-				xf = (int) (TamanhoPlanoX / 2 + TamanhoPlanoX / 2 * DistanciaTela * (xd * Math.sin(Teta) + yd * Math.cos(Teta)) / Math.sqrt(xd * xd + yd * yd + zd * zd)) - CorrecaoX;
+				xf = (int) (TamanhoPlanoX / 2 + TamanhoPlanoX / 2 * DistanciaTela * (Math.cos(Rot) * (xd * Math.sin(Teta) + yd * Math.cos(Teta)) - Math.sin(Rot) * (xd * Math.cos(Teta) * Math.sin(Phi) - yd * Math.sin(Teta) * Math.sin(Phi) + zd * Math.cos(Phi))) / Math.sqrt(xd * xd + yd * yd + zd * zd)) - CorrecaoX;
 
-				yf = (int) (TamanhoPlanoY / 2 + TamanhoPlanoY / 2 * DistanciaTela * (xd * Math.cos(Teta) * Math.sin(Phi) - yd * Math.sin(Teta) * Math.sin(Phi) + zd * Math.cos(Phi)) / Math.sqrt(xd * xd + yd * yd + zd * zd)) - CorrecaoY;
+				yf = (int) (TamanhoPlanoY / 2 + TamanhoPlanoY / 2 * DistanciaTela * (Math.sin(Rot) * (xd * Math.sin(Teta) + yd * Math.cos(Teta)) + Math.cos(Rot) * (xd * Math.cos(Teta) * Math.sin(Phi) - yd * Math.sin(Teta) * Math.sin(Phi) + zd * Math.cos(Phi))) / Math.sqrt(xd * xd + yd * yd + zd * zd)) - CorrecaoY;
 
 				if ((Math.abs(Math.acos(ProdutoEscalaro / Math.sqrt(xo * xo + yo * yo + zo * zo))) < AnguloVisao + MargemAnguloVisao) && (Math.abs(Math.acos(ProdutoEscalard / Math.sqrt(xd * xd + yd * yd + zd * zd))) < AnguloVisao + MargemAnguloVisao) && (Math.min(xi, Math.min(yi, Math.min(xf, yf))) > 0) && (Math.max(xi + CorrecaoX, xf + CorrecaoX) < TamanhoPlanoX) && (Math.max(yi + CorrecaoY, yf + CorrecaoY) < TamanhoPlanoY))
-					comp.addLine(xi, yi, xf, yf, CorAlvo);
+					comp.addLine(xi, yi, xf, yf, CorAlvo, i == EspacoLinhas.length - 1 ? Integer.MAX_VALUE : i);
 
 				if ((Math.acos(ProdutoEscalarXo / Math.sqrt(xo * xo + yo * yo)) <= AnguloDirecaoIr) && (Math.acos(ProdutoEscalarXd / Math.sqrt(xd * xd + yd * yd)) <= AnguloDirecaoIr))
 					{
 					if (Math.min(xi - CorrecaoX, xf - CorrecaoX) < 0)
 						{
-						comp.addLineG(50 - CorrecaoX, (int) (TamanhoPlanoY / 2) - 20 - CorrecaoY, 40 - CorrecaoX, (int) (TamanhoPlanoY / 2) - CorrecaoY, CorGuias);
+						comp.addLineG(50 - CorrecaoX, (int) (TamanhoPlanoY / 2) - 20 - CorrecaoY, 40 - CorrecaoX, (int) (TamanhoPlanoY / 2) - CorrecaoY, CorGuias, i == EspacoLinhas.length - 1 ? Integer.MAX_VALUE : i);
 
-						comp.addLineG(50 - CorrecaoX, (int) (TamanhoPlanoY / 2) + 20 - CorrecaoY, 40 - CorrecaoX, (int) (TamanhoPlanoY / 2) - CorrecaoY, CorGuias);
+						comp.addLineG(50 - CorrecaoX, (int) (TamanhoPlanoY / 2) + 20 - CorrecaoY, 40 - CorrecaoX, (int) (TamanhoPlanoY / 2) - CorrecaoY, CorGuias, i == EspacoLinhas.length - 1 ? Integer.MAX_VALUE : i);
 						}
 		
 					if (Math.max(xi - CorrecaoX, xf - CorrecaoX) > TamanhoPlanoX)
 						{
-						comp.addLineG(TamanhoPlanoX - 50 - CorrecaoX, (int) (TamanhoPlanoY / 2) - 20 - CorrecaoY, TamanhoPlanoX - 40  - CorrecaoX, (int) (TamanhoPlanoY / 2) - CorrecaoY, CorGuias);
+						comp.addLineG(TamanhoPlanoX - 50 - CorrecaoX, (int) (TamanhoPlanoY / 2) - 20 - CorrecaoY, TamanhoPlanoX - 40  - CorrecaoX, (int) (TamanhoPlanoY / 2) - CorrecaoY, CorGuias, i == EspacoLinhas.length - 1 ? Integer.MAX_VALUE : i);
 
-						comp.addLineG(TamanhoPlanoX - 50 - CorrecaoX, (int) (TamanhoPlanoY / 2) + 20 - CorrecaoY, TamanhoPlanoX - 40  - CorrecaoX, (int) (TamanhoPlanoY / 2) - CorrecaoY, CorGuias);
+						comp.addLineG(TamanhoPlanoX - 50 - CorrecaoX, (int) (TamanhoPlanoY / 2) + 20 - CorrecaoY, TamanhoPlanoX - 40  - CorrecaoX, (int) (TamanhoPlanoY / 2) - CorrecaoY, CorGuias, i == EspacoLinhas.length - 1 ? Integer.MAX_VALUE : i);
 						}
 					}
 				else if ((Math.acos(ProdutoEscalarXo / Math.sqrt(xo * xo + yo * yo)) > AnguloDirecaoIr) || (Math.acos(ProdutoEscalarXd / Math.sqrt(xd * xd + yd * yd)) > AnguloDirecaoIr))
 					{
-					comp.addLineG(50 - CorrecaoX, (int) (TamanhoPlanoY / 2) - 20 - CorrecaoY, 40 - CorrecaoX, (int) (TamanhoPlanoY / 2) - CorrecaoY, CorGuias);
+					comp.addLineG(50 - CorrecaoX, (int) (TamanhoPlanoY / 2) - 20 - CorrecaoY, 40 - CorrecaoX, (int) (TamanhoPlanoY / 2) - CorrecaoY, CorGuias, i == EspacoLinhas.length - 1 ? Integer.MAX_VALUE : i);
 
-					comp.addLineG(50 - CorrecaoX, (int) (TamanhoPlanoY / 2) + 20 - CorrecaoY, 40 - CorrecaoX, (int) (TamanhoPlanoY / 2) - CorrecaoY, CorGuias);
+					comp.addLineG(50 - CorrecaoX, (int) (TamanhoPlanoY / 2) + 20 - CorrecaoY, 40 - CorrecaoX, (int) (TamanhoPlanoY / 2) - CorrecaoY, CorGuias, i == EspacoLinhas.length - 1 ? Integer.MAX_VALUE : i);
 
-					comp.addLineG(TamanhoPlanoX - 50 - CorrecaoX, (int) (TamanhoPlanoY / 2) - 20 - CorrecaoY, TamanhoPlanoX - 40  - CorrecaoX, (int) (TamanhoPlanoY / 2) - CorrecaoY, CorGuias);
+					comp.addLineG(TamanhoPlanoX - 50 - CorrecaoX, (int) (TamanhoPlanoY / 2) - 20 - CorrecaoY, TamanhoPlanoX - 40  - CorrecaoX, (int) (TamanhoPlanoY / 2) - CorrecaoY, CorGuias, i == EspacoLinhas.length - 1 ? Integer.MAX_VALUE : i);
 
-					comp.addLineG(TamanhoPlanoX - 50 - CorrecaoX, (int) (TamanhoPlanoY / 2) + 20 - CorrecaoY, TamanhoPlanoX - 40  - CorrecaoX, (int) (TamanhoPlanoY / 2) - CorrecaoY, CorGuias);
+					comp.addLineG(TamanhoPlanoX - 50 - CorrecaoX, (int) (TamanhoPlanoY / 2) + 20 - CorrecaoY, TamanhoPlanoX - 40  - CorrecaoX, (int) (TamanhoPlanoY / 2) - CorrecaoY, CorGuias, i == EspacoLinhas.length - 1 ? Integer.MAX_VALUE : i);
 					}
 
 				if ((Math.acos(ProdutoEscalarZo / Math.sqrt(xo * xo + Math.cos(Teta) * Math.cos(Phi) * zo * Math.cos(Teta) * Math.cos(Phi) * zo)) <= AnguloDirecaoIr) && (Math.acos(ProdutoEscalarZd / Math.sqrt(xd * xd + zd * zd)) <= AnguloDirecaoIr))
 					{
 					if (Math.max(yi - CorrecaoY, yf - CorrecaoY) > Math.min(TamanhoPlanoX, TamanhoPlanoY))
 						{
-						comp.addLineG((int) (TamanhoPlanoX / 2) - 20 - CorrecaoX, TamanhoPlanoY - 50 - CorrecaoY, (int) (TamanhoPlanoX / 2) - CorrecaoX, TamanhoPlanoY - 40 - CorrecaoY, CorGuias);
+						comp.addLineG((int) (TamanhoPlanoX / 2) - 20 - CorrecaoX, TamanhoPlanoY - 50 - CorrecaoY, (int) (TamanhoPlanoX / 2) - CorrecaoX, TamanhoPlanoY - 40 - CorrecaoY, CorGuias, i == EspacoLinhas.length - 1 ? Integer.MAX_VALUE : i);
 
-						comp.addLineG((int) (TamanhoPlanoX / 2) - CorrecaoX, TamanhoPlanoY - 40 - CorrecaoY, (int) (TamanhoPlanoX / 2) + 20 - CorrecaoX, TamanhoPlanoY - 50 - CorrecaoY, CorGuias);
+						comp.addLineG((int) (TamanhoPlanoX / 2) - CorrecaoX, TamanhoPlanoY - 40 - CorrecaoY, (int) (TamanhoPlanoX / 2) + 20 - CorrecaoX, TamanhoPlanoY - 50 - CorrecaoY, CorGuias, i == EspacoLinhas.length - 1 ? Integer.MAX_VALUE : i);
 						}
 		
 					if (Math.min(yi - CorrecaoY, yf - CorrecaoY) < 0)
 						{
-						comp.addLineG((int) (TamanhoPlanoX / 2) - 20 - CorrecaoX, 50 - CorrecaoY, (int) (TamanhoPlanoX / 2) - CorrecaoX, 40 - CorrecaoY, CorGuias);
+						comp.addLineG((int) (TamanhoPlanoX / 2) - 20 - CorrecaoX, 50 - CorrecaoY, (int) (TamanhoPlanoX / 2) - CorrecaoX, 40 - CorrecaoY, CorGuias, i == EspacoLinhas.length - 1 ? Integer.MAX_VALUE : i);
 
-						comp.addLineG((int) (TamanhoPlanoX / 2) - CorrecaoX, 40 - CorrecaoY, (int) (TamanhoPlanoX / 2) + 20 - CorrecaoX, 50 - CorrecaoY, CorGuias);
+						comp.addLineG((int) (TamanhoPlanoX / 2) - CorrecaoX, 40 - CorrecaoY, (int) (TamanhoPlanoX / 2) + 20 - CorrecaoX, 50 - CorrecaoY, CorGuias, i == EspacoLinhas.length - 1 ? Integer.MAX_VALUE : i);
 						}
 					}
 				else if ((Math.acos(ProdutoEscalarZo / Math.sqrt(xo * xo + Math.cos(Teta) * Math.cos(Phi) * zo *  Math.cos(Teta) * Math.cos(Phi) * zo)) > AnguloDirecaoIr) || (Math.acos(ProdutoEscalarZd / Math.sqrt(xd * xd + zd * zd)) > AnguloDirecaoIr))
 					{
-					comp.addLineG((int) (TamanhoPlanoX / 2) - 20 - CorrecaoX, TamanhoPlanoY - 50 - CorrecaoY, (int) (TamanhoPlanoX / 2) - CorrecaoX, TamanhoPlanoY - 40 - CorrecaoY, CorGuias);
+					comp.addLineG((int) (TamanhoPlanoX / 2) - 20 - CorrecaoX, TamanhoPlanoY - 50 - CorrecaoY, (int) (TamanhoPlanoX / 2) - CorrecaoX, TamanhoPlanoY - 40 - CorrecaoY, CorGuias, i == EspacoLinhas.length - 1 ? Integer.MAX_VALUE : i);
 
-					comp.addLineG((int) (TamanhoPlanoX / 2) - CorrecaoX, TamanhoPlanoY - 40 - CorrecaoY, (int) (TamanhoPlanoX / 2) + 20 - CorrecaoX, TamanhoPlanoY - 50 - CorrecaoY, CorGuias);
+					comp.addLineG((int) (TamanhoPlanoX / 2) - CorrecaoX, TamanhoPlanoY - 40 - CorrecaoY, (int) (TamanhoPlanoX / 2) + 20 - CorrecaoX, TamanhoPlanoY - 50 - CorrecaoY, CorGuias, i == EspacoLinhas.length - 1 ? Integer.MAX_VALUE : i);
 
-					comp.addLineG((int) (TamanhoPlanoX / 2) - 20 - CorrecaoX, 50 - CorrecaoY, (int) (TamanhoPlanoX / 2) - CorrecaoX, 40 - CorrecaoY, CorGuias);
+					comp.addLineG((int) (TamanhoPlanoX / 2) - 20 - CorrecaoX, 50 - CorrecaoY, (int) (TamanhoPlanoX / 2) - CorrecaoX, 40 - CorrecaoY, CorGuias, i == EspacoLinhas.length - 1 ? Integer.MAX_VALUE : i);
 
-					comp.addLineG((int) (TamanhoPlanoX / 2) - CorrecaoX, 40 - CorrecaoY, (int) (TamanhoPlanoX / 2) + 20 - CorrecaoX, 50 - CorrecaoY, CorGuias);
+					comp.addLineG((int) (TamanhoPlanoX / 2) - CorrecaoX, 40 - CorrecaoY, (int) (TamanhoPlanoX / 2) + 20 - CorrecaoX, 50 - CorrecaoY, CorGuias, i == EspacoLinhas.length - 1 ? Integer.MAX_VALUE : i);
 					}
 				}
 			}
