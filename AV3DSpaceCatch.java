@@ -314,7 +314,7 @@ public class AV3DSpaceCatch extends JComponent
 					}
 
 				if (keyCode == KeyEvent.VK_P)
-					{if (FlagPausa == 1) FlagPausa = 0; else FlagPausa = 1;}
+					{if (FlagPausa == 1) FlagPausa = 0; else {BGM.stop(); BGM.close(); FlagBGM = 0; FlagPausa = 1;}}
 
 				if (keyCode == KeyEvent.VK_A) {if (FlagPausa == 0) 
 					if (Velocidade < LimiteSuperiorVelocidade)
