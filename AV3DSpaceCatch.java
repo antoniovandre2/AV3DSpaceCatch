@@ -344,7 +344,7 @@ public class AV3DSpaceCatch extends JComponent
 				if (keyCode == KeyEvent.VK_Q) 
 					{TipoAlvo++; TipoAlvo %= 2;}
 
-				Rot = 9 * Math.PI / 20 * Math.abs(Math.sin(Phi));
+				Rot = Math.PI / 3 * Math.abs(Math.sin(Phi));
 
 				double Tetatms = Teta - DeslocamentoAngular * Math.sin(Rot);
 				double Tetatps = Teta + DeslocamentoAngular * Math.sin(Rot);
