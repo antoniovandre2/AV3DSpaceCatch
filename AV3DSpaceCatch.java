@@ -121,7 +121,8 @@ public class AV3DSpaceCatch extends JComponent
 	public double Zalvo;
 	public double Teta = 0;
 	public double Phi = 0;
-	public double Rot = 0;
+	public double Teta0;
+	public double Phi0;
 
 	public int FlagArquivo;
 
@@ -308,15 +309,15 @@ public class AV3DSpaceCatch extends JComponent
 					z = 50;
 					Teta = 0;
 					Phi = 0;
-					Rot = 0;
+					Teta0 = Teta; Phi0 = Phi;
 
 					FlagPausa = 1;
 					}
 
 				if (keyCode == KeyEvent.VK_P)
-					{if (FlagPausa == 1) FlagPausa = 0; else {BGM.stop(); BGM.close(); FlagBGM = 0; FlagPausa = 1;}}
+					{Teta0 = Teta; Phi0 = Phi; if (FlagPausa == 1) FlagPausa = 0; else {BGM.stop(); BGM.close(); FlagBGM = 0; FlagPausa = 1;}}
 
-				if (keyCode == KeyEvent.VK_A) {if (FlagPausa == 0) 
+				if (keyCode == KeyEvent.VK_A) {Teta0 = Teta; Phi0 = Phi; if (FlagPausa == 0) 
 					if (Velocidade < LimiteSuperiorVelocidade)
 						{
 						Velocidade += IncrementoVelocidade;
@@ -327,7 +328,7 @@ public class AV3DSpaceCatch extends JComponent
 						FlagBGM = 0;
 						}}
 
-				if (keyCode == KeyEvent.VK_Z) {if (FlagPausa == 0) 
+				if (keyCode == KeyEvent.VK_Z) {Teta0 = Teta; Phi0 = Phi; if (FlagPausa == 0) 
 					if (Velocidade > LimiteInferiorVelocidade)
 						{
 						Velocidade -= IncrementoVelocidade;
@@ -342,31 +343,19 @@ public class AV3DSpaceCatch extends JComponent
 						}}
 
 				if (keyCode == KeyEvent.VK_Q) 
-					{TipoAlvo++; TipoAlvo %= 2;}
+					{Teta0 = Teta; Phi0 = Phi; TipoAlvo++; TipoAlvo %= 2;}
 
-				Rot = Phi;
+				if (keyCode == KeyEvent.VK_UP) if (FlagPausa == 0) 
+					{Teta0 = Teta; Phi0 = Phi; if (Math.abs(Phi) < Double.MAX_VALUE - MargemMaxValue) {Phi += DeslocamentoAngular;} else {Phi = 0;}}
 
-				double Tetatms = Teta - DeslocamentoAngular * Math.sin(Rot);
-				double Tetatps = Teta + DeslocamentoAngular * Math.sin(Rot);
-				double Phitmc = Phi - DeslocamentoAngular * Math.cos(Rot);
-				double Phitpc = Phi + DeslocamentoAngular * Math.cos(Rot);
+				if (keyCode == KeyEvent.VK_DOWN) if (FlagPausa == 0) 
+					{Teta0 = Teta; Phi0 = Phi; if (Math.abs(Phi) < Double.MAX_VALUE - MargemMaxValue) {Phi -= DeslocamentoAngular;} else {Phi = 0;}}
 
-				double Tetatmc = Teta - DeslocamentoAngular * Math.cos(Rot);
-				double Tetatpc = Teta + DeslocamentoAngular * Math.cos(Rot);
-				double Phitms = Phi - DeslocamentoAngular * Math.sin(Rot);
-				double Phitps = Phi + DeslocamentoAngular * Math.sin(Rot);
+				if (keyCode == KeyEvent.VK_LEFT) if (FlagPausa == 0) 
+					{if (Math.abs(Teta) < Double.MAX_VALUE - MargemMaxValue) {Teta += DeslocamentoAngular * Math.cos(Phi0); x -= 2 * DeslocamentoLinear * Math.abs(Math.sin(Phi0)) * Math.sin(Teta0); y -= 2 * DeslocamentoLinear * Math.abs(Math.sin(Phi0)) * Math.cos(Teta0);} else {Teta = 0;}}
 
-				if (keyCode == KeyEvent.VK_UP) {if (FlagPausa == 0) 
-					{if (Math.abs(Tetatps) < Double.MAX_VALUE) {if (Math.abs(Phitpc) < Double.MAX_VALUE) {Teta = Tetatps; Phi = Phitpc;} else {Phi = 0;}} else {Teta = 0;}}}
-
-				if (keyCode == KeyEvent.VK_DOWN) {if (FlagPausa == 0) 
-					{if (Math.abs(Tetatms) < Double.MAX_VALUE) {if (Math.abs(Phitmc) < Double.MAX_VALUE) {Teta = Tetatms; Phi = Phitmc;} else {Phi = 0;}} else {Teta = 0;}}}
-
-				if (keyCode == KeyEvent.VK_LEFT) {if (FlagPausa == 0) 
-					{if (Math.abs(Tetatpc) < Double.MAX_VALUE) {if (Math.abs(Phitms) < Double.MAX_VALUE) {Teta = Tetatpc; Phi = Phitms;} else {Phi = 0;}} else {Teta = 0;}}}
-
-				if (keyCode == KeyEvent.VK_RIGHT) {if (FlagPausa == 0) 
-					{if (Math.abs(Tetatmc) < Double.MAX_VALUE) {if (Math.abs(Phitps) < Double.MAX_VALUE) {Teta = Tetatmc; Phi = Phitps;} else {Phi = 0;}} else {Teta = 0;}}}
+				if (keyCode == KeyEvent.VK_RIGHT) if (FlagPausa == 0) 
+					{if (Math.abs(Teta) < Double.MAX_VALUE - MargemMaxValue) {Teta -= DeslocamentoAngular * Math.cos(Phi0); x += 2 * DeslocamentoLinear * Math.abs(Math.sin(Phi0)) * Math.sin(Teta0); y += 2 * DeslocamentoLinear * Math.abs(Math.sin(Phi0)) * Math.cos(Teta0);} else {Teta = 0;}}
 				}
 
 			public void keyReleased(KeyEvent ke){}
@@ -631,13 +620,13 @@ public class AV3DSpaceCatch extends JComponent
 
 				double ProdutoEscalarZd = xd * Math.cos(Teta) * Math.cos(Phi) - zd * Math.cos(Teta) * Math.cos(Phi) * Math.sin(Phi);
 
-				xi = (int) (TamanhoPlanoX / 2 + TamanhoPlanoX / 2 * DistanciaTela * (Math.cos(Rot) * xit - Math.sin(Rot) * yit) / di) - CorrecaoX;
+				xi = (int) (TamanhoPlanoX / 2 + TamanhoPlanoX / 2 * DistanciaTela * xit / di) - CorrecaoX;
 
-				yi = (int) (TamanhoPlanoY / 2 + TamanhoPlanoY / 2 * DistanciaTela * (Math.sin(Rot) * xit + Math.cos(Rot) * yit) / di) - CorrecaoY;
+				yi = (int) (TamanhoPlanoY / 2 + TamanhoPlanoY / 2 * DistanciaTela * yit / di) - CorrecaoY;
 
-				xf = (int) (TamanhoPlanoX / 2 + TamanhoPlanoX / 2 * DistanciaTela * (Math.cos(Rot) * xft - Math.sin(Rot) * yft) / df) - CorrecaoX;
+				xf = (int) (TamanhoPlanoX / 2 + TamanhoPlanoX / 2 * DistanciaTela * xft / df) - CorrecaoX;
 
-				yf = (int) (TamanhoPlanoY / 2 + TamanhoPlanoY / 2 * DistanciaTela * (Math.sin(Rot) * xft + Math.cos(Rot) * yft) / df) - CorrecaoY;
+				yf = (int) (TamanhoPlanoY / 2 + TamanhoPlanoY / 2 * DistanciaTela * yft / df) - CorrecaoY;
 
 				if ((Math.acos(ProdutoEscalaro / di) < AnguloVisao + MargemAnguloVisao) && (Math.acos(ProdutoEscalard / df) < AnguloVisao + MargemAnguloVisao) && (Math.min(xi, Math.min(yi, Math.min(xf, yf))) > 0) && (Math.max(xi + CorrecaoX, xf + CorrecaoX) < TamanhoPlanoX) && (Math.max(yi + CorrecaoY, yf + CorrecaoY) < TamanhoPlanoY))
 					comp.addLine(xi, yi, xf, yf, CorAlvo, i == EspacoLinhas.length - 1 ? Integer.MAX_VALUE : i);
