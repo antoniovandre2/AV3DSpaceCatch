@@ -5,7 +5,7 @@
  * 
  * Dependências: AntonioVandre >= 20231101.
  * 
- * Motor Gráfico: AV3D-n (para objetos próximos).
+ * Motor Gráfico: AV3D.
  * 
  * Sugestões ou comunicar erros: "a.vandre.g@gmail.com".
  * 
