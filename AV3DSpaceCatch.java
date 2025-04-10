@@ -11,7 +11,7 @@
  * 
  * Licença de uso: Atribuição-NãoComercial-CompartilhaIgual (CC BY-NC-SA).
  * 
- * Última atualização: 24-07-2024.
+ * Última atualização: 10-04-2025.
  */
 
 import java.awt.Dimension;
@@ -269,6 +269,7 @@ public class AV3DSpaceCatch extends JComponent
 
 		FameAV3DSpaceCatch.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
+		FameAV3DSpaceCatch.setMinimumSize(new Dimension(MinTamanhoPlanoX, MinTamanhoPlanoY + TamanhoEspacoLabelStatus));
 		FameAV3DSpaceCatch.setPreferredSize(new Dimension(TamanhoPlanoX, TamanhoPlanoY + TamanhoEspacoLabelStatus));
 		AV3DSpaceCatch comp = new AV3DSpaceCatch();
 		comp.setPreferredSize(new Dimension(TamanhoPlanoX, TamanhoPlanoY));
@@ -371,28 +372,6 @@ public class AV3DSpaceCatch extends JComponent
 
 			int width = FameAV3DSpaceCatch.getWidth();
 			int height = FameAV3DSpaceCatch.getHeight();
-
-			if (width < MinTamanhoPlanoX)
-				{
-				width = MinTamanhoPlanoX;
-				FameAV3DSpaceCatch.setPreferredSize(new Dimension(width, height));
-				FameAV3DSpaceCatch.setSize(width, height);
-				LabelDistancia.setBounds(TamanhoPlanoX - 120 - CorrecaoX, TamanhoPlanoY - 30 - CorrecaoY, 120, 30);
-				FameAV3DSpaceCatch.pack();
-				DesenharEspaco(comp);
-				FlagRedimensionarOver = 1;
-				}
-
-			if (height < MinTamanhoPlanoY + TamanhoEspacoLabelStatus)
-				{
-				height = MinTamanhoPlanoY + TamanhoEspacoLabelStatus;
-				FameAV3DSpaceCatch.setPreferredSize(new Dimension(width, height));
-				FameAV3DSpaceCatch.setSize(width, height);
-				LabelDistancia.setBounds(TamanhoPlanoX - 120 - CorrecaoX, TamanhoPlanoY - 30 - CorrecaoY, 120, 30);
-				FameAV3DSpaceCatch.pack();
-				DesenharEspaco(comp);
-				FlagRedimensionarOver = 1;
-				}
 
 			if (FlagRedimensionarOver == 0)
 				if ((width != TamanhoPlanoX) || (height != TamanhoPlanoY + TamanhoEspacoLabelStatus))
