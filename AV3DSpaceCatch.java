@@ -11,8 +11,10 @@
  * 
  * Licença de uso: Atribuição-NãoComercial-CompartilhaIgual (CC BY-NC-SA).
  * 
- * Última atualização: 10-04-2025.
+ * Última atualização: 16-04-2025.
  */
+
+import java.lang.IllegalThreadStateException;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -69,6 +71,7 @@ public class AV3DSpaceCatch extends JComponent
 	public static double DistanciaTela = 3; // Default: 3.
 	public static double DeslocamentoLinear = 1; // Default: 1.
 	public static double DeslocamentoAngular = 0.08; // Default: 0.08.
+	public static double FatorDeslocamentoTrick = 4; // Default: 4.
 	public static int TamanhoAlvo = 2; // Default: 2.
 	public static int DivisoesAlvo = 1; // Default: 1.
 	public int TipoAlvo = 0; // Default: 0.
@@ -353,10 +356,10 @@ public class AV3DSpaceCatch extends JComponent
 					{Teta0 = Teta; Phi0 = Phi; if (Math.abs(Phi) < Double.MAX_VALUE - MargemMaxValue) {Phi -= DeslocamentoAngular;} else {Phi = 0;}}
 
 				if (keyCode == KeyEvent.VK_LEFT) if (FlagPausa == 0) 
-					{if (Math.abs(Teta) < Double.MAX_VALUE - MargemMaxValue) {Teta += DeslocamentoAngular * Math.cos(Phi0); x -= 2 * DeslocamentoLinear * Math.abs(Math.sin(Phi0)) * Math.sin(Teta0); y -= 2 * DeslocamentoLinear * Math.abs(Math.sin(Phi0)) * Math.cos(Teta0);} else {Teta = 0;}}
+					{if (Math.abs(Teta) < Double.MAX_VALUE - MargemMaxValue) {Teta += DeslocamentoAngular * Math.cos(Phi0); x -= FatorDeslocamentoTrick * DeslocamentoLinear * Math.abs(Math.sin(Phi0)) * Math.sin(Teta0); y -= FatorDeslocamentoTrick * DeslocamentoLinear * Math.abs(Math.sin(Phi0)) * Math.cos(Teta0);} else {Teta = 0;}}
 
 				if (keyCode == KeyEvent.VK_RIGHT) if (FlagPausa == 0) 
-					{if (Math.abs(Teta) < Double.MAX_VALUE - MargemMaxValue) {Teta -= DeslocamentoAngular * Math.cos(Phi0); x += 2 * DeslocamentoLinear * Math.abs(Math.sin(Phi0)) * Math.sin(Teta0); y += 2 * DeslocamentoLinear * Math.abs(Math.sin(Phi0)) * Math.cos(Teta0);} else {Teta = 0;}}
+					{if (Math.abs(Teta) < Double.MAX_VALUE - MargemMaxValue) {Teta -= DeslocamentoAngular * Math.cos(Phi0); x += FatorDeslocamentoTrick * DeslocamentoLinear * Math.abs(Math.sin(Phi0)) * Math.sin(Teta0); y += FatorDeslocamentoTrick * DeslocamentoLinear * Math.abs(Math.sin(Phi0)) * Math.cos(Teta0);} else {Teta = 0;}}
 				}
 
 			public void keyReleased(KeyEvent ke){}
@@ -483,16 +486,21 @@ public class AV3DSpaceCatch extends JComponent
 
 			if (FlagPausa == 0) if (Math.sqrt(((2 * Xalvo + TamanhoAlvo) / 2 - x) * ((2 * Xalvo + TamanhoAlvo) / 2 - x) + ((2 * Yalvo + TamanhoAlvo) / 2 - y) * ((2 * Yalvo + TamanhoAlvo) / 2 - y) + ((2 * Zalvo + TamanhoAlvo) / 2 - z) * ((2 * Zalvo + TamanhoAlvo) / 2 - z)) <= DistanciaCapturaAlvo)
 				{
-				try {
-					InputStream CatchIS = getClass().getResourceAsStream(ArquivoSomCatch);
-					InputStream CatchBIS = new BufferedInputStream(CatchIS);
-					AudioInputStream CatchAIS = AudioSystem.getAudioInputStream(CatchBIS);
-					Catch = AudioSystem.getClip();  
-					Catch.open(CatchAIS);
-					Catch.start();
+				try
+					{
+					(new Thread () {public void run ()
+						{
+						try {
+							InputStream CatchIS = getClass().getResourceAsStream(ArquivoSomCatch);
+							InputStream CatchBIS = new BufferedInputStream(CatchIS);
+							AudioInputStream CatchAIS = AudioSystem.getAudioInputStream(CatchBIS);
+							Catch = AudioSystem.getClip();  
+							Catch.open(CatchAIS);
+							Catch.start();
 
-					FlagCatchSound = 1;
-				} catch(Exception ex) {}
+							FlagCatchSound = 1;
+						} catch(Exception ex) {}
+					}}).start();} catch (IllegalThreadStateException e) {}
 
 				FlagBGM = 0;
 
