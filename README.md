@@ -30,7 +30,7 @@ Barra de espaços para resetar as variáveis de localização.
 ESC para sair.
 ____________________
 
-![AV3D logo](https://antoniovandre2.github.io/AV3DSpaceCatch/Powered%20by%20AV3D%20engine%20-%20200p.png)
+![AV3DLite logo](https://antoniovandre2.github.io/AV3DSpaceCatch/Powered%20by%20AV3DLite%20engine%20-%20200p.png)
 ____________________
 
 Sugestões ou comunicar erros: "a.vandre.g@gmail.com".

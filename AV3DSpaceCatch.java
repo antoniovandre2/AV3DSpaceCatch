@@ -5,7 +5,7 @@
  * 
  * Dependências: AntonioVandre >= 20231101.
  * 
- * Motor Gráfico: AV3D.
+ * Motor Gráfico: AV3DLite.
  * 
  * Sugestões ou comunicar erros: "a.vandre.g@gmail.com".
  * 
