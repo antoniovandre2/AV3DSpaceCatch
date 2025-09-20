@@ -76,9 +76,9 @@ public class AV3DSpaceCatch extends JComponent
 	public static int DivisoesAlvo = 1; // Default: 1.
 	public int TipoAlvo = 0; // Default: 0.
 	public static double FatorArestasNaoOrtogonaisAlvo = 0.3; // Default: 0.3.
-	public static double LimiteXalvo = 400; // Default: 400.
-	public static double LimiteYalvo = 400; // Default: 400.
-	public static double LimiteZalvo = 400; // Default: 400.
+	public static double LimiteXalvo = 1000; // Default: 1000.
+	public static double LimiteYalvo = 1000; // Default: 1000.
+	public static double LimiteZalvo = 1000; // Default: 1000.
 	public static double DistanciaCapturaAlvo = 5; // Default: 5.
 	public static double AnguloDirecaoIr = Math.PI / 2; // Default: Math.PI / 2.
 	public static Color BackgroundCor = Color.BLACK; // Default: Color.BLACK.
@@ -626,7 +626,7 @@ public class AV3DSpaceCatch extends JComponent
 				if ((Math.acos(ProdutoEscalaro / di) < AnguloVisao + MargemAnguloVisao) && (Math.acos(ProdutoEscalard / df) < AnguloVisao + MargemAnguloVisao) && (Math.min(xi, Math.min(yi, Math.min(xf, yf))) > 0) && (Math.max(xi + CorrecaoX, xf + CorrecaoX) < TamanhoPlanoX) && (Math.max(yi + CorrecaoY, yf + CorrecaoY) < TamanhoPlanoY))
 					comp.addLine(xi, yi, xf, yf, CorAlvo, i == EspacoLinhas.length - 1 ? Integer.MAX_VALUE : i);
 
-				if ((Math.acos(ProdutoEscalarXo / Math.sqrt(xo * xo + yo * yo)) <= AnguloDirecaoIr) && (Math.acos(ProdutoEscalarXd / Math.sqrt(xd * xd + yd * yd)) <= AnguloDirecaoIr))
+				if ((Math.acos(ProdutoEscalarXo / Math.sqrt(xo * xo + yo * yo)) * Math.cos(Rot) <= AnguloDirecaoIr) && (Math.acos(ProdutoEscalarXd / Math.sqrt(xd * xd + yd * yd)) * Math.cos(Rot) <= AnguloDirecaoIr))
 					{
 					if (Math.min(xi - CorrecaoX, xf - CorrecaoX) < 0)
 						{
@@ -642,7 +642,7 @@ public class AV3DSpaceCatch extends JComponent
 						comp.addLineG(TamanhoPlanoX - 50 - CorrecaoX, (int) (TamanhoPlanoY / 2) + 20 - CorrecaoY, TamanhoPlanoX - 40  - CorrecaoX, (int) (TamanhoPlanoY / 2) - CorrecaoY, CorGuias, i == EspacoLinhas.length - 1 ? Integer.MAX_VALUE : i);
 						}
 					}
-				else if ((Math.acos(ProdutoEscalarXo / Math.sqrt(xo * xo + yo * yo)) > AnguloDirecaoIr) || (Math.acos(ProdutoEscalarXd / Math.sqrt(xd * xd + yd * yd)) > AnguloDirecaoIr))
+				else if ((Math.acos(ProdutoEscalarXo / Math.sqrt(xo * xo + yo * yo)) * Math.cos(Rot) > AnguloDirecaoIr) || (Math.acos(ProdutoEscalarXd / Math.sqrt(xd * xd + yd * yd)) * Math.cos(Rot) > AnguloDirecaoIr))
 					{
 					comp.addLineG(50 - CorrecaoX, (int) (TamanhoPlanoY / 2) - 20 - CorrecaoY, 40 - CorrecaoX, (int) (TamanhoPlanoY / 2) - CorrecaoY, CorGuias, i);
 
@@ -653,7 +653,7 @@ public class AV3DSpaceCatch extends JComponent
 					comp.addLineG(TamanhoPlanoX - 50 - CorrecaoX, (int) (TamanhoPlanoY / 2) + 20 - CorrecaoY, TamanhoPlanoX - 40  - CorrecaoX, (int) (TamanhoPlanoY / 2) - CorrecaoY, CorGuias, i == EspacoLinhas.length - 1 ? Integer.MAX_VALUE : i);
 					}
 
-				if ((Math.acos(ProdutoEscalarZo / Math.sqrt(xo * xo + Math.cos(Teta) * Math.cos(Phi) * zo * Math.cos(Teta) * Math.cos(Phi) * zo)) <= AnguloDirecaoIr) && (Math.acos(ProdutoEscalarZd / Math.sqrt(xd * xd + zd * zd)) <= AnguloDirecaoIr))
+				if ((Math.acos(ProdutoEscalarZo / Math.sqrt(xo * xo + Math.cos(Teta) * Math.cos(Phi) * zo * Math.cos(Teta) * Math.cos(Phi) * zo)) * Math.cos(Rot) <= AnguloDirecaoIr) && (Math.acos(ProdutoEscalarZd / Math.sqrt(xd * xd + zd * zd)) * Math.cos(Rot) <= AnguloDirecaoIr))
 					{
 					if (Math.max(yi - CorrecaoY, yf - CorrecaoY) > Math.min(TamanhoPlanoX, TamanhoPlanoY))
 						{
@@ -669,7 +669,7 @@ public class AV3DSpaceCatch extends JComponent
 						comp.addLineG((int) (TamanhoPlanoX / 2) - CorrecaoX, 40 - CorrecaoY, (int) (TamanhoPlanoX / 2) + 20 - CorrecaoX, 50 - CorrecaoY, CorGuias, i == EspacoLinhas.length - 1 ? Integer.MAX_VALUE : i);
 						}
 					}
-				else if ((Math.acos(ProdutoEscalarZo / Math.sqrt(xo * xo + Math.cos(Teta) * Math.cos(Phi) * zo *  Math.cos(Teta) * Math.cos(Phi) * zo)) > AnguloDirecaoIr) || (Math.acos(ProdutoEscalarZd / Math.sqrt(xd * xd + zd * zd)) > AnguloDirecaoIr))
+				else if ((Math.acos(ProdutoEscalarZo / Math.sqrt(xo * xo + Math.cos(Teta) * Math.cos(Phi) * zo *  Math.cos(Teta) * Math.cos(Phi) * zo)) * Math.cos(Rot) > AnguloDirecaoIr) || (Math.acos(ProdutoEscalarZd / Math.sqrt(xd * xd + zd * zd)) * Math.cos(Rot) > AnguloDirecaoIr))
 					{
 					comp.addLineG((int) (TamanhoPlanoX / 2) - 20 - CorrecaoX, TamanhoPlanoY - 50 - CorrecaoY, (int) (TamanhoPlanoX / 2) - CorrecaoX, TamanhoPlanoY - 40 - CorrecaoY, CorGuias, i);
 
