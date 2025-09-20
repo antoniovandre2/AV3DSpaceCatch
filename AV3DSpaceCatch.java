@@ -11,7 +11,7 @@
  * 
  * Licença de uso: Atribuição-NãoComercial-CompartilhaIgual (CC BY-NC-SA).
  * 
- * Última atualização: 18-09-2025.
+ * Última atualização: 20-09-2025.
  */
 
 import java.lang.IllegalThreadStateException;
@@ -70,7 +70,7 @@ public class AV3DSpaceCatch extends JComponent
 	public static int TamanhoFonteLabelDistancia = 10; // Default: 10.
 	public static double DistanciaTela = 3; // Default: 3.
 	public static double DeslocamentoLinear = 1; // Default: 1.
-	public static double DeslocamentoAngular = 0.08; // Default: 0.08.
+	public static double DeslocamentoAngularStatic = 0.08; // Default: 0.08.
 	public static double FatorDeslocamentoTrick = 4; // Default: 4.
 	public static int TamanhoAlvo = 2; // Default: 2.
 	public static int DivisoesAlvo = 1; // Default: 1.
@@ -97,6 +97,7 @@ public class AV3DSpaceCatch extends JComponent
 
 	// Variáveis de funcionamento interno. Evite alterar.
 
+	public double DeslocamentoAngular = DeslocamentoAngularStatic;
 	public long ValorInteiroLong;
 	public static int CorrecaoX = 10;
 	public static int CorrecaoY = 0;
@@ -525,7 +526,12 @@ public class AV3DSpaceCatch extends JComponent
 
 			if (FlagPausa == 0) DesenharEspaco(comp);
 
+			// Tricks scope.
+
 			if ((Math.abs(Math.sin(Rot)) < TricksFactor / 2) || (Math.abs(Math.cos(Rot)) < TricksFactor / 2)) Rot += (Math.cos(Phi) >= 0 ? 1 : -1) * TricksFactor / 10 * DeslocamentoAngular;
+
+			DeslocamentoAngular = DeslocamentoAngularStatic / Math.max(Math.abs(Math.cos(Phi)), TricksFactor);
+
 
 			if (FlagCatchSound == 1)
 				{try {Thread.sleep(100);} catch(InterruptedException e){}; Catch.close(); FlagCatchSound = 0;}
