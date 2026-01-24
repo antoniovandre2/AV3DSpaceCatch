@@ -11,7 +11,7 @@
  * 
  * Licença de uso: Atribuição-NãoComercial-CompartilhaIgual (CC BY-NC-SA).
  * 
- * Última atualização: 22-01-2026.
+ * Última atualização: 24-01-2026.
  */
 
 import java.lang.IllegalThreadStateException;
@@ -623,7 +623,7 @@ public class AV3DSpaceCatch extends JComponent
 
 				yf = (int) (TamanhoPlanoY / 2 + TamanhoPlanoY / 2 * DistanciaTela * yft / df) - CorrecaoY;
 
-				if ((Math.abs(Math.acos(ProdutoEscalaro / di / DistanciaTela)) < AnguloVisao + MargemAnguloVisao) && (Math.abs(Math.acos(ProdutoEscalard / df / DistanciaTela)) < AnguloVisao + MargemAnguloVisao))
+				if ((Math.abs(Math.acos(ProdutoEscalaro / di)) < AnguloVisao + MargemAnguloVisao) && (Math.abs(Math.acos(ProdutoEscalard / df)) < AnguloVisao + MargemAnguloVisao))
 					comp.addLine(xi, yi, xf, yf, CorAlvo, i == EspacoLinhas.length - 1 ? Integer.MAX_VALUE : i);
 
 				if ((Math.acos(ProdutoEscalarXo / Math.sqrt(xo * xo + yo * yo)) * Math.cos(Rot) <= AnguloDirecaoIr) && (Math.acos(ProdutoEscalarXd / Math.sqrt(xd * xd + yd * yd)) * Math.cos(Rot) <= AnguloDirecaoIr))
