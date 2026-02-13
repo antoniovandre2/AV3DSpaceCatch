@@ -11,7 +11,7 @@
  * 
  * Licença de uso: Atribuição-NãoComercial-CompartilhaIgual (CC BY-NC-SA).
  * 
- * Última atualização: 24-01-2026.
+ * Última atualização: 13-02-2026.
  */
 
 import java.lang.IllegalThreadStateException;
@@ -626,7 +626,7 @@ public class AV3DSpaceCatch extends JComponent
 				if ((Math.abs(Math.acos(ProdutoEscalaro / di)) < AnguloVisao + MargemAnguloVisao) && (Math.abs(Math.acos(ProdutoEscalard / df)) < AnguloVisao + MargemAnguloVisao))
 					comp.addLine(xi, yi, xf, yf, CorAlvo, i == EspacoLinhas.length - 1 ? Integer.MAX_VALUE : i);
 
-				if ((Math.acos(ProdutoEscalarXo / Math.sqrt(xo * xo + yo * yo)) * Math.cos(Rot) <= AnguloDirecaoIr) && (Math.acos(ProdutoEscalarXd / Math.sqrt(xd * xd + yd * yd)) * Math.cos(Rot) <= AnguloDirecaoIr))
+				if ((Math.acos(ProdutoEscalarXo / Math.sqrt(xo * xo + yo * yo)) * Math.abs(Math.cos(Rot)) <= AnguloDirecaoIr) && (Math.acos(ProdutoEscalarXd / Math.sqrt(xd * xd + yd * yd)) * Math.abs(Math.cos(Rot)) <= AnguloDirecaoIr))
 					{
 					if (Math.min(xi - CorrecaoX, xf - CorrecaoX) < 0)
 						{
@@ -653,7 +653,7 @@ public class AV3DSpaceCatch extends JComponent
 					comp.addLineG(TamanhoPlanoX - 50 - CorrecaoX, (int) (TamanhoPlanoY / 2) + 20 - CorrecaoY, TamanhoPlanoX - 40  - CorrecaoX, (int) (TamanhoPlanoY / 2) - CorrecaoY, CorGuias, i == EspacoLinhas.length - 1 ? Integer.MAX_VALUE : i);
 					}
 
-				if ((Math.acos(ProdutoEscalarZo / Math.sqrt(xo * xo + Math.cos(Teta) * Math.cos(Phi) * zo * Math.cos(Teta) * Math.cos(Phi) * zo)) * Math.cos(Rot) <= AnguloDirecaoIr) && (Math.acos(ProdutoEscalarZd / Math.sqrt(xd * xd + zd * zd)) * Math.cos(Rot) <= AnguloDirecaoIr))
+				if ((Math.acos(ProdutoEscalarZo / Math.sqrt(xo * xo + Math.cos(Teta) * Math.cos(Phi) * zo * Math.cos(Teta) * Math.cos(Phi) * zo)) * Math.abs(Math.cos(Rot)) <= AnguloDirecaoIr) && (Math.acos(ProdutoEscalarZd / Math.sqrt(xd * xd + zd * zd)) * Math.abs(Math.cos(Rot)) <= AnguloDirecaoIr))
 					{
 					if (Math.max(yi - CorrecaoY, yf - CorrecaoY) > Math.min(TamanhoPlanoX, TamanhoPlanoY))
 						{
